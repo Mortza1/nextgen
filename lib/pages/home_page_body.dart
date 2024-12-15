@@ -6,14 +6,15 @@ import '../scopedModel/connectedModel.dart';
 
 
 class HomePageBody extends StatefulWidget {
-  HomePageBody(this.model);
+  // HomePageBody(this.model);
 
-  final ApplianceModel model;
+  // final ApplianceModel model;
 
   _HomePageBodyState createState() => _HomePageBodyState();
 }
 
 class _HomePageBodyState extends State<HomePageBody> {
+  Color _buttonColor = const Color(0xffFEDC97);
   Widget _topMyHomeSection() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -90,10 +91,10 @@ class _HomePageBodyState extends State<HomePageBody> {
   }
   Widget _modeSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
-        height: MediaQuery.of(context).size.height * 0.275,
+        height: MediaQuery.of(context).size.height * 0.255,
         child: Column(
           children: [
           Row(
@@ -103,7 +104,7 @@ class _HomePageBodyState extends State<HomePageBody> {
             Text(
               'Modes',
               style: TextStyle(
-                fontSize: 25.0, // Increase font size
+                fontSize: 23.0, // Increase font size
                 fontWeight: FontWeight.w600, // Make text bold
                 fontFamily: 'Roboto', // Optional: change the font family (default is 'Roboto')
               ),
@@ -121,7 +122,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.085,
+                      height: MediaQuery.of(context).size.height * 0.075,
                       width: MediaQuery.of(context).size.width * 0.95,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
@@ -140,7 +141,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.085,
+                      height: MediaQuery.of(context).size.height * 0.075,
                       width: MediaQuery.of(context).size.width * 0.95,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
@@ -150,7 +151,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Morning scene", style: TextStyle(fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.w800),),
+                          Text("Night scene", style: TextStyle(fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.w800),),
                           Image.asset('assets/images/switch.png', height:35,)
                         ],
                       ),
@@ -164,8 +165,116 @@ class _HomePageBodyState extends State<HomePageBody> {
       )
     );
   }
+  Widget _mainWidgetsSection() {
+    return Padding(
+        padding: const EdgeInsets.symmetric( horizontal: 5),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.335,
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Frequently used devices",
+                    style: TextStyle(
+                      fontSize: 18.0, // Increase font size
+                      fontWeight: FontWeight.w600, // Make text bold
+                      fontFamily: 'Roboto', // Optional: change the font family (default is 'Roboto')
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5), // Add spacing between title and grid
+              Expanded(
+                child: GridView.builder(
+                  physics: AlwaysScrollableScrollPhysics(), // Allow vertical scrolling
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 boxes per row
+                    crossAxisSpacing: 8.0, // Spacing between columns
+                    mainAxisSpacing: 8.0, // Spacing between rows
+                    childAspectRatio: 1.7, // Adjust box proportions
+                  ),
+                  itemCount: 8, // Total number of boxes
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Color(0xffd9d9d9), // Background color for the boxes
+                        borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/images/tv.png', height: 15,),
+                              Text("Smart Tv"),
+                              Text("1 device")
+                            ],
+                          ),
+                          Image.asset('assets/images/switch.png', height: 30,)
+                        ],
+                      )
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
 
+        )
+    );
+  }
 
+  Widget _assistantButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.11,
+        child: Center(
+          child: GestureDetector(
+            onTapDown: (_) {
+              // Change the color when the button is pressed
+              setState(() {
+                _buttonColor = Color(0xffFB4242); // Change to your desired color
+              });
+            },
+            onTapUp: (_) {
+              // Revert the color when the button is released
+              setState(() {
+                _buttonColor = const Color(0xffFEDC97); // Revert to the original color
+              });
+            },
+            onTapCancel: () {
+              // Revert the color if the tap is canceled
+              setState(() {
+                _buttonColor = const Color(0xffFEDC97);
+              });
+            },
+            child: Container(
+              height: 75,
+              width: 75,
+              decoration: BoxDecoration(
+                color: _buttonColor, // Use the state variable for color
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Center(
+                child: Image.asset(
+                  'assets/images/mic.png',
+                  height: 25,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
 
   @override
@@ -177,7 +286,9 @@ class _HomePageBodyState extends State<HomePageBody> {
         children: <Widget>[
           _topMyHomeSection(),
           _topWidgetSection(),
-          _modeSection()
+          _modeSection(),
+          _mainWidgetsSection(),
+          _assistantButton()
 
     ])));
   }

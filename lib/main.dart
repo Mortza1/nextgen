@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nextgen_software/pages/tab.dart';
 import 'package:nextgen_software/scopedModel/connectedModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -39,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Container(
           height: MediaQuery.of(context).size.height,
           color: Color(0xfffcfcfd),
-          child:  HomePageBody(widget.model),)
+          child:  CustomTabScreen(),)
     );
   }
 }
