@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/light.dart';
+import 'package:nextgen_software/pages/speaker.dart';
 import 'package:nextgen_software/pages/tv.dart';
 
 class HomePageBody extends StatefulWidget {
@@ -211,6 +212,12 @@ class _HomePageBodyState extends State<HomePageBody> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => LightScreen()),
+                          );
+                        }
+                        if (index == 2) { // Check if it's the first tile
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SpeakerScreen()),
                           );
                         }
                       },

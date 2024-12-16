@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_seekbar/flutter_advanced_seekbar.dart';
 import 'dart:async';
@@ -8,10 +7,10 @@ class TVScreen extends StatefulWidget {
   const TVScreen({super.key});
 
   @override
-  _TVScreenState createState() => _TVScreenState();
+  TVScreenState createState() => TVScreenState();
 }
 
-class _TVScreenState extends State<TVScreen> {
+class TVScreenState extends State<TVScreen> {
   bool _isTvOn = false;
   String state1 = "";
   int progress1 = 0;
@@ -113,8 +112,6 @@ class _TVScreenState extends State<TVScreen> {
   }
 
   Widget _videoPlayer() {
-    Duration end = Duration(minutes: 15);
-
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 15),
