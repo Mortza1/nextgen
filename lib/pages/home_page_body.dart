@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:nextgen_software/pages/light.dart';
+import 'package:nextgen_software/pages/tv.dart';
 import 'package:nextgen_software/pages/user_profile_page.dart';
 
 import '../scopedModel/connectedModel.dart';
@@ -199,26 +201,42 @@ class _HomePageBodyState extends State<HomePageBody> {
                   ),
                   itemCount: 8, // Total number of boxes
                   itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Color(0xffd9d9d9), // Background color for the boxes
-                        borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                    return GestureDetector(
+                      onTap: () {
+                        if (index == 0) { // Check if it's the first tile
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TVScreen()),
+                          );
+                        }
+                        if (index == 1) { // Check if it's the first tile
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LightScreen()),
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xffd9d9d9), // Background color for the boxes
+                          borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/tv.png', height: 15),
+                                Text("Smart Tv"),
+                                Text("1 device")
+                              ],
+                            ),
+                            Image.asset('assets/images/switch.png', height: 30),
+                          ],
+                        ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset('assets/images/tv.png', height: 15,),
-                              Text("Smart Tv"),
-                              Text("1 device")
-                            ],
-                          ),
-                          Image.asset('assets/images/switch.png', height: 30,)
-                        ],
-                      )
                     );
                   },
                 ),

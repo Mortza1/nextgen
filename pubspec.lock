@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  audio_video_progress_bar:
+    dependency: "direct main"
+    description:
+      name: audio_video_progress_bar
+      sha256: "552b1f73c56c4c88407999e0a8507176f60c56de3e6d63bc20a0eab48467d4c9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -25,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  circular_seek_bar:
+    dependency: "direct main"
+    description:
+      name: circular_seek_bar
+      sha256: "567ef808513a398045cfb5b4767838270440ef4da07310ca75bf0c89ec678aba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   clock:
     dependency: transitive
     description:
@@ -62,6 +78,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_advanced_seekbar:
+    dependency: "direct main"
+    description:
+      name: flutter_advanced_seekbar
+      sha256: "984874166dbea731a1b979799527d29567c506acfd54aa47fad500d10251aa49"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
