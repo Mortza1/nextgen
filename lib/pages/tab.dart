@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/home_page_body.dart';
+import 'package:nextgen_software/pages/overview.dart';
 
 class CustomTabScreen extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
 
   final List<Widget> _screens = [
     HomePageBody(),
-    ScreenTwo(),
+    OverviewScreen(),
     ScreenThree(),
   ];
 
