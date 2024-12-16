@@ -5,7 +5,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../model/appliance.dart';
 
 class  ConnectedModel extends Model{
-  List<Appliance> _applianceList = [
+  final List<Appliance> _applianceList = [
     Appliance(
         title : 'A/C',
         subtitle : '24 C',

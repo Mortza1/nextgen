@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
 class LightScreen extends StatefulWidget {
+  const LightScreen({super.key});
+
   @override
-  _LightScreenState createState() => _LightScreenState();
+  LightScreenState createState() => LightScreenState();
 }
 
-class _LightScreenState extends State<LightScreen> {
-  double _progress = 0;
+class LightScreenState extends State<LightScreen> {
+  final double _progress = 0;
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
   @override
@@ -91,7 +93,7 @@ class _LightScreenState extends State<LightScreen> {
   Widget _lightSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.07, // Parent container height
         child: ListView.builder(
@@ -100,7 +102,7 @@ class _LightScreenState extends State<LightScreen> {
           itemBuilder: (context, index) {
             // Check if it's the first two boxes
             Color boxColor = (index == 0 || index == 1) ? Color(0xff32E1A1) : Color(0xffefefef);
-            String text = (index == 0 || index == 1) ? 'active' : 'not active';
+            // String text = (index == 0 || index == 1) ? 'active' : 'not active';
 
             return Container(
               width: 120, // Width of each box
@@ -125,12 +127,14 @@ class _LightScreenState extends State<LightScreen> {
   }
 
   Widget _seekerControls() {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
+      // height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
         children: [
+          SizedBox(height: 20,),
           Stack(
-            alignment: Alignment.center, // Aligns children to the center of the stack
+            // alignment: Alignment.center, // Aligns children to the center of the stack
             children: [
               CircularSeekBar(
                 width: double.infinity,
@@ -158,34 +162,64 @@ class _LightScreenState extends State<LightScreen> {
                 },
               ),
               // Widget in the center of the circular seek bar
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: const Color(0xffCA8A2A),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.35,
+                child: Center(
+                  child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color(0xffCA8A2A),
+                  ),
+                  child: const Icon(
+                    Icons.power_settings_new,
+                    color: Colors.white,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.power_settings_new,
-                  color: Colors.white,
                 ),
               ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.35,
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("93%", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),),
+                    Text("Philips hue", style: TextStyle(fontSize: 15))
+                  ],
+                ),
+              )
+
+              
             ],
           ),
-          const SizedBox(height: 10),
-          // Display the current value in real-time
-          ValueListenableBuilder<double>(
-            valueListenable: _valueNotifier,
-            builder: (context, value, child) {
-              // setState(() {
-              //   _progress = value;
-              // });
-              return Text(
-                "Progress: ${value.toInt()}%",
-                style: const TextStyle(fontSize: 16, color: Colors.black),
-              );
-            },
-          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 40,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Color(0xffFEDC97)
+                ),
+                child: Center(child: Text("Hue", style: TextStyle(color: Color(0xffCA8A2A)),)),
+              ),
+              SizedBox(width: 10,),
+              Container(
+                height: 40,
+                width: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Color(0xffC4EDD2)
+                ),
+                child: Center(child: Text("Hue", style: TextStyle(color: Color(0xff008914)),)),
+              )
+            ],
+          )
+          
         ],
       ),
     );

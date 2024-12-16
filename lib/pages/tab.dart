@@ -3,6 +3,8 @@ import 'package:nextgen_software/pages/home_page_body.dart';
 import 'package:nextgen_software/pages/overview.dart';
 
 class CustomTabScreen extends StatefulWidget {
+  const CustomTabScreen({super.key});
+
   @override
   _CustomTabScreenState createState() => _CustomTabScreenState();
 }
@@ -93,6 +95,8 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
 
 // Dummy screen for "Search"
 class ScreenTwo extends StatelessWidget {
+  const ScreenTwo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -106,6 +110,8 @@ class ScreenTwo extends StatelessWidget {
 
 // Dummy screen for "Settings"
 class ScreenThree extends StatelessWidget {
+  const ScreenThree({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

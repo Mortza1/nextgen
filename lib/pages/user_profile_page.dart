@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class UserProfilePage extends StatefulWidget {
+  const UserProfilePage({super.key});
+
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
@@ -41,7 +43,7 @@ class _UserProfilePageState extends State<StatefulWidget> {
                 SizedBox(
                   height: 50,
                 ),
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Text(
                     'Profile',

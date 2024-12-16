@@ -10,6 +10,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   final ApplianceModel model = ApplianceModel();
 
+  MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return  ScopedModel<ApplianceModel>(
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage(this.model);
+  const MyHomePage(this.model, {super.key});
 
   final ApplianceModel model;
 

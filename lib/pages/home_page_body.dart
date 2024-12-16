@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:nextgen_software/pages/light.dart';
 import 'package:nextgen_software/pages/tv.dart';
-import 'package:nextgen_software/pages/user_profile_page.dart';
-
-import '../scopedModel/connectedModel.dart';
-
 
 class HomePageBody extends StatefulWidget {
+  const HomePageBody({super.key});
+
   // HomePageBody(this.model);
 
   // final ApplianceModel model;
 
+  @override
   _HomePageBodyState createState() => _HomePageBodyState();
 }
 
@@ -45,7 +43,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   Widget _topWidgetSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.07, // Parent container height
         child: ListView.builder(

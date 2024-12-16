@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
 class TVScreen extends StatefulWidget {
+  const TVScreen({super.key});
+
   @override
   _TVScreenState createState() => _TVScreenState();
 }
