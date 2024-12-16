@@ -3,6 +3,8 @@ import 'package:nextgen_software/pages/light.dart';
 import 'package:nextgen_software/pages/speaker.dart';
 import 'package:nextgen_software/pages/tv.dart';
 
+import 'morning.dart';
+
 class HomePageBody extends StatefulWidget {
   const HomePageBody({super.key});
 
@@ -122,39 +124,55 @@ class _HomePageBodyState extends State<HomePageBody> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.075,
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Color(0xffd9d9d9),
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Morning scene", style: TextStyle(fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.w800),),
-                          Image.asset('assets/images/switch.png', height:35,)
-                        ],
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MorningScreen(title: 'Morning Scene',)),
+                        );
+                      },
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.075,
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Color(0xffd9d9d9),
+                          borderRadius: BorderRadius.circular(8)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Morning scene", style: TextStyle(fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.w800),),
+                            Image.asset('assets/images/switch.png', height:35,)
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.075,
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          color: Color(0xffd9d9d9),
-                          borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Night scene", style: TextStyle(fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.w800),),
-                          Image.asset('assets/images/switch.png', height:35,)
-                        ],
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MorningScreen(title: 'Night Scene',)),
+                        );
+                      },
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.075,
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: Color(0xffd9d9d9),
+                            borderRadius: BorderRadius.circular(8)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Night scene", style: TextStyle(fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.w800),),
+                            Image.asset('assets/images/switch.png', height:35,)
+                          ],
+                        ),
                       ),
                     ),
                   ),
