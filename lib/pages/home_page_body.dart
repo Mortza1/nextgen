@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nextgen_software/pages/curtain.dart';
 import 'package:nextgen_software/pages/light.dart';
 import 'package:nextgen_software/pages/speaker.dart';
 import 'package:nextgen_software/pages/thermostat.dart';
@@ -244,6 +245,12 @@ class _HomePageBodyState extends State<HomePageBody> {
                             context,
                             MaterialPageRoute(builder: (context) => ThermostatScreen()),
                           );
+                        }
+                        if (index == 4) { // Check if it's the first tile
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CurtainScreen()),
+                        );
                         }
                       },
                       child: Container(
