@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../model/mode.dart';
 
 class MorningScreen extends StatefulWidget {
-  final String title;
-  const MorningScreen({super.key, required this.title});
+  final Mode mode;
+  const MorningScreen({super.key, required this.mode});
 
   @override
   MorningScreenState createState() => MorningScreenState();
@@ -19,7 +21,7 @@ class MorningScreenState extends State<MorningScreen> {
           children: [
             _screenHeader(),
             _modeBasicCard(),
-            _modeDevices(),
+            _modeDevices(widget.mode),
           ],
         ),
       ),
@@ -27,6 +29,7 @@ class MorningScreenState extends State<MorningScreen> {
   }
 
   Widget _screenHeader() {
+    var title = widget.mode.title;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.14,
@@ -43,7 +46,7 @@ class MorningScreenState extends State<MorningScreen> {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                widget.title,
+                title,
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
@@ -65,6 +68,8 @@ class MorningScreenState extends State<MorningScreen> {
   }
 
   Widget _modeBasicCard(){
+    var startTime = widget.mode.startTime;
+    var endTime = widget.mode.endTime;
     return Container(
       height: MediaQuery.of(context).size.height * 0.18,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -95,8 +100,8 @@ class MorningScreenState extends State<MorningScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('From 6am'),
-                    Text('to 9am'),
+                    Text('From ${DateFormat('h:mm a').format(startTime)}'),
+                    Text('To ${DateFormat('h:mm a').format(endTime)}'),
                   ],
                 )
               ],
@@ -129,32 +134,41 @@ class MorningScreenState extends State<MorningScreen> {
     );
   }
 
-  Widget _modeDevices() {
+  Widget _modeDevices(Mode model) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       height: MediaQuery.of(context).size.height * 0.6,
       child: Column(
         children: [
-          SizedBox(height: 20,),
-          Align(alignment: Alignment.topLeft ,child: Text('Device routine', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),)),
+          const SizedBox(height: 20),
+          const Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Device routine',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+          ),
           Expanded(
             child: GridView.builder(
-              physics: AlwaysScrollableScrollPhysics(), // Allow vertical scrolling
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              physics: const AlwaysScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // 2 boxes per row
                 crossAxisSpacing: 8.0, // Spacing between columns
                 mainAxisSpacing: 8.0, // Spacing between rows
                 childAspectRatio: 1.7, // Adjust box proportions
               ),
-              itemCount: 3, // Total number of boxes
+              itemCount: model.appliances.length, // Total number of appliances
               itemBuilder: (BuildContext context, int index) {
+                final appliance = model.appliances[index];
                 return GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    // Handle appliance tap
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: Color(0xffd9d9d9), // Background color for the boxes
-                      borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                      color: const Color(0xffd9d9d9), // Inactive appliance color
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Stack(
                       children: [
@@ -163,8 +177,14 @@ class MorningScreenState extends State<MorningScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset('assets/images/tv.png', height: 15,),
-                              Text('Smart Tv', style: TextStyle(fontSize: 12),)
+                              Image.asset(
+                                appliance.mainIconString, // Dynamic icon path
+                                height: 15,
+                              ),
+                              Text(
+                                appliance.title,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ],
                           ),
                         ),
@@ -172,33 +192,46 @@ class MorningScreenState extends State<MorningScreen> {
                           alignment: Alignment.topRight,
                           child: Padding(
                             padding: const EdgeInsets.all(4.0),
-                            child: Icon(Icons.settings, color: Colors.black, size: 15,),
+                            child: Icon(
+                              Icons.settings,
+                              color: Colors.black,
+                              size: 15,
+                            ),
                           ),
-                        )
+                        ),
                       ],
-                    )
+                    ),
                   ),
                 );
               },
             ),
           ),
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          height: 40,
-          width: MediaQuery.of(context).size.width * 0.8,
-          decoration: BoxDecoration(
-              color: Colors.black
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: GestureDetector(
+              // onTap: model.onManageDevices, // Trigger manage devices action
+              child: Container(
+                height: 40,
+                width: MediaQuery.of(context).size.width * 0.8,
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                ),
+                child: const Center(
+                  child: Text(
+                    'Manage devices',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-          child: Center(
-            child: Text('Add device', style: TextStyle(color: Colors.white, ),),
-          ),
-        ),
-      )
         ],
       ),
     );
   }
+
 
 
 }

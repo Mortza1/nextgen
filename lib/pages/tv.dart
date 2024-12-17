@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_seekbar/flutter_advanced_seekbar.dart';
 import 'dart:async';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:nextgen_software/model/appliance.dart';
 
 class TVScreen extends StatefulWidget {
-  const TVScreen({super.key});
+  final Appliance device;
+  const TVScreen({super.key, required this.device});
 
   @override
   TVScreenState createState() => TVScreenState();
 }
 
 class TVScreenState extends State<TVScreen> {
-  bool _isTvOn = false;
+  // bool _isTvOn = widget;
   String state1 = "";
   int progress1 = 0;
   String audioState = '';
@@ -23,13 +25,14 @@ class TVScreenState extends State<TVScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var isTvOn = widget.device.isEnable;
     return Scaffold(
       body: Column(
         children: [
           _screenHeader(),
-          _settingOptions(),
+          _settingOptions(isTvOn),
           SizedBox(height: 20),
-          _isTvOn?
+          isTvOn?
           _videoPlayer():SizedBox(),
         ],
       ),
@@ -46,7 +49,7 @@ class TVScreenState extends State<TVScreen> {
           IconButton(
             icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, true); // Pass a value indicating that a change happened
             },
           ),
           Expanded(
@@ -69,7 +72,7 @@ class TVScreenState extends State<TVScreen> {
     );
   }
 
-  Widget _settingOptions() {
+  Widget _settingOptions(isTvOn) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.07,
@@ -82,11 +85,11 @@ class TVScreenState extends State<TVScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              !_isTvOn?
+              !isTvOn?
               IconButton(
                 icon: Icon(Icons.toggle_off, size: 40, color: Colors.black),
                 onPressed: () {setState(() {
-                  _isTvOn = true;
+                  widget.device.isEnable = !widget.device.isEnable;
                 });},
                 tooltip: "Toggle Power",
               ):
@@ -94,7 +97,7 @@ class TVScreenState extends State<TVScreen> {
                 icon: Icon(Icons.toggle_on, size: 40, color: Colors.green),
                 onPressed: () {
                   setState(() {
-                    _isTvOn = false;
+                    widget.device.isEnable = !widget.device.isEnable;
                   });
                 },
                 tooltip: "Toggle Power",

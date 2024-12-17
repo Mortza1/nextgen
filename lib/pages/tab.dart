@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/home_page_body.dart';
 import 'package:nextgen_software/pages/overview.dart';
+import 'package:nextgen_software/pages/setting.dart';
+import 'package:nextgen_software/scopedModel/app_model.dart';
 
-import '../scopedModel/connectedModel.dart';
+import '../scopedModel/connected_model_appliance.dart';
 
 class CustomTabScreen extends StatefulWidget {
-  final ApplianceModel model;
+  final AppModel model;
   const CustomTabScreen({super.key, required this.model});
 
   @override
@@ -18,9 +20,9 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      HomePageBody(model: widget.model,),
+      HomePageBody(app_model: widget.model),
       OverviewScreen(),
-      ScreenThree(),
+      SettingScreen(),
     ];
     return Scaffold(
       body: Stack(
@@ -30,26 +32,44 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
             bottom: 20, // Adjust distance from the bottom of the screen
             left: 20,
             right: 20,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black, // Black background color
-                borderRadius: BorderRadius.circular(15), // Rounded corners
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem('assets/images/dashboard.png', 0, "dashboard"),
-                  _buildNavItem('assets/images/graph.png', 1, "overview"),
-                  _buildNavItem('assets/images/user.png', 2, "profile"),
-                ],
+            child: GestureDetector(
+              onHorizontalDragEnd: (details) {
+                if (details.primaryVelocity != null && details.primaryVelocity! > 0) {
+                  setState(() {
+                    if (_currentIndex >0){
+                      _currentIndex --;
+                    }
+                  });
+                }else if (details.primaryVelocity! < 0) {
+                  setState(() {
+                    if (_currentIndex < 2){
+                      _currentIndex ++;
+                    }
+                  });
+
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black, // Black background color
+                  borderRadius: BorderRadius.circular(15), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildNavItem('assets/images/dashboard.png', 0, "dashboard"),
+                    _buildNavItem('assets/images/graph.png', 1, "overview"),
+                    _buildNavItem('assets/images/user.png', 2, "profile"),
+                  ],
+                ),
               ),
             ),
           ),
@@ -95,32 +115,3 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
 
 
 
-// Dummy screen for "Search"
-class ScreenTwo extends StatelessWidget {
-  const ScreenTwo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Search Screen',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-// Dummy screen for "Settings"
-class ScreenThree extends StatelessWidget {
-  const ScreenThree({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Settings Screen',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}

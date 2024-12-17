@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
+import '../model/appliance.dart';
+
 class CurtainScreen extends StatefulWidget {
-  const CurtainScreen({super.key});
+  final Appliance device;
+  const CurtainScreen({super.key, required this.device});
 
   @override
   CurtainScreenState createState() => CurtainScreenState();
 }
 
 class CurtainScreenState extends State<CurtainScreen> {
-  final double _progress = 0;
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
   @override
@@ -20,12 +22,13 @@ class CurtainScreenState extends State<CurtainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double progress = widget.device.state.toMap()['opened'];
     return Scaffold(
       body: Column(
         children: [
           _screenHeader(),
           _settingOptions(),
-          _seekerControls(),
+          _seekerControls(_valueNotifier, progress),
         ],
       ),
     );
@@ -89,58 +92,51 @@ class CurtainScreenState extends State<CurtainScreen> {
     );
   }
 
-  Widget _seekerControls() {
+  Widget _seekerControls(valueNotifier, progress) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       // height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
         children: [
           SizedBox(height: 20,),
-          Stack(
-            // alignment: Alignment.center, // Aligns children to the center of the stack
-            children: [
-              CircularSeekBar(
-                width: double.infinity,
-                height: 280,
-                progress: _progress,
-                minProgress: 0,
-                maxProgress: 100,
-                barWidth: 3,
-                startAngle: 45,
-                sweepAngle: 270,
-                strokeCap: StrokeCap.round,
-                innerThumbRadius: 5,
-                innerThumbStrokeWidth: 3,
-                innerThumbColor: Color(0xff8247FF),
-                progressColor: Color(0xff8247FF),
-                trackColor: const Color(0xffDDDDDD),
-                outerThumbRadius: 5,
-                outerThumbStrokeWidth: 5,
-                outerThumbColor: Color(0xff8247FF),
-                animation: false,
-                interactive: true,
-                valueNotifier: _valueNotifier,
-                onEnd: () {
-                  // Optional: Handle end of seek
-                },
-              ),
-              // Widget in the center of the circular seek bar
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
-                child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('80%', style: TextStyle(color: Color(0xff8247FF), fontSize: 35, fontWeight: FontWeight.w900),),
-                        Text('opened', style: TextStyle(color: Colors.black, fontSize: 13))
-                      ],
-                    )
-                ),
-              ),
+          CircularSeekBar(
+            width: double.infinity,
+            height: 280,
+            progress: progress,
+            minProgress: 0,
+            maxProgress: 100,
+            barWidth: 3,
+            startAngle: 45,
+            sweepAngle: 270,
+            strokeCap: StrokeCap.round,
+            innerThumbRadius: 5,
+            innerThumbStrokeWidth: 3,
+            innerThumbColor: Color(0xff8247FF),
+            progressColor: Color(0xff8247FF),
+            trackColor: const Color(0xffDDDDDD),
+            outerThumbRadius: 5,
+            outerThumbStrokeWidth: 5,
+            outerThumbColor: Color(0xff8247FF),
+            valueNotifier: valueNotifier,
+            animation: false,
+            interactive: true,
+            onEnd: (){
+              setState(() {
+                widget.device.state.toMap()['opened'] = progress;
+              });
 
-
-
-            ],
+            },
+            child: Center(
+              child: ValueListenableBuilder(
+                  valueListenable: valueNotifier,
+                  builder: (_, double value, __) => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('${value.round()}%', style: TextStyle(color: Color(0xff8247FF), fontSize: 35, fontWeight: FontWeight.w900),),
+                      Text('opened', style: TextStyle(color: Colors.black, fontSize: 13))
+                    ],
+                  )),
+            ),
           ),
         ],
       ),
