@@ -5,14 +5,17 @@ import 'package:nextgen_software/pages/speaker.dart';
 import 'package:nextgen_software/pages/thermostat.dart';
 import 'package:nextgen_software/pages/tv.dart';
 
+import '../scopedModel/connectedModel.dart';
+import 'camera.dart';
 import 'morning.dart';
 
 class HomePageBody extends StatefulWidget {
-  const HomePageBody({super.key});
+  final ApplianceModel model;
+  const HomePageBody({super.key, required this.model});
 
   // HomePageBody(this.model);
 
-  // final ApplianceModel model;
+
 
   @override
   _HomePageBodyState createState() => _HomePageBodyState();
@@ -251,6 +254,12 @@ class _HomePageBodyState extends State<HomePageBody> {
                         context,
                         MaterialPageRoute(builder: (context) => CurtainScreen()),
                         );
+                        }
+                        if (index == 5) { // Check if it's the first tile
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CameraScreen()),
+                          );
                         }
                       },
                       child: Container(

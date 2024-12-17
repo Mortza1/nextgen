@@ -1,21 +1,19 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Appliance {
   String id;
   String title;
-  String subtitle;
-  IconData leftIcon;
-  IconData topRightIcon;
-  IconData bottomRightIcon;
+  IconData mainIcon;
+  String mainIconString;
+  Map<String, dynamic> state;
   bool isEnable;
 
   Appliance({
     this.id = '', // Default value or nullable
     this.title = '',
-    this.subtitle = '',
-    required this.leftIcon,
-    required this.topRightIcon,
-    required this.bottomRightIcon,
-    this.isEnable = true,  // Default value for boolean
+    this.mainIcon = Icons.tv,
+    this.mainIconString = '',
+    this.state = const {'state': 'off'},
+    this.isEnable = false,  // Default value for boolean
   });
 }

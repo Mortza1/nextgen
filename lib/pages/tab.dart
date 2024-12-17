@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/home_page_body.dart';
 import 'package:nextgen_software/pages/overview.dart';
 
+import '../scopedModel/connectedModel.dart';
+
 class CustomTabScreen extends StatefulWidget {
-  const CustomTabScreen({super.key});
+  final ApplianceModel model;
+  const CustomTabScreen({super.key, required this.model});
 
   @override
   _CustomTabScreenState createState() => _CustomTabScreenState();
@@ -12,18 +15,17 @@ class CustomTabScreen extends StatefulWidget {
 class _CustomTabScreenState extends State<CustomTabScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    HomePageBody(),
-    OverviewScreen(),
-    ScreenThree(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      HomePageBody(model: widget.model,),
+      OverviewScreen(),
+      ScreenThree(),
+    ];
     return Scaffold(
       body: Stack(
         children: [
-          _screens[_currentIndex], // Display the current screen
+          screens[_currentIndex], // Display the current screen
           Positioned(
             bottom: 20, // Adjust distance from the bottom of the screen
             left: 20,

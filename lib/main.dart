@@ -41,8 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         body: Container(
           height: MediaQuery.of(context).size.height,
-          color: Color(0xfffcfcfd),
-          child:  CustomTabScreen(),)
+          // color: Color(0xfffcfcfd),
+          child:  CustomTabScreen(model: widget.model,),)
     );
   }
 }
