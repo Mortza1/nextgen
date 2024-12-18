@@ -22,7 +22,7 @@ class ConnectedMode extends Model {
           mainIconString: 'assets/images/speaker.png',
           type: 'speaker',
           isEnable: true,
-          state: SpeakerState(volume: 60, currentTrack: 'Song Title'),
+          state: SpeakerState(volume: 60, trackAuthor: 'Juice WRLD', trackCover: 'assets/images/music.jpg', trackTitle: 'All eyes on me', currentTimestamp: Duration(minutes: 1)),
         ),
       ],
     ),

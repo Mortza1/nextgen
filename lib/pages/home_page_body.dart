@@ -257,15 +257,29 @@ class _HomePageBodyState extends State<HomePageBody> {
                           MaterialPageRoute(builder: (context) => LightScreen()),
                         );
                       } else if (device.type == "speaker") {
-                        Navigator.push(
+                        final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SpeakerScreen()),
+                          MaterialPageRoute(builder: (context) => SpeakerScreen(device: device)),
                         );
+
+                        // Check if TVScreen passed back the result to trigger rebuild
+                        if (result == true) {
+                          setState(() {
+                            _needsRebuild = true;
+                          });
+                        }
                       } else if (device.type == "thermostat") {
-                        Navigator.push(
+                        final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ThermostatScreen()),
+                          MaterialPageRoute(builder: (context) => ThermostatScreen(device: device)),
                         );
+
+                        // Check if TVScreen passed back the result to trigger rebuild
+                        if (result == true) {
+                          setState(() {
+                            _needsRebuild = true;
+                          });
+                        }
                       } else if (device.type == "curtain") {
                         final result = await Navigator.push(
                           context,

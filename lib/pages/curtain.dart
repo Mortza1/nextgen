@@ -7,12 +7,35 @@ class CurtainScreen extends StatefulWidget {
   final Appliance device;
   const CurtainScreen({super.key, required this.device});
 
+
   @override
   CurtainScreenState createState() => CurtainScreenState();
 }
 
 class CurtainScreenState extends State<CurtainScreen> {
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+  late double progress;
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the progress value from the appliance state
+    progress = widget.device.state.toMap()['opened'].toDouble();
+
+    // Set the initial value of the ValueNotifier
+    _valueNotifier.value = progress;
+
+    // Listen to ValueNotifier changes
+    _valueNotifier.addListener(() {
+      setState(() {
+        // Update the appliance state when ValueNotifier changes
+        if (widget.device.state is CurtainState) {
+          (widget.device.state as CurtainState).opened = _valueNotifier.value;
+        }
+      });
+    });
+  }
+
 
   @override
   void dispose() {
@@ -22,7 +45,6 @@ class CurtainScreenState extends State<CurtainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double progress = widget.device.state.toMap()['opened'];
     return Scaffold(
       body: Column(
         children: [

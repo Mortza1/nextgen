@@ -14,7 +14,7 @@ class  ConnectedModelAppliance extends Model{
         title : 'Speakers',
         mainIconString: 'assets/images/speaker.png',
         type: 'speaker',
-        state: SpeakerState(volume: 60, currentTrack: 'Song Title'),
+        state: SpeakerState(volume: 60, trackAuthor: 'Juice WRLD', trackCover: 'assets/images/music.jpg', trackTitle: 'All eyes on me', currentTimestamp: Duration(minutes: 1), trackTime: Duration(minutes: 4)),
         isEnable : true),
     Appliance(
         title : 'Lights',

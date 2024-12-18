@@ -4,23 +4,47 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
+import '../model/appliance.dart';
+
 class SpeakerScreen extends StatefulWidget {
-  const SpeakerScreen({super.key});
+  final Appliance device;
+  const SpeakerScreen({super.key, required this.device});
 
   @override
   SpeakerScreenState createState() => SpeakerScreenState();
 }
 
 class SpeakerScreenState extends State<SpeakerScreen> {
-  final double _progress = 0;
+
   bool _isPlaying = false;
   String state1 = "";
   int progress1 = 0;
   String audioState = '';
   int audioProgress = 0;
   Timer? _timer;
-  final Duration totalDuration = Duration(minutes: 3); // Total video duration
+  late Duration totalDuration;
+
+
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize ValueNotifier with the initial volume
+    totalDuration = widget.device.state.toMap()['trackTime'];
+    double initialVolume = widget.device.state.toMap()['volume'].toDouble();
+    _valueNotifier.value = initialVolume;
+
+    // Listener to sync appliance state with ValueNotifier
+    _valueNotifier.addListener(() {
+      if (widget.device.state is SpeakerState) {
+        (widget.device.state as SpeakerState).volume = _valueNotifier.value.round();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -30,12 +54,13 @@ class SpeakerScreenState extends State<SpeakerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var device = widget.device.state.toMap();
     return Scaffold(
       body: Column(
         children: [
           _screenHeader(),
           _settingOptions(),
-          _seekerControls(),
+          _seekerControls(device, _valueNotifier),
         ],
       ),
     );
@@ -100,7 +125,7 @@ class SpeakerScreenState extends State<SpeakerScreen> {
   }
 
 
-  Widget _seekerControls() {
+  Widget _seekerControls(device, valueNotifier) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       // height: MediaQuery.of(context).size.height * 0.4,
@@ -110,30 +135,37 @@ class SpeakerScreenState extends State<SpeakerScreen> {
           Stack(
             // alignment: Alignment.center, // Aligns children to the center of the stack
             children: [
-              CircularSeekBar(
-                width: double.infinity,
-                height: 250,
-                progress: _progress,
-                minProgress: 0,
-                maxProgress: 100,
-                barWidth: 3,
-                startAngle: 45,
-                sweepAngle: 270,
-                strokeCap: StrokeCap.round,
-                innerThumbRadius: 5,
-                innerThumbStrokeWidth: 3,
-                innerThumbColor: Colors.blue,
-                progressColor: Colors.blue,
-                trackColor: const Color(0xffDDDDDD),
-                outerThumbRadius: 5,
-                outerThumbStrokeWidth: 5,
-                outerThumbColor: Colors.blue,
-                animation: false,
-                interactive: true,
-                valueNotifier: _valueNotifier,
-                onEnd: () {
-                  // Optional: Handle end of seek
-                },
+              Column(
+                children: [
+                  CircularSeekBar(
+                    width: double.infinity,
+                    height: 250,
+                    progress: valueNotifier.value,
+                    minProgress: 0,
+                    maxProgress: 100,
+                    barWidth: 3,
+                    startAngle: 45,
+                    sweepAngle: 270,
+                    strokeCap: StrokeCap.round,
+                    innerThumbRadius: 5,
+                    innerThumbStrokeWidth: 3,
+                    innerThumbColor: Colors.blue,
+                    progressColor: Colors.blue,
+                    trackColor: const Color(0xffDDDDDD),
+                    outerThumbRadius: 5,
+                    outerThumbStrokeWidth: 5,
+                    outerThumbColor: Colors.blue,
+                    animation: false,
+                    interactive: true,
+                    valueNotifier: valueNotifier,
+                    onEnd: () {
+                      // Ensure appliance state updates when interaction ends
+                      setState(() {
+                        widget.device.state.toMap()['volume'] = valueNotifier.value.round();
+                      });
+                    },
+                  ),
+                ],
               ),
               // Widget in the center of the circular seek bar
               SizedBox(
@@ -148,7 +180,7 @@ class SpeakerScreenState extends State<SpeakerScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(75),  // Match the container's borderRadius
                       child: Image.asset(
-                        'assets/images/music.jpg',
+                        device['trackCover'],
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -162,8 +194,8 @@ class SpeakerScreenState extends State<SpeakerScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("All eyes on me", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
-                    Text("By someone", style: TextStyle(fontSize: 15))
+                    Text(device['trackTitle'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                    Text(device['trackAuthor'], style: TextStyle(fontSize: 15))
                   ],
                 ),
               )

@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
+import '../model/appliance.dart';
+
 class ThermostatScreen extends StatefulWidget {
-  const ThermostatScreen({super.key});
+  final Appliance device;
+  const ThermostatScreen({super.key, required this.device});
 
   @override
   ThermostatScreenState createState() => ThermostatScreenState();
 }
 
 class ThermostatScreenState extends State<ThermostatScreen> {
-  final double _progress = 0;
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize ValueNotifier with the initial volume
+    double currentTemperature = widget.device.state.toMap()['currentTemperature'].toDouble();
+    _valueNotifier.value = ((currentTemperature - 16)/14)*100;
+
+    // Listener to sync appliance state with ValueNotifier
+    _valueNotifier.addListener(() {
+      if (widget.device.state is ThermostatState) {
+        (widget.device.state as ThermostatState).currentTemperature = (((_valueNotifier.value/100) * 14) + 16);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -25,7 +43,7 @@ class ThermostatScreenState extends State<ThermostatScreen> {
         children: [
           _screenHeader(),
           _settingOptions(),
-          _seekerControls(),
+          _seekerControls(_valueNotifier),
         ],
       ),
     );
@@ -89,58 +107,52 @@ class ThermostatScreenState extends State<ThermostatScreen> {
     );
   }
 
-  Widget _seekerControls() {
+  Widget _seekerControls(valueNotifier) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       // height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
         children: [
           SizedBox(height: 20,),
-          Stack(
-            // alignment: Alignment.center, // Aligns children to the center of the stack
+          CircularSeekBar(
+            width: double.infinity,
+            height: 280,
+            progress: valueNotifier.value,
+            minProgress: 0,
+            maxProgress: 100,
+            barWidth: 3,
+            startAngle: 45,
+            sweepAngle: 270,
+            strokeCap: StrokeCap.round,
+            innerThumbRadius: 5,
+            innerThumbStrokeWidth: 3,
+            innerThumbColor: Colors.red,
+            progressGradientColors: const [Colors.blue, Colors.red],
+            progressColor: Colors.blue,
+            trackColor: const Color(0xffDDDDDD),
+            outerThumbRadius: 5,
+            outerThumbStrokeWidth: 5,
+            outerThumbColor: Colors.red,
+            animation: false,
+            interactive: true,
+            valueNotifier: valueNotifier,
+            onEnd: () {
+              // Ensure appliance state updates when interaction ends
+              setState(() {
+                widget.device.state.toMap()['setTemperature'] = valueNotifier.value.round();
+              });
+            },
+            child: Center(
+          child: ValueListenableBuilder(
+          valueListenable: valueNotifier,
+          builder: (_, double value, __) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularSeekBar(
-                width: double.infinity,
-                height: 280,
-                progress: _progress,
-                minProgress: 0,
-                maxProgress: 100,
-                barWidth: 3,
-                startAngle: 45,
-                sweepAngle: 270,
-                strokeCap: StrokeCap.round,
-                innerThumbRadius: 5,
-                innerThumbStrokeWidth: 3,
-                innerThumbColor: Colors.blue,
-                progressColor: Colors.blue,
-                trackColor: const Color(0xffDDDDDD),
-                outerThumbRadius: 5,
-                outerThumbStrokeWidth: 5,
-                outerThumbColor: Colors.blue,
-                animation: false,
-                interactive: true,
-                valueNotifier: _valueNotifier,
-                onEnd: () {
-                  // Optional: Handle end of seek
-                },
-              ),
-              // Widget in the center of the circular seek bar
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('23', style: TextStyle(color: Colors.blue, fontSize: 35, fontWeight: FontWeight.w900),),
-                      Text('in 15 minutes', style: TextStyle(color: Colors.black, fontSize: 13))
-                    ],
-                  )
-                ),
-              ),
-
-
-
+              Text('${(((valueNotifier.value/100) * 14) + 16).round()}°C', style: TextStyle(color: valueNotifier.value > 60? Colors.red : Colors.blue, fontSize: 35, fontWeight: FontWeight.w900),),
+              Text('in 15 minutes', style: TextStyle(color: Colors.black, fontSize: 13))
             ],
+          ),),
+              ),
           ),
           const SizedBox(height: 20),
           Row(

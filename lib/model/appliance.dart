@@ -60,18 +60,31 @@ class CurtainState extends ApplianceState {
 
 class SpeakerState extends ApplianceState {
   int volume;
-  String currentTrack;
+  String trackTitle;
+  String trackAuthor;
+  String trackCover;
+  Duration currentTimestamp;
+  Duration trackTime;
 
   SpeakerState({
     this.volume = 50,
-    this.currentTrack = '',
+    this.trackTitle = '',
+    this.trackAuthor = '',
+    this.trackCover = '',
+    this.currentTimestamp = const Duration(milliseconds: 0),
+    this.trackTime = const Duration(minutes: 3)
+
   });
 
   @override
   Map<String, dynamic> toMap() {
     return {
       'volume': volume,
-      'currentTrack': currentTrack,
+      'trackTitle': trackTitle,
+      'trackCover': trackCover,
+      'trackAuthor': trackAuthor,
+      'currentTimestamp': currentTimestamp,
+      'trackTime': trackTime
     };
   }
 }
@@ -109,13 +122,26 @@ class CameraState extends ApplianceState {
 
 class ThermostatState extends ApplianceState {
   double currentTemperature;
+  double setTemperature;
+  String mode;
+  int fanSpeed;
 
-  ThermostatState({this.currentTemperature = 22.0});
+  ThermostatState(
+      {
+        this.currentTemperature = 22.0,
+        this.setTemperature = 0.0,
+        this.mode = 'cool',
+        this.fanSpeed = 0
+
+      });
 
   @override
   Map<String, dynamic> toMap() {
     return {
       'currentTemperature': currentTemperature,
+      'setTemperature': setTemperature,
+      'mode' : mode,
+      'fanSpeed' : fanSpeed
     };
   }
 }
