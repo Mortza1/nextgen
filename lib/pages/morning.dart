@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../model/mode.dart';
+import 'curtain.dart';
 
 class MorningScreen extends StatefulWidget {
   final Mode mode;
@@ -162,7 +163,12 @@ class MorningScreenState extends State<MorningScreen> {
                 final appliance = model.appliances[index];
                 return GestureDetector(
                   onTap: () {
-                    // Handle appliance tap
+                    if (appliance.type == 'curtain'){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CurtainScreen(device: appliance)),
+                      );
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),

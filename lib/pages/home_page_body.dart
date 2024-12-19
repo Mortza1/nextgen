@@ -8,6 +8,7 @@ import 'package:nextgen_software/scopedModel/app_model.dart';
 import 'package:nextgen_software/scopedModel/connected_mode.dart';
 
 import '../scopedModel/connected_model_appliance.dart';
+import 'add_mode.dart';
 import 'camera.dart';
 import 'morning.dart';
 
@@ -121,7 +122,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   }
 
 
-  Widget _modeSection(ModeModel model) {
+  Widget _modeSection(ModeModel model, ApplianceModel deviceModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
@@ -129,6 +130,7 @@ class _HomePageBodyState extends State<HomePageBody> {
         height: MediaQuery.of(context).size.height * 0.255,
         child: Column(
           children: [
+            // Header Row with "Modes" text and Add button
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,57 +143,86 @@ class _HomePageBodyState extends State<HomePageBody> {
                     fontFamily: 'Roboto', // Optional: change the font family
                   ),
                 ),
-                Image.asset(
-                  'assets/images/add.png',
-                  width: 25, // Set the width
-                  height: 25, // Set the height
+                GestureDetector(
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddModeScreen(
+                        model: deviceModel,
+                        modeModel: model,
+                      )),
+                    );
+
+                    // Check if TVScreen passed back the result to trigger rebuild
+                    if (result == true) {
+                      setState(() {
+                        _needsRebuild = true;
+                      });
+                    }
+                  },
+                  child: Image.asset(
+                    'assets/images/add.png',
+                    width: 25, // Set the width
+                    height: 25, // Set the height
+                  ),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9),
-              child: Column(
-                children: model.allFetch.map((mode) { // Use dynamic modes from the model
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        // Dynamic navigation based on mode title
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MorningScreen(mode: mode),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.075,
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: Color(0xffd9d9d9), // Background based on isEnabled
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              mode.title,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w800,
+            // Scrollable List of Modes
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 9),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: model.allFetch.map((mode) {
+                      // Use dynamic modes from the model
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Dynamic navigation based on mode title
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MorningScreen(mode: mode),
                               ),
+                            );
+                          },
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.075,
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
                             ),
-                            mode.isActive()?
-                                Icon(Icons.toggle_on, color: Colors.green, size: 40,)
-                                :Icon(Icons.toggle_off, color: Colors.black, size: 40),
-                          ],
+                            decoration: BoxDecoration(
+                              color: const Color(0xffd9d9d9), // Background based on isEnabled
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  mode.title,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                mode.isActive()
+                                    ? const Icon(Icons.toggle_on,
+                                    color: Colors.green, size: 40)
+                                    : const Icon(Icons.toggle_off,
+                                    color: Colors.black, size: 40),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
             ),
           ],
@@ -199,6 +230,7 @@ class _HomePageBodyState extends State<HomePageBody> {
       ),
     );
   }
+
 
   Widget _mainWidgetsSection(ApplianceModel model) {
     return Padding(
@@ -402,7 +434,7 @@ class _HomePageBodyState extends State<HomePageBody> {
         children: <Widget>[
           _topMyHomeSection(),
           _topWidgetSection(model),
-          _modeSection(modeModel),
+          _modeSection(modeModel, model),
           _mainWidgetsSection(model),
           _assistantButton()
 

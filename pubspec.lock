@@ -248,6 +248,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.3.0"
+  wheel_picker:
+    dependency: "direct main"
+    description:
+      name: wheel_picker
+      sha256: "16a1f9b28bcde5780691e501949c8c977178d0c3e1d20a01912ae41025b47c03"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
 sdks:
   dart: ">=3.6.0 <4.0.0"
   flutter: ">=3.18.0-18.0.pre.54"

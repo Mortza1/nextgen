@@ -27,14 +27,20 @@ class CurtainScreenState extends State<CurtainScreen> {
 
     // Listen to ValueNotifier changes
     _valueNotifier.addListener(() {
-      setState(() {
-        // Update the appliance state when ValueNotifier changes
-        if (widget.device.state is CurtainState) {
-          (widget.device.state as CurtainState).opened = _valueNotifier.value;
-        }
-      });
+      if (mounted) {
+        // Use WidgetsBinding.instance.addPostFrameCallback to schedule the update after the build phase
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            // Update the appliance state when ValueNotifier changes
+            if (widget.device.state is CurtainState) {
+              (widget.device.state as CurtainState).opened = _valueNotifier.value;
+            }
+          });
+        });
+      }
     });
   }
+
 
 
   @override
@@ -66,7 +72,7 @@ class CurtainScreenState extends State<CurtainScreen> {
           IconButton(
             icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, widget.device);
             },
           ),
           Expanded(

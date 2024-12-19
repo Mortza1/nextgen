@@ -28,6 +28,14 @@ class Mode {
   // Function to check if current time is within this mode's time range
   bool isActive() {
     DateTime now = DateTime.now();
-    return now.isAfter(startTime) && now.isBefore(endTime);
+
+    // Normalize the `now`, `startTime`, and `endTime` to the same date
+    DateTime normalizedNow = DateTime(1970, 1, 1, now.hour, now.minute, now.second);
+    DateTime normalizedStartTime = DateTime(1970, 1, 1, startTime.hour, startTime.minute, startTime.second);
+    DateTime normalizedEndTime = DateTime(1970, 1, 1, endTime.hour, endTime.minute, endTime.second);
+
+    // Compare only the time
+    return normalizedNow.isAfter(normalizedStartTime) && normalizedNow.isBefore(normalizedEndTime);
   }
+
 }
