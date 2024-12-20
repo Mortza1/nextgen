@@ -1,0 +1,21 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+# from api.chatMessageController import chatMessageRouter
+# from api.chatRoomController import chatRoomRouter
+from api.userController import userRouter
+# from api.scriptController import scriptRouter
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# app.include_router(chatMessageRouter, prefix="/doc")
+# app.include_router(chatRoomRouter, prefix="/doc")
+app.include_router(userRouter, prefix="/doc")
+# app.include_router(scriptRouter, prefix="/doc")
