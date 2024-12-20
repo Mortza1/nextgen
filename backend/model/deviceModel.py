@@ -27,100 +27,65 @@ class ResponseObject(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-
-class Section:
-    def __init__(self, title: str, description: str, sections=None):
-        self.title = title
-        self.description = description
-        self.sections = sections if sections else []
-
-    def to_dict(self):
-        return {
-            "title": self.title,
-            "description": self.description,
-            "sections": [section.to_dict() for section in self.sections] if self.sections else []
-        }
-
-class Document:
-    def __init__(self, url: str, title: str, summary: str, keywords: list[str], sections: list[Section]):
-        self.url = url
-        self.title = title
-        self.summary = summary
-        self.keywords = keywords
-        self.sections = sections
+class User:
+    def __init__(self, name: str, email: str, role: str, password:str, managed_homes: list[str] = [], associated_homes: list[str] = []):
+        self.name = name
+        self.password = password
+        self.email = email
+        self.role = role
+        self.managed_homes = managed_homes
+        self.associated_homes = associated_homes
 
     def to_dict(self):
         return {
-            "url": self.url,
-            "title": self.title,
-            "summary": self.summary,
-            "keywords": self.keywords,
-            "sections": [section.to_dict() for section in self.sections]
+            "name" : self.name,
+            "email": self.email,
+            "password" : self.password,
+            "role": self.role,
+            "managed_homes" : self.managed_homes,
+            "associated_homes" : self.associated_homes
         }
-class SummarizerChatRoom:
-    def __init__(self, user_id: str, room_name: str,template: str = "general", room_uuid: str = None, docData = {},widgets = {}, states = {}, room_members: list[str] = [], nodes = [], mapProgress = {} ):
-        self.user_id = user_id
-        self.room_name = room_name
-        self.room_uuid = room_uuid if room_uuid else str(ObjectId())  # Assuming ObjectId is imported from bson
-        self.room_members = room_members
-        self.created_by = user_id
-        self.date_created = datetime.now()
-        self.date_modified = datetime.now()
-        self.docData = docData
-        self.widgets = widgets
-        self.template = template
-        self.mapProgress = mapProgress
-        self.nodes = nodes
-        self.states = states
-        self.last_modified_by = user_id
-
+    
+class Home:
+    def __init__(self, name: str, address: str, manager_id: str, dwellers: list[str] = [], devices: list[str] = []):
+        self.name = name
+        self.address = address
+        self.manager_id = manager_id
+        self.dwellers = dwellers
+        self.devices = devices
 
     def to_dict(self):
         return {
-            "_id": str(self.room_uuid),
-            "created_by": self.created_by,
-            "date_created": self.date_created.isoformat(),
-            "date_modified": self.date_modified.isoformat(),
-            "last_modified_by": self.last_modified_by,
-            "room_members": self.room_members,
-            "room_name": self.room_name,
-            "room_uuid": self.room_uuid,
-            "user_id": self.user_id,
-            "docData" : self.docData,
-            "widgets" : self.widgets,
-            "mapProgress": self.mapProgress,
-            "nodes" : self.nodes,
-            "template" : self.template,
-            "states" : self.states
+            "name" : self.name,
+            "address" : self.address,
+            "manager_id" : self.manager_id,
+            "dwellers" : self.dwellers,
+            "devices": self.devices
         }
 
-class SummarizerChatMessage:
-    def __init__(self, isUser: bool,  room_uuid: str,message_id: str, sender_id: str, timestamp: datetime, intent: str, message_content: str):
-        self.room_uuid = room_uuid
-        self.message_id = message_id
-        self.sender_id = sender_id
-        self.timestamp = timestamp
-        self.isUser = isUser
-        self.intent = intent
-        self.message_content = message_content
+class Device:
+    def __init__(self, name: str, type: str, home_id: str, current_data: dict = {}, historical_data: dict = {}):
+        self.name = name
+        self.type = type
+        self.home_id = home_id
+        self.current_data = current_data
+        self.historical_data = historical_data
+        
 
     def to_dict(self):
+        """
+        Convert the DeviceModel instance to a dictionary.
+        
+        :return: Dictionary representation of the DeviceModel instance
+        """
         return {
-            "room_uuid" : self.room_uuid,
-            "message_id": self.message_id,
-            "isUser": self.isUser,
-            "sender_id": self.sender_id,
-            "timestamp": self.timestamp.isoformat(),
-            "intent": self.intent,
-            "message_content": self.message_content,
+            "name" : self.name,
+            "type" : self.type,
+            "home_id" : self.home_id,
+            "current_data" : self.current_data,
+            "historical_data" : self.historical_data
         }
-
-    def __str__(self):
-        if self.isUser:
-            x = 'User'
-        else:
-            x = 'Bot'
-        return f"{x}: {self.content}"
+        
     
 
 class RoomCreateRequest(BaseModel):
@@ -133,11 +98,15 @@ class clear_roomsParams(BaseModel):
 
 class RegisterParams(BaseModel):
     email: str
-    password: str   
+    password: str
+    role: str = ''
+    name: str
+    associated_homes: list[str] = []
+    managed_homes: list[str] = []
 
-class AuthParams(BaseModel):
-    userId: str
-    profileId: str   
+class LoginParams(BaseModel):
+    email: str
+    password: str   
 
 class addColumnParams(BaseModel):
     header: str

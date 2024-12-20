@@ -17,5 +17,5 @@ app.add_middleware(
 
 # app.include_router(chatMessageRouter, prefix="/doc")
 # app.include_router(chatRoomRouter, prefix="/doc")
-app.include_router(userRouter, prefix="/doc")
+app.include_router(userRouter, prefix="/auth")
 # app.include_router(scriptRouter, prefix="/doc")

@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from repositories.user_repository import UserManager
 # from repositories.room_repository import SummarizerChatRoomManager
 # from model.pdf_summarize_model import ResponseInfo, ResponseObject
-from model.deviceModel import get_userParams, RegisterParams, ResponseInfo, ResponseObject
+from model.deviceModel import LoginParams, get_userParams, RegisterParams, ResponseInfo, ResponseObject
 
 
 userRouter = APIRouter()
@@ -11,10 +11,10 @@ userRouter = APIRouter()
 # summarizer_chat_message_manager = SummarizerChatMessageRepository()
 user_manager = UserManager()
 
-@userRouter.post("/register", response_model=ResponseObject)
+@userRouter.post("/register-manager", response_model=ResponseObject)
 async def register_user(params: RegisterParams):
     try:
-        message_id = user_manager.create_user(params.email, params.password)
+        message_id = user_manager.create_user(email = params.email, password=params.password, name=params.name, role='manager')
         if message_id:
             response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="User inserted successfully."
@@ -28,16 +28,16 @@ async def register_user(params: RegisterParams):
 
 
 
-@userRouter.post("/login/{userid}/{profileid}", response_model=ResponseObject)
-async def register_user(userid: str, profileid: str):
+@userRouter.post("/login", response_model=ResponseObject)
+async def login_user(params: LoginParams):
     try:
         
-        user_id = user_manager.auth(userid, profileid)
+        user_id = user_manager.login_user(params.email, params.password)
         if user_id:
             response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="Logged in successfully"
             )
-            return ResponseObject(data=True, statusCode=200, responseInfo=response_info)
+            return ResponseObject(data={'user_id' : user_id}, statusCode=200, responseInfo=response_info)
         else:
             raise HTTPException(status_code=500, detail="Failed to log in")
     except Exception as e:
