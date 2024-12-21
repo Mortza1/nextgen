@@ -86,6 +86,23 @@ class Device:
             "historical_data" : self.historical_data
         }
         
+class InvitationTokens:
+    def __init__(self, token: str, email: str, home_id: str, expires_at: datetime, used: bool = False):
+        self.token = token
+        self.email = email
+        self.expires_at = expires_at
+        self.home_id = home_id
+        self.used = used
+
+    def to_dict(self):
+        return {
+            "token" : self.token,
+            "email" : self.email,
+            "role" : self.role,
+            "home_id" : self.home_id,
+            "used" : self.used,
+            "expires_at" : self.expires_at
+        }
     
 
 class RoomCreateRequest(BaseModel):
@@ -101,6 +118,7 @@ class RegisterParams(BaseModel):
     password: str
     role: str = ''
     name: str
+    token: str = ''
     associated_homes: list[str] = []
     managed_homes: list[str] = []
 

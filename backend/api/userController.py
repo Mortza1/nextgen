@@ -25,6 +25,22 @@ async def register_user(params: RegisterParams):
     except Exception as e:
         print("error: dasda ", e)
         raise HTTPException(status_code=500, detail="Internal server error.")
+    
+
+# @userRouter.post("/register-dweller", response_model=ResponseObject)
+# async def register_user(params: RegisterParams):
+#     try:
+#         message_id = user_manager.create_user(email = params.email, password=params.password, name=params.name, role='dweller', token=params.token)
+#         if message_id:
+#             response_info = ResponseInfo(
+#                 statusCode=200, message="Success", detail="User inserted successfully."
+#             )
+#             return ResponseObject(data={"user_id": message_id}, statusCode=200, responseInfo=response_info)
+#         else:
+#             raise HTTPException(status_code=500, detail="Failed to add user")
+#     except Exception as e:
+#         print("error: dasda ", e)
+#         raise HTTPException(status_code=500, detail="Internal server error.")
 
 
 

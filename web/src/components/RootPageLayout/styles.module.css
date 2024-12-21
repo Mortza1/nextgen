@@ -1,0 +1,10 @@
+.container {
+  height: 100dvh;
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  padding: 10px;
+  padding-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
