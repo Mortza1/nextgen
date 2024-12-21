@@ -1,7 +1,7 @@
 import Head from "next/head";
 import classNames from "classnames";
-
 import styles from "./styles.module.css";
+import Dashboard from "@app/components/Dashboard";
 
 export default function RootPage() {
   return (
@@ -15,8 +15,9 @@ export default function RootPage() {
       <div
         className={classNames(styles.pageContainer, styles.rootPageContainer)}
       >
-        {/* <h2>Loading Rooms, please wait...</h2> */}
-        <div className={styles.loader}></div>
+        <div className={styles.pageContainer}>
+            <Dashboard/>
+        </div>
       </div>
     </>
   );

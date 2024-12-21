@@ -47,6 +47,21 @@
   margin: 0;
 }
 
+@font-face {
+  font-family: 'Roboto-bold';
+  src: url('/fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal; /* Use 'italic' if the font is italic */
+}
+
+@font-face {
+  font-family: 'Roboto-med';
+  src: url('/fonts/Roboto-Medium.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal; /* Use 'italic' if the font is italic */
+}
+
+
 html,
 body {
   max-width: 100vw;
@@ -55,9 +70,9 @@ body {
 
 body {
   height: 100dvh;
-  background-color: #353440;
+  background: linear-gradient(180deg, #466e80,#466e80, #E7DFC6);
   color: var(--black1);
-  font-family: "IBM Plex Sans", sans-serif;
+  font-family: "Roboto-med", "IBM Plex Sans", sans-serif;
 }
 
 a {
@@ -110,4 +125,3 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #5561f6; /* Darker gradient when hovering */
 }
-

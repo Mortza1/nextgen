@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import styles from "../styles.module.css";
 
 const RoomPage = () => {
-  const router = useRouter();
-  const { roomId } = router.query as { roomId: string };
+  // const router = useRouter();
+  // const { roomId } = router.query as { roomId: string };
   // const rooms = useRoomsContext();
   // const user = useUserContext();
 
@@ -24,7 +24,7 @@ const RoomPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.pageContainer}>
-        {/* <PdfAnalyzationMain room={currentRoom} user={user} /> */}
+  
       </div>
     </>
   );

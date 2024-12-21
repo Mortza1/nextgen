@@ -5,9 +5,10 @@ interface User {
   ProfileID: string;
 }
 
-export const getUserFromToken = (token: string): User | null => {
+export const getUserFromToken = (token: string) => {
   try {
-    return jwtDecode<User>(token); // Correctly call jwtDecode as a function
+    return { userId: token };
+    // return jwtDecode<User>(token); // Correctly call jwtDecode as a function
   } catch (error) {
     console.error('Failed to decode token:', error);
     return null;
