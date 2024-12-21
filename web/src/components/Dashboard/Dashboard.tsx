@@ -1,25 +1,35 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useState } from "react";
 import styles from "./styles.module.css";
 import LeftNav from "./components/LeftNav";
 import TopNav from "./components/TopNav";
-import Stats from "./components/Stats";
-
+import Stats from "./components/Stats"; // Create this component
+import Homes from "../Homes/Homes";
 
 const Dashboard: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeScreen, setActiveScreen] = useState<string>("DASHBOARD");
 
-  const handleClick = (index: number) => {
-    setActiveIndex(index);
+  const renderScreen = () => {
+    switch (activeScreen) {
+      case "DASHBOARD":
+        return (
+          <div className={styles.body}>
+            <Stats totalUsage={"500W"} />
+            <div className={styles.analytics}></div>
+          </div>
+        );
+      case "HOMES":
+        return <div className={styles.body}><Homes /></div>;
+      default:
+        return <div className={styles.body}>Not Found</div>;
+    }
   };
+
   return (
     <div className={styles.main}>
-      <TopNav />
+      <TopNav onSelect={(screen) => setActiveScreen(screen)} />
       <div className={styles.mainContent}>
-        <LeftNav/>
-        <div className={styles.body}>
-          <Stats totalUsage={"500W"} />
-          <div className={styles.analytics}></div>
-        </div>
+        <LeftNav />
+        {renderScreen()}
       </div>
     </div>
   );

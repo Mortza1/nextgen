@@ -74,6 +74,7 @@
     .body {
       width: 87%;
       min-height: 85vh;
+      margin-bottom: 20px;
       background-color: white;
       border-radius: 30px;
       display: flex;
@@ -81,7 +82,7 @@
       .stats{
         width: 55%;
         height: max(35%, 350px);
-        background: linear-gradient(135deg, #466e80, #E7DFC6);
+        background: linear-gradient(135deg, #466e80, #f6d4c0);
         border-radius: 20px;
         margin: 20px;
         display: flex;
@@ -121,7 +122,7 @@
         height: max(35%, 350px);
         width: 35%;
         border-radius: 30px;
-        background-color: #E7DFC6;
+        background-color: #f6d4c0;
       }
 
     }

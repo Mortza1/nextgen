@@ -1,0 +1,45 @@
+.main {
+    height: 100%;
+    width: 100%;
+
+    .add_home_row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+
+        .heading {
+            padding: 10px 20px;
+            color: black;
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+        .button {
+            display: flex;
+            align-items: center;
+            background-color: #f6d4c0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: black;
+            font-size: 0.8rem;
+            font-family: 'Roboto-med';
+            font-weight: 800;
+            cursor: pointer;
+            user-select: none;
+        }
+    }
+
+    .homes{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 30px;
+
+        .text{
+            color: black;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+    }
+}
