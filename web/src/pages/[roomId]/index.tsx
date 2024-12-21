@@ -19,7 +19,7 @@ const RoomPage = () => {
     <>
       <Head>
         <title>{`nextgen`}</title>
-        <meta name="description" content="sBee App" />
+        <meta name="description" content="nextgen App" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

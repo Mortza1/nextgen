@@ -28,6 +28,16 @@ export class RoomApi extends Base {
     });
   }
 
+  register_manager(
+    data: RegisterRequestData
+  ): AxiosPromise<CommonResponseApi<RegisterResponse>> {
+    return this.httpClient({
+      url: `${this.url}/auth/register-manager`,
+      method: "POST",
+      data,
+    });
+  }
+
   login(
     userid: string, profileid: string
   ): AxiosPromise<CommonResponseApi<RegisterResponse>> {

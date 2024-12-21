@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginUser, registerUser } from '@app/api/actions';
+import { loginUser, registerManager} from '@app/api/actions';
 import { getUserFromToken } from '@app/components/Authentication/tokenUtils';
 
 
@@ -7,7 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string, tokenType: string) => void;
   logout: () => void;
-  register: (email: string, password: string) => Promise<void>;
+  register: (name:string, email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,15 +62,15 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     setIsAuthenticated(false);
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (name : string, email: string, password: string) => {
     try {
-      const userId = await registerUser({ email, password });
+      const userId = await registerManager({ name, email, password });
       if (userId) {
         localStorage.setItem('authToken', userId['user_id']);
-        const decodedUser = getUserFromToken(userId['user_id']);
-        if (decodedUser) {
+        // const decodedUser = getUserFromToken(userId['user_id']);
+        // if (decodedUser) {
           setIsAuthenticated(true);
-        }
+        // }
       }
     } catch (error) {
       setIsAuthenticated(false);

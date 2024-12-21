@@ -1,6 +1,7 @@
 declare module "rooms-model" {
 
   export interface RegisterRequestData {
+    name: string;
     email: string;
     password: string;
   }
