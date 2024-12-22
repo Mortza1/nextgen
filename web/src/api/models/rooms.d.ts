@@ -6,6 +6,14 @@ declare module "rooms-model" {
     password: string;
   }
 
+  export interface AddHomeRequestData {
+    home_name: string;
+    address: string;
+    manager_id: string;
+    devices: string[] = [];
+    dwellers: string[] = [];
+  }
+
   export interface AuthRequestData {
     userId: string;
     profileId: string;
@@ -17,6 +25,9 @@ declare module "rooms-model" {
 
   export interface RegisterResponse {
     user_id: string;
+  }
+  export interface HomeResponse {
+    home_id: string;
   }
 
   

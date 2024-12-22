@@ -1,13 +1,12 @@
 from app.db_config import MongoConnection
-from werkzeug.security import generate_password_hash, check_password_hash
 
-from model.deviceModel import Home, User
+from model.deviceModel import Home
 
 class HomeManager:
     def __init__(self):
         try:
             self.db_connection = MongoConnection().get_db()
-            self.collection = self.db_connection["users"]
+            self.collection = self.db_connection["homes"]
         except Exception as e:
             print("error: ", e)
 

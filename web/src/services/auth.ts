@@ -1,4 +1,4 @@
-export const STORAGE_USER_ID_KEY = "userId";
+export const STORAGE_USER_ID_KEY = "authToken";
 
 export const getUserId = (): string => {
   if (typeof window !== "undefined") {  // Check if the code is running on the client side

@@ -123,7 +123,7 @@ class RegisterParams(BaseModel):
     managed_homes: list[str] = []
 
 class AddHomeParams(BaseModel):
-    name: str
+    home_name: str
     address: str
     devices: list[str] = []
     manager_id: str

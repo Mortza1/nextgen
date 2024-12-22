@@ -1,6 +1,7 @@
 import type { AxiosInstance, AxiosProgressEvent, AxiosPromise } from "axios";
 import Base from "./base";
 import {
+  AddHomeRequestData,
   getUserData,
   RegisterRequestData,
   RegisterResponse,
@@ -33,6 +34,16 @@ export class RoomApi extends Base {
   ): AxiosPromise<CommonResponseApi<RegisterResponse>> {
     return this.httpClient({
       url: `${this.url}/auth/register-manager`,
+      method: "POST",
+      data,
+    });
+  }
+
+  add_home(
+    data: AddHomeRequestData
+  ): AxiosPromise<CommonResponseApi<RegisterResponse>> {
+    return this.httpClient({
+      url: `${this.url}/management/add-home`,
       method: "POST",
       data,
     });
