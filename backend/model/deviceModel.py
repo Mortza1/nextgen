@@ -122,6 +122,13 @@ class RegisterParams(BaseModel):
     associated_homes: list[str] = []
     managed_homes: list[str] = []
 
+class AddHomeParams(BaseModel):
+    name: str
+    address: str
+    devices: list[str] = []
+    manager_id: str
+    dwellers: list[str] = []
+
 class LoginParams(BaseModel):
     email: str
     password: str   

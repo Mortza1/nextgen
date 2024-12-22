@@ -107,7 +107,7 @@ a {
 
 /* For all scrollbars */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 1%;
 }
 
 /* Track (background of the scrollbar) */

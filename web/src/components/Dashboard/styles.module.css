@@ -1,6 +1,7 @@
 .main {
   height: 100%;
   width: 100%;
+  overflow: hidden;
   
   .topNav {
     padding: 0 30px;
@@ -73,11 +74,17 @@
 
     .body {
       width: 87%;
-      min-height: 85vh;
+      height: 85vh;
       margin-bottom: 20px;
       background-color: white;
       border-radius: 30px;
       display: flex;
+
+      .content {
+        display: flex;
+        width: 100%;
+        overflow-y: auto;
+      }
       
       .stats{
         width: 55%;
@@ -127,4 +134,6 @@
 
     }
   }
+
+  
 }

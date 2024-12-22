@@ -13,8 +13,11 @@ const Dashboard: React.FC = () => {
       case "DASHBOARD":
         return (
           <div className={styles.body}>
+            <div className={styles.content}>
             <Stats totalUsage={"500W"} />
             <div className={styles.analytics}></div>
+            </div>
+            
           </div>
         );
       case "HOMES":
