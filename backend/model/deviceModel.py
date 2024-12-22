@@ -129,6 +129,10 @@ class AddHomeParams(BaseModel):
     manager_id: str
     dwellers: list[str] = []
 
+class HomeParams(BaseModel):
+    manager_id: str
+
+
 class LoginParams(BaseModel):
     email: str
     password: str   

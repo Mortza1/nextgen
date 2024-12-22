@@ -6,6 +6,9 @@ export interface RegisterParams {
   email: string;
   password: string
 }
+export interface GetHomeParams {
+  manager_id: string
+}
 export interface AddHomeParams {
   home_name: string
   address: string
@@ -24,6 +27,22 @@ export const registerManager = async ({
 } : RegisterParams) => {
   try {
     const { data } = await clientApi.room.register_manager({name, email, password});
+    if (data.statusCode === 200 || data.statusCode === 201) {
+      console.log(data.data)
+      return data.data;
+    }
+    throw Error(data.responseInfo.message);
+  } catch (error) {
+    console.log(error, "ssssssssssss");
+    //TODO:
+  }
+};
+
+export const getHomes = async ({
+  manager_id
+} : GetHomeParams) => {
+  try {
+    const { data } = await clientApi.room.getHomes({manager_id});
     if (data.statusCode === 200 || data.statusCode === 201) {
       console.log(data.data)
       return data.data;

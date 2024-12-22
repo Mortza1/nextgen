@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from repositories.home_repository import HomeManager
-from model.deviceModel import AddHomeParams, ResponseInfo, ResponseObject
+from model.deviceModel import AddHomeParams, HomeParams, ResponseInfo, ResponseObject
 
 
 managerRouter = APIRouter()
@@ -21,3 +21,19 @@ async def add_home(params: AddHomeParams):
         print("error: dasda ", e)
         raise HTTPException(status_code=500, detail="Internal server error.")
     
+
+@managerRouter.post("/homes", response_model=ResponseObject)
+async def get_homes(params: HomeParams):
+    try:
+        print("manager_id: ", params.manager_id)
+        homes = home_manager.get_homes_by_manager(str(params.manager_id))
+        if homes:
+            response_info = ResponseInfo(
+                statusCode=200, message="Success", detail="Homes retrieved successfully."
+            )
+            return ResponseObject(data={"homes": homes}, statusCode=200, responseInfo=response_info)
+        else:
+            raise HTTPException(status_code=404, detail="No homes found for the given manager.")
+    except Exception as e:
+        print("error: ", e)
+        raise HTTPException(status_code=500, detail="Internal server error.")

@@ -22,15 +22,17 @@
       gap: 30px;
       .item {
         display: flex;
-        color: white;
+        color: #ccc;
         font-size: 0.8rem;
         cursor: pointer;
         user-select: none;  
       }
-      .item:hover {
-        color: lightgray;
+      .selected {
+        color: white;
+        font-weight: 900;
       }
     }
+    
     
   }
   .mainContent {

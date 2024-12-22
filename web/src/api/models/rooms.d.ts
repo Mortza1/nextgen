@@ -22,6 +22,9 @@ declare module "rooms-model" {
   export interface getUserData {
     id: string
   }
+  export interface getHomeData {
+    manager_id: string
+  }
 
   export interface RegisterResponse {
     user_id: string;

@@ -14,14 +14,17 @@ const Dashboard: React.FC = () => {
         return (
           <div className={styles.body}>
             <div className={styles.content}>
-            <Stats totalUsage={"500W"} />
-            <div className={styles.analytics}></div>
+              <Stats totalUsage={"500W"} />
+              <div className={styles.analytics}></div>
             </div>
-            
           </div>
         );
       case "HOMES":
         return <div className={styles.body}><Homes /></div>;
+      case "DWELLERS":
+        return <div className={styles.body}>Dwellers Content</div>;
+      case "DEVICES":
+        return <div className={styles.body}>Devices Content</div>;
       default:
         return <div className={styles.body}>Not Found</div>;
     }
@@ -29,7 +32,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className={styles.main}>
-      <TopNav onSelect={(screen) => setActiveScreen(screen)} />
+      <TopNav onSelect={(screen) => setActiveScreen(screen)} selectedScreen={activeScreen} />
       <div className={styles.mainContent}>
         <LeftNav />
         {renderScreen()}

@@ -155,7 +155,21 @@
         100% { transform: rotate(360deg); }
       }
 
+      .home {
+        color: black;
+        display: flex;
+        align-items: center;
+        background-color: beige;
+        padding: 20px;
+        margin: 5px 40px;
+        border: 2px solid black;
+        border-radius: 10px;
+        width: 75%;
+        height: 100px; 
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1); /* Add a shadow */
+      }
+      .home:hover{
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5); /* Add a shadow */
+      }
+      
 }
-
-
-  

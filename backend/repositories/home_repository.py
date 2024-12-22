@@ -21,3 +21,21 @@ class HomeManager:
         except Exception as e:
             print(f"An error occurred while creating home: {e}")
             return None 
+    
+    def get_homes_by_manager(self, manager_id: str):
+        try:
+            # Find all homes with the same manager_id
+            homes_cursor = self.collection.find({"manager_id": manager_id})
+            
+            # Convert the cursor to a list of homes and convert ObjectId to string
+            homes_list = []
+            for home in homes_cursor:
+                # Convert ObjectId to string
+                home["_id"] = str(home["_id"])
+                homes_list.append(home)
+            
+            return homes_list
+        
+        except Exception as e:
+            print(f"An error occurred while retrieving homes: {e}")
+            return None
