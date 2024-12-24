@@ -1,3 +1,4 @@
+from bson import ObjectId
 from app.db_config import MongoConnection
 
 from model.deviceModel import Home
@@ -10,7 +11,7 @@ class HomeManager:
         except Exception as e:
             print("error: ", e)
 
-    def create_home(self, home_name: str, address: str, manager_id: str, dwellers: list[str] = [], devices: list[str] = []):
+    def create_home(self, home_name: str, address: str, manager_id: str, dwellers: list[dict] = [], devices: list[str] = []):
         try:
             home = Home(name=home_name, address=address, manager_id=manager_id, dwellers=dwellers, devices=devices)
             home_data = home.to_dict()
@@ -39,3 +40,16 @@ class HomeManager:
         except Exception as e:
             print(f"An error occurred while retrieving homes: {e}")
             return None
+    
+    def add_dweller(self, user_id: str, home_id: str):
+        try:
+            data = {"user_id": user_id, 'status': 'invited'}
+            result = self.collection.update_one(
+                {"_id": ObjectId(home_id)},  # Convert home_id to ObjectId
+                {"$addToSet": {"dwellers": data}}  # Add user_id to dwellers if not already present
+            )
+            return result.modified_count > 0  # Returns True if a document was updated
+        except Exception as e:
+            print(f"An error occurred while updating dwellers: {e}")
+            return None
+

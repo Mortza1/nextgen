@@ -47,7 +47,7 @@ class User:
         }
     
 class Home:
-    def __init__(self, name: str, address: str, manager_id: str, dwellers: list[str] = [], devices: list[str] = []):
+    def __init__(self, name: str, address: str, manager_id: str, dwellers: list[dict] = [], devices: list[str] = []):
         self.name = name
         self.address = address
         self.manager_id = manager_id
@@ -98,7 +98,6 @@ class InvitationTokens:
         return {
             "token" : self.token,
             "email" : self.email,
-            "role" : self.role,
             "home_id" : self.home_id,
             "used" : self.used,
             "expires_at" : self.expires_at
@@ -131,6 +130,14 @@ class AddHomeParams(BaseModel):
 
 class HomeParams(BaseModel):
     manager_id: str
+
+class InviteParams(BaseModel):
+    email: str
+    house_id: str
+    manager_id: str
+
+class homeDwellersParams(BaseModel):
+    user_ids : list[str]
 
 
 class LoginParams(BaseModel):

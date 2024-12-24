@@ -4,12 +4,13 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import AddHomeForm from "./components/AddHomeForm";
 import { getHomes } from "@app/api/actions";
 import { getUserId } from "@app/services/auth";
+import HomeDetails from "./components/HomeDetails";
 
 const Homes: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAddingHome, setIsAddingHome] = useState(false);
-  const [homes, setHomes] = useState<any[]>([]); // State to store the list of homes
-  const [selectedHome, setSelectedHome] = useState<any | null>(null); // Track selected home
+  const [homes, setHomes] = useState<any[]>([]); 
+  const [selectedHome, setSelectedHome] = useState<any | null>(null); 
 
   useEffect(() => {
     setIsLoading(true);
@@ -43,7 +44,7 @@ const Homes: React.FC = () => {
     <div className={styles.main}>
       <div className={styles.add_home_row}>
         <div className={styles.heading}>
-          {selectedHome ? `Home Details - ${selectedHome.name}` : "Homes"}
+          {selectedHome ? `Home detail page` : "Homes"}
         </div>
         {!selectedHome && (
           <div className={styles.button} onClick={handleAddHomeClick}>
@@ -58,29 +59,7 @@ const Homes: React.FC = () => {
         <AddHomeForm onCancel={handleCancelClick} devices={[]} dwellers={[]} />
       ) : selectedHome ? (
         // Home Details View
-        <div className={styles.homeDetails}>
-          <button className={styles.backButton} onClick={handleBackClick}>
-            Back
-          </button>
-          <h2 className={styles.homeName}>{selectedHome.name}</h2>
-          <p className={styles.homeAddress}>{selectedHome.address}</p>
-          <div>
-            <h3>Dwellers:</h3>
-            <ul>
-              {selectedHome.dwellers?.map((dweller: any, index: number) => (
-                <li key={index}>{dweller.name}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>Devices:</h3>
-            <ul>
-              {selectedHome.devices?.map((device: any, index: number) => (
-                <li key={index}>{device.name}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+            <HomeDetails home={selectedHome} onBackClick={handleBackClick}/>
       ) : (
         // Homes List View
         <div className={styles.homes}>
@@ -101,7 +80,7 @@ const Homes: React.FC = () => {
                 className={styles.home}
                 onClick={() => handleHomeClick(home)} // Navigate to home details on click
               >
-                <div className={styles.home_name}>{home.name}</div>
+                <div className={styles.home_name}>#{index+1}. {home.name}</div>
               </div>
             ))
           )}

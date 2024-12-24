@@ -3,9 +3,11 @@ import Base from "./base";
 import {
   AddHomeRequestData,
   getHomeData,
+  getHomeUsersData,
   getUserData,
   RegisterRequestData,
   RegisterResponse,
+  sendInviteData,
 } from "rooms-model";
 
 export class RoomApi extends Base {
@@ -15,6 +17,26 @@ export class RoomApi extends Base {
   ) {
     return this.httpClient({
       url: `${this.url}/user`,
+      method: "POST",
+      data,
+    });
+  }
+
+  sendInvite(
+    data: sendInviteData
+  ) {
+    return this.httpClient({
+      url: `${this.url}/management/invite-dweller`,
+      method: "POST",
+      data,
+    });
+  }
+
+  getHomeUsers(
+    data: getHomeUsersData
+  ) {
+    return this.httpClient({
+      url: `${this.url}/management/home-dwellers`,
       method: "POST",
       data,
     });
