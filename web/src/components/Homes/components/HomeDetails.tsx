@@ -59,7 +59,7 @@ const HomeDetails: React.FC<HomeDetailsProps> = ({ home, onBackClick }) => {
     // Check if the inviteEmail already exists in the dwellers
     const isEmailExisting = dwellers.some((dweller) => dweller.email === inviteEmail);
 
-    if (isEmailExisting || inviteEmail != '') {
+    if (isEmailExisting || inviteEmail == '') {
       alert("This email is already a dweller.");
       setInviteEmail(""); // Reset invite email input
       return; // Exit if the email is already a dweller

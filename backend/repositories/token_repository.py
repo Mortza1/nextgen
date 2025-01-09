@@ -58,3 +58,22 @@ class TokenManager:
             traceback.print_exc()
             print("Error:", e)
             return False
+        
+    def verify_token(self, email: str, token: str):
+        try:
+            # Corrected filter: Use a dictionary
+            documents = list(self.collection.find({'email': email}))
+            for doc in documents:
+                if doc.get('token') == token:
+                    if datetime.utcnow() <= doc['expires_at']:
+                        if not doc.get('used', False):
+                            self.collection.update_one(
+                                {"_id": doc['_id']},
+                                {"$set": {"used": True}}
+                            )
+                            return doc['home_id']
+            return None
+        except Exception as e:
+            traceback.print_exc()
+            print(f"An error occurred while verifying the token: {e}")
+            return None

@@ -86,6 +86,23 @@ class Device:
             "historical_data" : self.historical_data
         }
         
+class Hub:
+    def __init__(self, home_id: str, devices: list[str]):
+        self.home_id = home_id
+        self.devices = devices
+        
+
+    def to_dict(self):
+        """
+        Convert the DeviceModel instance to a dictionary.
+        
+        :return: Dictionary representation of the DeviceModel instance
+        """
+        return {
+            "home_id" : self.home_id,
+            "devices" : self.devices
+        }
+        
 class InvitationTokens:
     def __init__(self, token: str, email: str, home_id: str, expires_at: datetime, used: bool = False):
         self.token = token
@@ -120,6 +137,17 @@ class RegisterParams(BaseModel):
     token: str = ''
     associated_homes: list[str] = []
     managed_homes: list[str] = []
+
+class RegisterDeviceParams(BaseModel):
+    home_id: str
+    
+
+class RegisterDwellerParams(BaseModel):
+    email: str
+    password: str
+    name: str
+    token: str
+
 
 class AddHomeParams(BaseModel):
     home_name: str

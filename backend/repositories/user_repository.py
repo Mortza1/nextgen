@@ -73,3 +73,36 @@ class UserManager:
             traceback.print_exc()  # Print full stack trace for debugging
             print(f"An error occurred while retrieving user: {e}")
             return None
+        
+    def update_user(self, name: str, email: str, password: str, home_id: str):
+        try:
+            # Find the user by email
+            user = self.collection.find_one({"email": email})
+            
+            if user:
+                # Update the user's data
+                updates = {
+                    "name": name,
+                    "role": "dweller",
+                    "password": generate_password_hash(password),  # Securely hash the new password
+                }
+                
+                # Ensure associated_homes is a list and append home_id
+                if "associated_homes" in user and isinstance(user["associated_homes"], list):
+                    if home_id not in user["associated_homes"]:
+                        user["associated_homes"].append(home_id)
+                else:
+                    updates["associated_homes"] = [home_id]
+                
+                # Update the user in the database
+                self.collection.update_one({"_id": user["_id"]}, {"$set": updates})
+                return True  # Indicate a successful update
+            else:
+                # Return None if the user does not exist
+                return None
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()  # Print full stack trace for debugging
+            print(f"An error occurred while updating user: {e}")
+            return False  # Indicate a failure to update
