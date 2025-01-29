@@ -1,4 +1,5 @@
 import asyncio
+import json
 import paho.mqtt.client as mqtt
 import threading
 
@@ -23,8 +24,6 @@ async def start_mqtt_client():
     mqtt_client.connect("127.0.0.1", 1883, 60)  # Use the correct MQTT broker address
 
     # Start MQTT loop in a separate background thread to avoid blocking FastAPI
-    loop = asyncio.get_event_loop()
-
     def mqtt_loop():
         # This runs in the background and keeps MQTT handling in a non-blocking way
         mqtt_client.loop_forever()
@@ -43,8 +42,9 @@ async def stop_mqtt_client():
 
 # Function to publish messages to a specific topic
 def publish_message(topic, message):
-    result = mqtt_client.publish(topic, message)
+    result = mqtt_client.publish(topic, json.dumps({"command": message}))
     if result.rc == mqtt.MQTT_ERR_SUCCESS:
         print(f"Message '{message}' successfully published to topic '{topic}'")
     else:
         print(f"Failed to publish message '{message}' to topic '{topic}'")
+

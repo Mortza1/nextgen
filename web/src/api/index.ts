@@ -19,7 +19,7 @@ class ClientApi {
   }
 }
 //
-const baseURL = "https://d98f-2-51-19-23.ngrok-free.app/";
+const baseURL = "http://localhost:8000/";
 
 const clientApi = new ClientApi(
   axios.create({

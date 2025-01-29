@@ -47,12 +47,12 @@ class User:
         }
     
 class Home:
-    def __init__(self, name: str, address: str, manager_id: str, dwellers: list[dict] = [], devices: list[str] = []):
+    def __init__(self, name: str, address: str, manager_id: str, hub_id: str = '', dwellers: list[dict] = []):
         self.name = name
         self.address = address
         self.manager_id = manager_id
         self.dwellers = dwellers
-        self.devices = devices
+        self.hub_id = hub_id
 
     def to_dict(self):
         return {
@@ -60,7 +60,7 @@ class Home:
             "address" : self.address,
             "manager_id" : self.manager_id,
             "dwellers" : self.dwellers,
-            "devices": self.devices
+            "hub_id" : self.hub_id
         }
 
 class Device:
@@ -87,8 +87,7 @@ class Device:
         }
         
 class Hub:
-    def __init__(self, home_id: str, devices: list[str]):
-        self.home_id = home_id
+    def __init__(self, devices: list[str]):
         self.devices = devices
         
 
@@ -99,7 +98,6 @@ class Hub:
         :return: Dictionary representation of the DeviceModel instance
         """
         return {
-            "home_id" : self.home_id,
             "devices" : self.devices
         }
         
@@ -138,9 +136,13 @@ class RegisterParams(BaseModel):
     associated_homes: list[str] = []
     managed_homes: list[str] = []
 
-class RegisterDeviceParams(BaseModel):
-    home_id: str
-    
+class ConnectDeviceParams(BaseModel):
+    hub_id: str
+    device_id: str
+
+class GetDevicesParams(BaseModel):
+    user_id: str
+    hub_id : str
 
 class RegisterDwellerParams(BaseModel):
     email: str

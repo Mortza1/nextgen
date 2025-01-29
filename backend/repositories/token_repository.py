@@ -46,7 +46,7 @@ class TokenManager:
             msg["From"] = sender_email
             msg["To"] = recipient_email
             msg["Subject"] = 'token for home invitation'
-            msg.attach(MIMEText(f'The following is your token: ${token}', "plain"))
+            msg.attach(MIMEText(f'The following is your token: {token}', "plain"))
             with smtplib.SMTP(smtp_server, smtp_port) as server:
                 server.starttls()
                 server.login(sender_email, sender_password)

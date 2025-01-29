@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from fastapi import FastAPI
 from app import app
 
 if __name__ == "__main__":

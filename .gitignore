@@ -12,7 +12,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-nextgen-back
+env
 
 # IntelliJ related
 *.iml

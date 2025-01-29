@@ -96,7 +96,7 @@ class UserManager:
                 
                 # Update the user in the database
                 self.collection.update_one({"_id": user["_id"]}, {"$set": updates})
-                return True  # Indicate a successful update
+                return str(user["_id"])  # Indicate a successful update
             else:
                 # Return None if the user does not exist
                 return None

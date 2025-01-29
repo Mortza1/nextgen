@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # from api.chatRoomController import chatRoomRouter
 from api.userController import userRouter
 from api.managementController import managerRouter
+from api.userDeviceController import deviceRouter
 # from api.scriptController import scriptRouter
 
 app = FastAPI()
@@ -19,4 +20,5 @@ app.add_middleware(
 # app.include_router(chatMessageRouter, prefix="/doc")
 app.include_router(managerRouter, prefix="/management")
 app.include_router(userRouter, prefix="/auth")
+app.include_router(deviceRouter, prefix="/device")
 # app.include_router(scriptRouter, prefix="/doc")
