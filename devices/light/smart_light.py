@@ -12,7 +12,8 @@ load_dotenv()
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 DEVICE_ID = os.getenv("DEVICE_ID", "smart_light_default")
-DEVICE_TOPIC = f"devices/{DEVICE_ID}/command"
+COMMAND_TOPIC = f"devices/{DEVICE_ID}/command"
+STATE_TOPIC = f"devices/{DEVICE_ID}/state"  # Topic to publish state updates
 
 # Smart Light State
 light_state = {
@@ -26,26 +27,21 @@ light_state = {
 
 POWER_CONSUMPTION_RATE = 0.1  # Watts per second at 100% brightness
 
-# Log file path
-LOG_FILE = "smart_light_log.txt"
-
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT Broker with result code {rc}")
-    client.subscribe(DEVICE_TOPIC)
-
+    client.subscribe(COMMAND_TOPIC)
 
 def on_message(client, userdata, msg):
     global light_state
     
-    payload_str = msg.payload.decode().strip()  # Decode and remove leading/trailing spaces
-    
-    if not payload_str:  # Check for empty payload
+    payload_str = msg.payload.decode().strip()
+    if not payload_str:
         print(f"Received an empty message on {msg.topic}, ignoring.")
         return
 
     try:
-        payload = json.loads(payload_str)  # Parse JSON safely
+        payload = json.loads(payload_str)
     except json.JSONDecodeError as e:
         print(f"JSON decode error: {e}. Payload received: {payload_str}")
         return
@@ -73,6 +69,30 @@ def on_message(client, userdata, msg):
     else:
         print(f"Unknown command: {command}")
 
+    publish_state()  # Publish state after any command update
+
+# Function to publish light state
+def publish_state():
+    global light_state
+
+    if light_state["is_on"]:
+        elapsed_time = time.time() - light_state["last_on_time"]
+        power_usage = (POWER_CONSUMPTION_RATE * light_state["brightness"] / 100) * elapsed_time / 3600
+        light_state["total_energy"] += power_usage
+        light_state["power_consumption"] = power_usage
+        light_state["last_on_time"] = time.time()
+
+    state_entry = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "is_on": light_state["is_on"],
+        "rgb": light_state["rgb"],
+        "brightness": light_state["brightness"],
+        "power_consumption": round(light_state["power_consumption"], 4),
+        "total_energy": round(light_state["total_energy"], 4)
+    }
+
+    client.publish(STATE_TOPIC, json.dumps(state_entry))
+    
 
 # Initialize MQTT client
 client = mqtt.Client()
@@ -82,33 +102,8 @@ client.on_message = on_message
 client.connect(MQTT_BROKER, MQTT_PORT, 60)
 client.loop_start()
 
-# Function to log state
-def log_light_state():
-    global light_state
-
-    if light_state["is_on"]:
-        elapsed_time = time.time() - light_state["last_on_time"]
-        power_usage = (POWER_CONSUMPTION_RATE * light_state["brightness"] / 100) * elapsed_time / 3600  # Convert to Wh
-        light_state["total_energy"] += power_usage
-        light_state["power_consumption"] = power_usage
-        light_state["last_on_time"] = time.time()  # Reset last on time
-
-    log_entry = {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "is_on": light_state["is_on"],
-        "rgb": light_state["rgb"],
-        "brightness": light_state["brightness"],
-        "power_consumption": round(light_state["power_consumption"], 4),
-        "total_energy": round(light_state["total_energy"], 4)
-    }
-
-    with open(LOG_FILE, "a") as log_file:
-        log_file.write(json.dumps(log_entry) + "\n")
-
-    print(f"Logged state: {log_entry}")
-
-# Simulate device running with adaptive logging interval
+# Run logging and publishing loop
 while True:
-    log_light_state()
+    publish_state()
     interval = 3 if light_state["is_on"] else 10  # 3 sec when on, 10 sec when off
     time.sleep(interval)

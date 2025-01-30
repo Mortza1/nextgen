@@ -1,22 +1,64 @@
 import asyncio
 import json
+import os
 import paho.mqtt.client as mqtt
 import threading
 
 mqtt_client = mqtt.Client()
 
+DATA_DIR = "device_data"
+os.makedirs(DATA_DIR, exist_ok=True)
+
 # MQTT callbacks
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT broker successfully!")
+        client.subscribe("devices/+/state")
     else:
         print(f"Failed to connect, return code {rc}")
         print(f"Connection details: {client._userdata}")
 
 
 def on_message(client, userdata, msg):
-    print(f"Received message on {msg.topic}: {msg.payload.decode()}")
+    topic = msg.topic
+    payload = msg.payload.decode()
+    
+    # Check if the message is a device state update
+    if topic.startswith("devices/") and topic.endswith("/state"):
+        print(f"Received device state update: {payload}")
 
+        try:
+            state_data = json.loads(payload)  # Convert JSON string to dict
+            device_id = topic.split("/")[1]  # Extract device ID from topic
+            
+            # Define file path for the device
+            file_path = os.path.join(DATA_DIR, f"{device_id}.json")
+
+            # Read existing data if the file exists
+            if os.path.exists(file_path):
+                with open(file_path, "r") as f:
+                    try:
+                        existing_data = json.load(f)
+                    except json.JSONDecodeError:
+                        existing_data = []
+            else:
+                existing_data = []
+
+            # Append new state update
+            existing_data.append(state_data)
+
+            # Save updated data
+            with open(file_path, "w") as f:
+                json.dump(existing_data, f, indent=4)
+
+            print(f"State saved for {device_id}")
+
+        except json.JSONDecodeError:
+            print("Invalid JSON received!")
+    else:
+        print(f"Received unknown message on {topic}: {payload}")
+
+        
 # Function to start the MQTT client
 async def start_mqtt_client():
     mqtt_client.on_connect = on_connect
