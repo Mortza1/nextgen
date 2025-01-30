@@ -140,6 +140,10 @@ class ConnectDeviceParams(BaseModel):
     hub_id: str
     device_id: str
 
+class SetDeviceParams(BaseModel):
+    device_id: str
+    command: str
+
 class GetDevicesParams(BaseModel):
     user_id: str
     hub_id : str

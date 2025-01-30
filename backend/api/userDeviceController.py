@@ -5,7 +5,8 @@ from repositories.home_repository import HomeManager
 from repositories.hub_repository import HubManager
 from repositories.token_repository import TokenManager
 from repositories.user_repository import UserManager
-from model.deviceModel import ConnectDeviceParams, GetDevicesParams, ResponseInfo, ResponseObject
+import httpx
+from model.deviceModel import ConnectDeviceParams, GetDevicesParams, ResponseInfo, ResponseObject, SetDeviceParams
 
 
 deviceRouter = APIRouter()
@@ -66,3 +67,37 @@ async def get_devices(params: GetDevicesParams):
     
     
 
+@deviceRouter.post("/update_device", response_model=ResponseObject)
+async def update_device(params: SetDeviceParams):
+    try:
+        # Prepare the data for the external request
+        url = f"http://localhost:8010/devices/{params.device_id}/command"
+        headers = {"Content-Type": "application/json"}
+        body = {
+            "device_id": params.device_id,
+            "command": params.command  # You can change to "turn_off" or other commands based on your use case
+        }
+
+        # Send the POST request to the new endpoint
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=body, headers=headers)
+
+        # Check the response status code and handle accordingly
+        if response.status_code == 200:
+            # Return the successful response with data
+            response_info = {
+                "statusCode": 200,
+                "message": "Success",
+                "detail": "Device toggled successfully."
+            }
+            return ResponseObject(
+                data=True,  # Send back the response data from the external endpoint
+                statusCode=200,
+                responseInfo=response_info
+            )
+        else:
+            raise HTTPException(status_code=response.status_code, detail="Failed to toggle the device")
+    
+    except Exception as e:
+        print(f"Error in toggle_light: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error.")

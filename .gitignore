@@ -13,6 +13,8 @@
 .swiftpm/
 migrate_working_dir/
 env
+devices/light/smart_light_log.txt
+output.log
 
 # IntelliJ related
 *.iml
