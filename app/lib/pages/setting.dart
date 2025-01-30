@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
+import 'package:nextgen_software/pages/login.dart';
+
+import '../scopedModel/app_model.dart';
 
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({super.key});
+  final AppModel model;
+  const SettingScreen({super.key, required this.model});
 
   @override
   SettingScreenState createState() => SettingScreenState();
@@ -32,7 +36,16 @@ class SettingScreenState extends State<SettingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/man.png', height: 70,),
+            GestureDetector(
+              onTap: (){
+                widget.model.logout();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage(appModel: widget.model)),
+                );
+                },
+              child: Image.asset('assets/images/man.png', height: 70,),
+            ),
             SizedBox(height: 10,),
             Text('Murtaza Mustafa',  style: TextStyle(fontWeight: FontWeight.w900),)
           ],

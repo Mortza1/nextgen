@@ -41,9 +41,17 @@ class  ConnectedModelAppliance extends Model{
         state: ThermostatState(currentTemperature: 24.5),
         isEnable : true),
   ];
+
 }
 class ApplianceModel extends ConnectedModelAppliance {
+  List<Appliance> _fetchedAppliances = [];
+
   List<Appliance> get allFetch {
-    return List.from(_applianceList);
+    return List.from(_fetchedAppliances);
+  }
+
+  void setAppliances(List<Appliance> appliances) {
+    _fetchedAppliances = appliances;
+    notifyListeners();
   }
 }

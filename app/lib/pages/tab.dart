@@ -20,9 +20,9 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      HomePageBody(app_model: widget.model),
+      HomePageBody(appModel: widget.model),
       OverviewScreen(),
-      SettingScreen(),
+      SettingScreen(model: widget.model,),
     ];
     return Scaffold(
       body: Stack(
