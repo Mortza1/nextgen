@@ -32,11 +32,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className={styles.main}>
-      <TopNav onSelect={(screen) => setActiveScreen(screen)} selectedScreen={activeScreen} />
-      <div className={styles.mainContent}>
+      {/* <TopNav onSelect={(screen) => setActiveScreen(screen)} selectedScreen={activeScreen} /> */}
+      {/* <div className={styles.mainContent}>
         <LeftNav />
         {renderScreen()}
-      </div>
+      </div> */}
     </div>
   );
 };

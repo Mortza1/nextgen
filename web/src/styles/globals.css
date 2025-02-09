@@ -70,7 +70,8 @@ body {
 
 body {
   height: 100dvh;
-  background: linear-gradient(180deg, #446e81,#697e87);
+  /* background: linear-gradient(180deg, #446e81,#697e87); */
+  background-color: #EEECDE;
   color: var(--black1);
   font-family: "Roboto-med", "IBM Plex Sans", sans-serif;
 }

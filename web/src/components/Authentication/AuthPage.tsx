@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import styles from '@app/components/Authentication/styles.module.css';
-import { CircularProgress } from '@mui/material';
 import { useAuth } from "@app/contexts/AuthContext";
 
 

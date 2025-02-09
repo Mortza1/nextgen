@@ -27,9 +27,9 @@ const AuthenticatedApp: React.FC<{ Component: React.ComponentType<any>, pageProp
     return <LoadingSpinner />;
   }
 
-  if (!isAuthenticated) {
-    return <AuthPage/>;
-  }
+  // if (!isAuthenticated) {
+  //   return <AuthPage/>;
+  // }
 
   return (
     
