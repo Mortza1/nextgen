@@ -1,9 +1,12 @@
 import { memo, useState } from "react";
 import styles from "./styles.module.css";
 import LeftNav from "./components/LeftNav";
-import TopNav from "./components/TopNav";
-import Stats from "./components/Stats"; // Create this component
 import Homes from "../Homes/Homes";
+import DashboardScreen from "./components/DashboardScreen";
+import Devices from "../Devices";
+import Dwellers from "../Dwellers";
+import Notifications from "../Notifications";
+import Settings from "../Settings";
 
 const Dashboard: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<string>("DASHBOARD");
@@ -12,19 +15,18 @@ const Dashboard: React.FC = () => {
     switch (activeScreen) {
       case "DASHBOARD":
         return (
-          <div className={styles.body}>
-            <div className={styles.content}>
-              <Stats totalUsage={"500W"} />
-              <div className={styles.analytics}></div>
-            </div>
-          </div>
+          <DashboardScreen/>
         );
       case "HOMES":
-        return <div className={styles.body}><Homes /></div>;
+        return (<Homes />);
       case "DWELLERS":
-        return <div className={styles.body}>Dwellers Content</div>;
+        return (<Dwellers/>);
       case "DEVICES":
-        return <div className={styles.body}>Devices Content</div>;
+        return (<Devices />);
+        case "NOTIFICATIONS":
+        return (<Notifications />);
+        case "SETTINGS":
+          return (<Settings />);
       default:
         return <div className={styles.body}>Not Found</div>;
     }
@@ -32,11 +34,8 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className={styles.main}>
-      {/* <TopNav onSelect={(screen) => setActiveScreen(screen)} selectedScreen={activeScreen} /> */}
-      {/* <div className={styles.mainContent}>
-        <LeftNav />
-        {renderScreen()}
-      </div> */}
+      <LeftNav activeScreen={activeScreen} setActiveScreen={setActiveScreen} />
+      <div className={styles.body}>{renderScreen()}</div>
     </div>
   );
 };

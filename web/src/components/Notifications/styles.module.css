@@ -1,0 +1,59 @@
+.main {
+  color: black;
+  padding: 50px 20px;
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+
+  .notificationBox {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .card {
+    width: 100%;
+    height: 70px;
+    background-color: #FFFDEE;
+    border-radius: 10px;
+    opacity: 1; /* Default full opacity */
+  }
+  
+  /* Gradually decrease opacity for lower cards */
+  .card:nth-child(2) {
+    opacity: 0.85;
+  }
+  .card:nth-child(3) {
+    opacity: 0.7;
+  }
+  .card:nth-child(4) {
+    opacity: 0.55;
+  }
+  .card:nth-child(5) {
+    opacity: 0.4;
+  }
+
+  .loadMore {
+    position: absolute;
+    bottom: 20px;
+    right: 50%;
+    padding: 10px 30px;
+    background-color: rgba(217, 217, 217, 0.45);
+    border: 1px solid #635959;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .loadMore:hover {
+    background-color: rgba(217, 217, 217, 0.7);
+  }
+  
+}

@@ -289,3 +289,94 @@
       }     
       
 }
+
+
+
+.content {
+  height: 95%;
+  width: 100%;
+  margin: 10px 10px 10px 0px;
+  display: flex;
+  gap: 5px;
+
+  .backImg {
+    width: 60%;
+    height: 100%;
+    background-size: cover; /* This makes sure the image covers the whole area */
+    background-position: center; /* Centers the background imag,e */
+    position: relative;
+    border-radius: 25px;
+
+    .controlBox {
+      width: 35%;
+      height: 50%;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      margin: 0px 10px 10px 0px; 
+      background-color: #EEECDE;
+      opacity: 70%;
+      border-radius: 10px;
+    }
+  }
+
+  .controls {
+    width: 39%;
+    padding: 5px;
+
+    .title {
+      color: black;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .rooms {
+      display: flex;
+      width: 100%;
+      height: 15%;
+      gap: 10px;
+      margin-top: 10px;
+
+      .roomButton {
+        flex: 1;
+        background-color: #FFFDEE;
+        cursor: pointer;
+        border-radius: 10px;
+        color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .devices {
+      display: flex;
+      width: 100%;
+      height: 15%;
+      gap: 10px;
+      margin-top: 10px;
+
+      .devicesBox {
+        flex: 1;
+        background-color: #FFFDEE;
+        cursor: pointer;
+        border-radius: 10px;
+        color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .usage {
+      width: 100%;
+      height: 25%;
+      background-color: #FFFDEE;
+      margin-top: 10px;
+      border-radius: 10px;
+      color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+  }
+}
