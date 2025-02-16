@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/home_page_body.dart';
-import 'package:nextgen_software/pages/overview.dart';
+import 'package:nextgen_software/pages/energy/overview.dart';
 import 'package:nextgen_software/pages/settings/setting.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 
 import '../scopedModel/connected_model_appliance.dart';
-import 'mode_page.dart';
+import 'modes/mode_page.dart';
 
 class CustomTabScreen extends StatefulWidget {
   final AppModel model;

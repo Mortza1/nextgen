@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:nextgen_software/pages/assistant_button.dart';
-import 'package:nextgen_software/pages/curtain.dart';
-import 'package:nextgen_software/pages/light.dart';
-import 'package:nextgen_software/pages/speaker.dart';
-import 'package:nextgen_software/pages/thermostat.dart';
-import 'package:nextgen_software/pages/tv.dart';
+import 'package:nextgen_software/pages/components/assistant_button.dart';
+import 'package:nextgen_software/pages/components/consumption_dialog.dart';
+import 'package:nextgen_software/pages/devices/curtain.dart';
+import 'package:nextgen_software/pages/devices/light.dart';
+import 'package:nextgen_software/pages/modes/add_mode_in_home.dart';
+import 'package:nextgen_software/pages/notifications.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 import 'package:nextgen_software/scopedModel/connected_mode.dart';
+import '../model/mode.dart';
 import '../scopedModel/connected_model_appliance.dart';
-import 'add_mode.dart';
-import 'camera.dart';
+import 'devices/speaker.dart';
+import 'devices/thermostat.dart';
+import 'devices/tv.dart';
+import 'modes/add_mode.dart';
+import 'devices/camera.dart';
 import 'components/toggle.dart';
 import 'morning.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +29,6 @@ class HomePageBody extends StatefulWidget {
 class _HomePageBodyState extends State<HomePageBody> {
   bool _needsRebuild = false;
   Color _buttonColor = const Color(0xffFEDC97);
-
   @override
   void initState() {
     super.initState();
@@ -70,115 +73,20 @@ class _HomePageBodyState extends State<HomePageBody> {
               )
             ],
           ),
-          Image.asset('assets/images/bell.png',
-            width: 45,  // Set the width
-            height: 45, // Set the height
-            )
+          GestureDetector(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsScreen()),
+              );
+            },
+            child: Image.asset('assets/images/bell.png',
+              width: 45,  // Set the width
+              height: 45, // Set the height
+              ),
+          )
         ],
       ),
-    );
-  }
-  Widget _consumptionBox(){
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.95,
-          height: MediaQuery.of(context).size.height * 0.18, // Parent container height
-          decoration: BoxDecoration(
-            color: Color(0xffF9E07F),
-            borderRadius: BorderRadius.circular(10)
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: 55,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Color(0xffFFEA96)
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Energy Consumption', style: TextStyle(color: Color(0xffD3B84F), fontSize: 14, fontWeight: FontWeight.w600),),
-                    SizedBox(width: 5,),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      height: 40,
-                      // width: 100,
-                      decoration: BoxDecoration(
-                        color: Color(0xffE8CA52),
-                        borderRadius: BorderRadius.circular(30)
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset('assets/images/calender.png'),
-                          Text(DateFormat('dd MMM, yyyy').format(DateTime.now()), style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900),)
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 10,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          color: Color(0xffFFEA96)
-                        ),
-                        child: Center(
-                          child: Image.asset('assets/images/energy.png', height: 25,),
-                        ),
-                      ),
-                      SizedBox(width: 5,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${widget.appModel.homeData['used_today'].toString()}kWh', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900),),
-                          Text('Today', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900, fontSize: 12)),
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(width: 10,),
-                  Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Color(0xffFFEA96)
-                        ),
-                        child: Center(
-                          child: Image.asset('assets/images/plug.png', height: 20,),
-                        ),
-                      ),
-                      SizedBox(width: 5,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${widget.appModel.homeData['used_this_week'].toString()}kWh', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900),),
-                          Text('This Week', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900, fontSize: 12)),
-                        ],
-                      )
-                    ],
-                  ),
-                ],
-              )
-
-            ],
-          ),
-    ),
     );
   }
   Widget _modeSection(ModeModel model, ApplianceModel deviceModel) {
@@ -197,32 +105,24 @@ class _HomePageBodyState extends State<HomePageBody> {
                 Text(
                   'Modes',
                   style: TextStyle(
-                    fontSize: 19.0, // Increase font size
-                    fontWeight: FontWeight.w600, // Make text bold
-                    fontFamily: 'Roboto', // Optional: change the font family
+                    fontSize: 19.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Roboto',
                   ),
                 ),
                 GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.push(
+                  onTap: (){
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AddModeScreen(
-                        model: deviceModel,
-                        modeModel: model,
-                      )),
+                      MaterialPageRoute(
+                        builder: (context) => AddModeInHome(model: widget.appModel,)
+                      ),
                     );
-
-                    // Check if TVScreen passed back the result to trigger rebuild
-                    if (result == true) {
-                      setState(() {
-                        _needsRebuild = true;
-                      });
-                    }
                   },
                   child: Image.asset(
                     'assets/images/add.png',
-                    width: 25, // Set the width
-                    height: 25, // Set the height
+                    width: 25,
+                    height: 25,
                   ),
                 ),
               ],
@@ -234,18 +134,12 @@ class _HomePageBodyState extends State<HomePageBody> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: model.allFetch.map((mode) {
-                      // Use dynamic modes from the model
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: GestureDetector(
                           onTap: () {
-                            // Dynamic navigation based on mode title
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MorningScreen(mode: mode),
-                              ),
-                            );
+                            // Show Dialog with Mode Details
+                            _showModeDetailsDialog(context, mode);
                           },
                           child: Container(
                             height: MediaQuery.of(context).size.height * 0.075,
@@ -255,8 +149,13 @@ class _HomePageBodyState extends State<HomePageBody> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              image: DecorationImage(image: AssetImage(mode.backImg), fit: BoxFit.cover,),
-                              color: const Color(0xffd9d9d9), // Background based on isEnabled
+                              image: mode.backImg != null
+                                  ? DecorationImage(
+                                image: NetworkImage(mode.backImg!),
+                                fit: BoxFit.cover,
+                              )
+                                  : null,
+                              color: Color(int.parse('0x${mode.bgColor}')),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -288,6 +187,124 @@ class _HomePageBodyState extends State<HomePageBody> {
           ],
         ),
       ),
+    );
+  }
+  void _showModeDetailsDialog(BuildContext context, Mode mode) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.white.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: Colors.white,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              image: mode.backImg != null
+                  ? DecorationImage(
+                image: NetworkImage(mode.backImg!),
+                fit: BoxFit.cover,
+              )
+                  : null,
+              color: Color(int.parse('0x${mode.bgColor}')),
+              border: Border.all(width: 3),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(mode.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                    Icon(Icons.toggle_off, color: Colors.black, size: 35,)
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(width: 1),
+                    color: Colors.white
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.more_time_rounded, color: Colors.grey, size: 20,),
+                      SizedBox(width: 5,),
+                      Text('Scheduled : 6:00 - 20:00', style: TextStyle(color: Color(0xff7E7979), fontSize: 13, fontWeight: FontWeight.bold),)
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20,),
+                Align(alignment: Alignment.centerLeft, child: Text('Device routine', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)),
+                SizedBox(height: 5,),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: Expanded(
+                    child: GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // 2 boxes per row
+                        crossAxisSpacing: 8.0, // Spacing between columns
+                        mainAxisSpacing: 8.0, // Spacing between rows
+                        childAspectRatio: 1.7, // Adjust box proportions
+                      ),
+                      itemCount: mode.appliances.length, // Total number of appliances
+                      itemBuilder: (BuildContext context, int index) {
+                        final appliance = mode.appliances[index];
+                        return GestureDetector(
+                          onTap: () {
+                            if (appliance.type == 'curtain'){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CurtainScreen(device: appliance)),
+                              );
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffEFEFEF), // Inactive appliance color
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(width: 1)
+                            ),
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        appliance.mainIconString, // Dynamic icon path
+                                        height: 15,
+                                      ),
+                                      SizedBox(height: 5,),
+                                      Text(
+                                        appliance.title,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
   Widget _mainWidgetsSection(ApplianceModel model) {
@@ -445,7 +462,6 @@ class _HomePageBodyState extends State<HomePageBody> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     ApplianceModel model = widget.appModel.applianceModel;
@@ -456,7 +472,8 @@ class _HomePageBodyState extends State<HomePageBody> {
         child: Column(
         children: <Widget>[
           _topMyHomeSection(),
-          _consumptionBox(),
+          // _consumptionBox(),
+          ConsumptionWidget(homeData: widget.appModel.homeData),
           // _topWidgetSection(model),
           _modeSection(modeModel, model),
           _mainWidgetsSection(model),
@@ -464,4 +481,5 @@ class _HomePageBodyState extends State<HomePageBody> {
           // AssistantButton()
     ])));
   }
+
 }

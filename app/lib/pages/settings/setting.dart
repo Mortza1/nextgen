@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
-import 'package:nextgen_software/pages/login.dart';
+import 'package:nextgen_software/pages/auth_ui/login.dart';
+import 'package:nextgen_software/pages/settings/manage_devices.dart';
+import 'package:nextgen_software/pages/settings/manage_rooms.dart';
 import 'package:nextgen_software/pages/settings/settingButton.dart';
 
 import '../../scopedModel/app_model.dart';
@@ -53,18 +55,11 @@ class SettingScreenState extends State<SettingScreen> {
         children: [
           SizedBox(height: 70,),
           GestureDetector(
-            onTap: (){
-              widget.model.logout();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage(appModel: widget.model)),
-              );
-              },
             child: Image.asset('assets/images/man.png', height: 120,),
           ),
           SizedBox(height: 10,),
-          Text(widget.model.userData['name'],  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),),
-          Text(widget.model.userData['email'],  style: TextStyle(fontWeight: FontWeight.w500),),
+          Text(widget.model.userData['name'] ?? '',  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),),
+          Text(widget.model.userData['email'] ?? '',  style: TextStyle(fontWeight: FontWeight.w500),),
           SizedBox(height: 30,),
           Container(
             height: MediaQuery.of(context).size.height * 0.12,
@@ -105,7 +100,12 @@ class SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
-                Text('Manage', style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold),)
+                TextButton(onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ManageRoomsScreen()),
+                  );
+                }, child: Text('Manage', style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold)),)
               ],
             ),
           ),
@@ -137,7 +137,12 @@ class SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
-                Text('Manage', style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold),)
+                TextButton(onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ManageDevicesScreen()),
+                  );
+                }, child: Text('Manage', style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold)),)
               ],
             ),
           ),

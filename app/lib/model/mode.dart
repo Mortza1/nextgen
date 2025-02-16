@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import 'appliance.dart';  // Import the Appliance model
 
 class Mode {
@@ -6,6 +8,7 @@ class Mode {
   DateTime startTime;  // Start time as a DateTime object
   DateTime endTime;    // End time as a DateTime object
   String backImg;
+  String bgColor;
   List<Appliance> appliances;  // List of appliances associated with this mode
 
   Mode({
@@ -13,9 +16,10 @@ class Mode {
     required this.title,
     required this.startTime,
     required this.endTime,
-    this.backImg = '',
+    String? backImg, // Updated to ImageProvider
+    this.bgColor = '',
     this.appliances = const [],  // List of appliances, defaults to an empty list
-  });
+  }) : backImg = backImg ?? '';
 
   // Function to add a new appliance to the mode
   void addAppliance(Appliance appliance) {

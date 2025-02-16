@@ -2,6 +2,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Api/api_service.dart';
 import '../model/appliance.dart';
+import '../model/mode.dart';
 import 'connected_mode.dart';
 import 'connected_model_appliance.dart';
 
@@ -74,6 +75,13 @@ class AppModel extends Model {
     }
 
   }
+  Future<void> addMode(Map<String, dynamic> mode) async {
+    print(homeData);
+    var homeId = homeData['_id'];
+    final result = await _apiService.addMode(homeId, mode);
+    print(result);
+    notifyListeners();
+  }
   Future<void> logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _isLoggedIn = false;
@@ -86,30 +94,53 @@ class AppModel extends Model {
     String? userId = prefs.getString('user_id');
     String? hubId = prefs.getString('hub_id');
     hubId ??= '';
+
     if (userId != null) {
       try {
         final result = await _apiService.getDevices(userId, hubId);
-        if (hubId == ''){
+        if (hubId == '') {
           await prefs.setString('hub_id', result['data']['hub_id']);
         }
-        List<dynamic> devicesData = result['data']['devices'];
-        List<Appliance> appliances = devicesData.map((device){
+
+        // Handle devices
+        List<dynamic> devicesData = result['data']['devices'] ?? [];
+        List<Appliance> appliances = devicesData.map((device) {
           return Appliance(
             id: device['_id'] ?? '',
             title: device['name'] ?? 'Unknown Device',
             type: device['type'] ?? 'unknown',
             mainIconString: _getIconPath(device['type']),
-            // state: ThermostatState()
             state: _mapState(device),
-            // isEnable: device['isEnable'] ?? true,
           );
         }).toList();
         applianceModel.setAppliances(appliances);
+        // Handle modes
+        if (homeData != null && homeData.containsKey('modes')) {
+          List<Mode> modes = (homeData['modes'] ?? []).map<Mode>((mode) {
+            var devices = (mode['devices'] as List<dynamic>)
+                .map((e) => e.toString()) // Convert each element to String
+                .toList();
+            var appliances = devices
+                .map((id) => applianceModel.getApplianceById(id))
+                .where((appliance) => appliance != null)
+                .cast<Appliance>()
+                .toList();
+            return Mode(
+                title: mode['name'] ?? '',
+                startTime: DateTime.now(),
+                endTime: DateTime.now(),
+                backImg: mode['bgImage'],
+                bgColor: mode['bgColor'],
+                appliances: appliances
+            );
+          }).toList();
+          modeModel.setModes(modes);
+        } else {
+          print('homeData or modes is null');
+        }
 
-
-        // print('${result['data']}, Devices fetched successfully!');
       } catch (e) {
-        print('Error while fetching devices: $e'); // Print the error
+        print('Error while fetching devices: $e');
       }
     } else {
       print('User ID is null');
@@ -133,6 +164,7 @@ class AppModel extends Model {
         return 'assets/images/default.png';
     }
   }
+
   dynamic _mapState(Map<String, dynamic> device) {
     switch (device['type']) {
       case 'tv':
@@ -182,7 +214,6 @@ class AppModel extends Model {
       return null;
     }
   }
-
 
 
   void notifyAll() {

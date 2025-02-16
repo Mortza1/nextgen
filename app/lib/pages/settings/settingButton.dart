@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
-import 'package:nextgen_software/pages/login.dart';
+import 'package:nextgen_software/pages/auth_ui/login.dart';
 import 'package:nextgen_software/pages/settings/notificationSetting.dart';
 import 'package:nextgen_software/pages/settings/preferences.dart';
 import 'package:nextgen_software/pages/settings/privacy.dart';

@@ -1,0 +1,8 @@
+.iconWrapContainer {
+  font-size: 1.2em;
+  font-weight: inherit;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

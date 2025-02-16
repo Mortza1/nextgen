@@ -1,0 +1,8 @@
+fastapi
+python-dotenv
+pymongo
+werkzeug
+uvicorn
+ngrok
+paho-mqtt
+httpx
