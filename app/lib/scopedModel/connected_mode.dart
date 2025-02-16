@@ -8,7 +8,8 @@ class ConnectedMode extends Model {
     Mode(
       title: 'Morning Mode',
       startTime: DateTime(2024, 12, 17, 6, 0),  // 06:00 AM
-      endTime: DateTime(2024, 12, 17, 9, 0),    // 09:00 AM
+      endTime: DateTime(2024, 12, 17, 9, 0),// 09:00 AM
+      backImg: 'assets/images/morning_back.png',
       appliances: [
         Appliance(
           title: 'Tv',
@@ -30,6 +31,7 @@ class ConnectedMode extends Model {
       title: 'Night Mode',
       startTime: DateTime(2024, 12, 17, 20, 0),  // 08:00 PM
       endTime: DateTime(2024, 12, 17, 22, 0),    // 10:00 PM
+      backImg: 'assets/images/night_back.png',
       appliances: [
         Appliance(
           title: 'Lights',

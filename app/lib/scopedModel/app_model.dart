@@ -8,6 +8,8 @@ import 'connected_model_appliance.dart';
 
 class AppModel extends Model {
   bool _isLoggedIn = false;
+  Map<String, dynamic> userData = {};
+  Map<String, dynamic> homeData = {};
   bool get isLoggedIn => _isLoggedIn;
   final ApplianceModel applianceModel = ApplianceModel();
   final ApiService _apiService = ApiService();
@@ -18,7 +20,6 @@ class AppModel extends Model {
     _isLoggedIn = prefs.getString('user_id') == null ? false : true;
     notifyListeners();
   }
-
   Future<void> login(String email, String password) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final result = await _apiService.login(email, password);
@@ -27,26 +28,52 @@ class AppModel extends Model {
     await prefs.setString('user_id', result['data']['user_id']);
     notifyListeners();
   }
+  Future<void> getUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('user_id');
+    String? homeId = prefs.getString('home_id');
 
+    if (userId != null && homeId != null) {
+      try {
+        final result = await _apiService.getUser(userId, homeId);
+
+        if (result['statusCode'] == 200) {  // Assuming API response contains a success field
+          // Extract user details from API response
+          userData = result['data']['user'];
+          homeData = result['data']['home'];
+
+
+          print("User Data: $userData"); // Debugging output
+        } else {
+          print("Failed to fetch user data: ${result['message']}");
+        }
+      } catch (e) {
+        print("Error fetching user: $e");
+      }
+    } else {
+      print("No user ID found in SharedPreferences.");
+    }
+
+    notifyListeners();  // Update UI
+  }
   Future<void> register(String name, String token, String email, String password) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final result = await _apiService.register(name, email, token, password);
     _isLoggedIn = true;
     print(result['data']['user_id'] + 'klklll');
     await prefs.setString('user_id', result['data']['user_id']);
+    await prefs.setString('home_id', result['data']['home_id']);
     notifyListeners();
   }
-
-  Future<void> setCommand(String command) async {
+  Future<void> setCommand(String id, String command) async {
     try{
-      final result = await _apiService.setCommand('677ff0c3dc28041eb6f226eb', command);
+      final result = await _apiService.setCommand(id, command);
       notifyListeners();
     } catch (e){
       print('Error while toggling light: $e'); // Print the error
     }
 
   }
-
   Future<void> logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _isLoggedIn = false;
@@ -54,14 +81,17 @@ class AppModel extends Model {
 
     notifyListeners();
   }
-
   Future<void> getDevices() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('user_id');
-
+    String? hubId = prefs.getString('hub_id');
+    hubId ??= '';
     if (userId != null) {
       try {
-        final result = await _apiService.getDevices(userId);
+        final result = await _apiService.getDevices(userId, hubId);
+        if (hubId == ''){
+          await prefs.setString('hub_id', result['data']['hub_id']);
+        }
         List<dynamic> devicesData = result['data']['devices'];
         List<Appliance> appliances = devicesData.map((device){
           return Appliance(
@@ -85,7 +115,6 @@ class AppModel extends Model {
       print('User ID is null');
     }
   }
-
   String _getIconPath(String? type) {
     switch (type) {
       case 'tv':
@@ -104,7 +133,6 @@ class AppModel extends Model {
         return 'assets/images/default.png';
     }
   }
-
   dynamic _mapState(Map<String, dynamic> device) {
     switch (device['type']) {
       case 'tv':
@@ -124,8 +152,8 @@ class AppModel extends Model {
         );
       case 'light':
         return LightState(
-          isOn: device['current_data']['isOn'] ?? false,
-          brightness: device['current_data']['brightness'] ?? 100,
+          isOn: device['current_data']['is_on'] ?? false,
+          brightness: device['current_data']['brightness'] ?? 50,
         );
       case 'curtain':
         return CurtainState(opened: device['state']['opened'] ?? 50);
@@ -137,6 +165,24 @@ class AppModel extends Model {
         return null;
     }
   }
+  Future<Appliance?> getDeviceById(String deviceId) async {
+    try {
+      // Get all devices
+      await getDevices();
+
+      // Filter the list to find the device by ID
+      List<Appliance> matchingDevices = applianceModel.allFetch.where(
+            (appliance) => appliance.id == deviceId,
+      ).toList();
+
+      // Return the first match or null if not found
+      return matchingDevices.isNotEmpty ? matchingDevices.first : null;
+    } catch (e) {
+      print('Error fetching device by ID: $e');
+      return null;
+    }
+  }
+
 
 
   void notifyAll() {

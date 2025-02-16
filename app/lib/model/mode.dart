@@ -5,6 +5,7 @@ class Mode {
   String title;
   DateTime startTime;  // Start time as a DateTime object
   DateTime endTime;    // End time as a DateTime object
+  String backImg;
   List<Appliance> appliances;  // List of appliances associated with this mode
 
   Mode({
@@ -12,6 +13,7 @@ class Mode {
     required this.title,
     required this.startTime,
     required this.endTime,
+    this.backImg = '',
     this.appliances = const [],  // List of appliances, defaults to an empty list
   });
 

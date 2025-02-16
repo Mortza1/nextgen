@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nextgen_software/pages/assistant_button.dart';
 import 'package:nextgen_software/pages/curtain.dart';
 import 'package:nextgen_software/pages/light.dart';
 import 'package:nextgen_software/pages/speaker.dart';
@@ -6,11 +7,12 @@ import 'package:nextgen_software/pages/thermostat.dart';
 import 'package:nextgen_software/pages/tv.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 import 'package:nextgen_software/scopedModel/connected_mode.dart';
-
 import '../scopedModel/connected_model_appliance.dart';
 import 'add_mode.dart';
 import 'camera.dart';
+import 'components/toggle.dart';
 import 'morning.dart';
+import 'package:intl/intl.dart';
 
 class HomePageBody extends StatefulWidget {
   final AppModel appModel;
@@ -27,6 +29,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   @override
   void initState() {
     super.initState();
+    getUser();
     fetchDevices();
   }
 
@@ -38,99 +41,144 @@ class _HomePageBodyState extends State<HomePageBody> {
       print('Error in fetchDevices: $e');
     }
   }
+
+  Future<void> getUser() async {
+    try {
+      await widget.appModel.getUser();
+      setState(() {}); // Update UI after fetching devices
+    } catch (e) {
+      print('Error in fetchDevices: $e');
+    }
+  }
+
   Widget _topMyHomeSection() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.09,
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      height: MediaQuery.of(context).size.height * 0.21,
+      padding: EdgeInsets.only(top: 50, left: 16, right: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'My Home',
-            style: TextStyle(
-              fontSize: 20.0, // Increase font size
-              fontWeight: FontWeight.w900, // Make text bold
-              fontFamily: 'Roboto', // Optional: change the font family (default is 'Roboto')
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset('assets/images/profile_female.png', width: 75, height: 75,),
+              SizedBox(height: 5,),
+              Text(
+                "Hello, ${widget.appModel.userData['name']?.split(' ')[0] ?? ''} ☀",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, fontFamily: 'Roboto'),
+              )
+            ],
           ),
-          Image.asset('assets/images/add.png',
-            width: 25,  // Set the width
-            height: 25, // Set the height
+          Image.asset('assets/images/bell.png',
+            width: 45,  // Set the width
+            height: 45, // Set the height
             )
         ],
       ),
     );
   }
-  Widget _topWidgetSection(ApplianceModel model) {
+  Widget _consumptionBox(){
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07, // Parent container height
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal, // Scroll horizontally
-          itemCount: model.allFetch.length, // Use the dynamic model list count
-          itemBuilder: (context, index) {
-            // Sort the list so enabled devices come first
-            var sortedList = List.from(model.allFetch)
-              ..sort((a, b) => (b.isEnable ? 1 : 0).compareTo(a.isEnable ? 1 : 0));
-            bool isEnabled = sortedList[index].isEnable;
-            Color boxColor = isEnabled ? Color(0xff32E1A1) : Color(0xffefefef);
-            String text = isEnabled ? 'active' : 'not active';
-
-            return GestureDetector(
-              onTap: () async {
-                String cmd = isEnabled? 'turn_off' : 'turn_on';
-                await widget.appModel.setCommand(cmd); // Wait for the async operation
-                setState(() {
-                  sortedList[index].isEnable = !isEnabled; // Then update the state
-                });
-              },
-
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1, // Set box height
-                width: 120, // Box width
-                margin: EdgeInsets.symmetric(horizontal: 4.0), // Space between boxes
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.95,
+          height: MediaQuery.of(context).size.height * 0.18, // Parent container height
+          decoration: BoxDecoration(
+            color: Color(0xffF9E07F),
+            borderRadius: BorderRadius.circular(10)
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 55,
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
-                  color: boxColor, // Use dynamic color
-                  borderRadius: BorderRadius.circular(5), // Rounded corners
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      blurRadius: 10,
-                      offset: Offset(0, 10),
-                      color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(30),
+                  color: Color(0xffFFEA96)
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Energy Consumption', style: TextStyle(color: Color(0xffD3B84F), fontSize: 14, fontWeight: FontWeight.w600),),
+                    SizedBox(width: 5,),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      height: 40,
+                      // width: 100,
+                      decoration: BoxDecoration(
+                        color: Color(0xffE8CA52),
+                        borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset('assets/images/calender.png'),
+                          Text(DateFormat('dd MMM, yyyy').format(DateTime.now()), style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900),)
+                        ],
+                      ),
                     )
                   ],
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(sortedList[index].mainIconString, height: 20),
-                    SizedBox(width: 10),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          sortedList[index].title, // Dynamic title
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        Text(
-                          text, // Dynamic status
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                    SizedBox(width: 10)
-                  ],
-                ),
               ),
-            );
-          },
-        ),
-      ),
+              SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          color: Color(0xffFFEA96)
+                        ),
+                        child: Center(
+                          child: Image.asset('assets/images/energy.png', height: 25,),
+                        ),
+                      ),
+                      SizedBox(width: 5,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${widget.appModel.homeData['used_today'].toString()}kWh', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900),),
+                          Text('Today', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900, fontSize: 12)),
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(width: 10,),
+                  Row(
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: Color(0xffFFEA96)
+                        ),
+                        child: Center(
+                          child: Image.asset('assets/images/plug.png', height: 20,),
+                        ),
+                      ),
+                      SizedBox(width: 5,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${widget.appModel.homeData['used_this_week'].toString()}kWh', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900),),
+                          Text('This Week', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.w900, fontSize: 12)),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              )
+
+            ],
+          ),
+    ),
     );
   }
   Widget _modeSection(ModeModel model, ApplianceModel deviceModel) {
@@ -149,7 +197,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                 Text(
                   'Modes',
                   style: TextStyle(
-                    fontSize: 23.0, // Increase font size
+                    fontSize: 19.0, // Increase font size
                     fontWeight: FontWeight.w600, // Make text bold
                     fontFamily: 'Roboto', // Optional: change the font family
                   ),
@@ -207,6 +255,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
+                              image: DecorationImage(image: AssetImage(mode.backImg), fit: BoxFit.cover,),
                               color: const Color(0xffd9d9d9), // Background based on isEnabled
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -216,9 +265,9 @@ class _HomePageBodyState extends State<HomePageBody> {
                                 Text(
                                   mode.title,
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 22,
                                     fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
                                 mode.isActive()
@@ -247,19 +296,18 @@ class _HomePageBodyState extends State<HomePageBody> {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.335,
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Frequently used devices",
+              "My room",
               style: TextStyle(
                 fontSize: 18.0,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w800,
                 fontFamily: 'Roboto',
               ),
             ),
-            const SizedBox(height: 5),
             Expanded(
               child: GridView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -267,7 +315,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
-                  childAspectRatio: 1.7,
+                  childAspectRatio: 2.5,
                 ),
                 itemCount: model.allFetch.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -286,7 +334,7 @@ class _HomePageBodyState extends State<HomePageBody> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: const Color(0xffd9d9d9),
+          border: Border.all(color: Color(0x3f000017)),
           borderRadius: BorderRadius.circular(10.0),
           boxShadow: [
             BoxShadow(
@@ -306,21 +354,14 @@ class _HomePageBodyState extends State<HomePageBody> {
                 Text(device.title),
               ],
             ),
-            IconButton(
-              onPressed: () => setState(() {
-                device.isEnable = !device.isEnable;
-              }),
-              icon: Icon(
-                device.isEnable ? Icons.toggle_on : Icons.toggle_off,
-                color: device.isEnable ? Colors.green : Colors.black,
-                size: 35,
-              ),
-            ),
+            ['thermostat'].contains(device.type) ? SizedBox():
+            ToggleMain(deviceId: device.id, appModel: widget.appModel), // Pass only ID
           ],
         ),
       ),
     );
   }
+
   void _navigateToDeviceScreen(device) async {
     Widget? screen;
 
@@ -329,7 +370,7 @@ class _HomePageBodyState extends State<HomePageBody> {
         screen = TVScreen(device: device);
         break;
       case "light":
-        screen = LightScreen();
+        screen = LightScreen(appModel: widget.appModel, device: device);
         break;
       case "speaker":
         screen = SpeakerScreen(device: device);
@@ -415,11 +456,12 @@ class _HomePageBodyState extends State<HomePageBody> {
         child: Column(
         children: <Widget>[
           _topMyHomeSection(),
-          _topWidgetSection(model),
+          _consumptionBox(),
+          // _topWidgetSection(model),
           _modeSection(modeModel, model),
           _mainWidgetsSection(model),
-          _assistantButton()
-
+          // _assistantButton()
+          // AssistantButton()
     ])));
   }
 }

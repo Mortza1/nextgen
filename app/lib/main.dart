@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nextgen_software/pages/assistant_button.dart';
 import 'package:nextgen_software/pages/splash_screen.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 import 'package:scoped_model/scoped_model.dart';

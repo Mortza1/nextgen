@@ -1,16 +1,50 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 
+import '../model/appliance.dart';
+import '../scopedModel/app_model.dart';
+
 class LightScreen extends StatefulWidget {
-  const LightScreen({super.key});
+  final AppModel appModel;
+  final Appliance device;
+  const LightScreen({super.key, required this.appModel, required this.device});
 
   @override
   LightScreenState createState() => LightScreenState();
 }
 
 class LightScreenState extends State<LightScreen> {
-  final double _progress = 0;
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+  late double progress;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the progress value from the appliance state
+    var state = widget.device.state as LightState;
+    progress = state.brightness.toDouble();
+
+    // Set the initial value of the ValueNotifier
+    _valueNotifier.value = progress;
+
+    // Listen to ValueNotifier changes
+    _valueNotifier.addListener(() {
+      if (mounted) {
+        // Use WidgetsBinding.instance.addPostFrameCallback to schedule the update after the build phase
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // setState(() {
+          //   // Update the appliance state when ValueNotifier changes
+          //   if (widget.device.state is CurtainState) {
+          //     (widget.device.state as CurtainState).opened = _valueNotifier.value;
+          //   }
+          // });
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -25,8 +59,7 @@ class LightScreenState extends State<LightScreen> {
         children: [
           _screenHeader(),
           _settingOptions(),
-          _lightSection(),
-          _seekerControls(),
+          _seekerControls(_valueNotifier, progress),
         ],
       ),
     );
@@ -89,44 +122,8 @@ class LightScreenState extends State<LightScreen> {
       ),
     );
   }
-
-  Widget _lightSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07, // Parent container height
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal, // Scroll horizontally
-          itemCount: 5, // Set the number of items in the list
-          itemBuilder: (context, index) {
-            // Check if it's the first two boxes
-            Color boxColor = (index == 0 || index == 1) ? Color(0xff32E1A1) : Color(0xffefefef);
-            // String text = (index == 0 || index == 1) ? 'active' : 'not active';
-
-            return Container(
-              width: 120, // Width of each box
-              height: MediaQuery.of(context).size.height * 0.1, // Set the box height to match parent container
-              margin: EdgeInsets.symmetric(horizontal: 4.0), // Space between boxes
-              decoration: BoxDecoration(
-                color: boxColor, // Use the appropriate color
-                borderRadius: BorderRadius.circular(5), // Rounded corners for boxes
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("Light ${index + 1}")
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _seekerControls() {
+  Widget _seekerControls(valueNotifier, progress) {
+    Timer? _seekTimer;
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       // height: MediaQuery.of(context).size.height * 0.4,
@@ -139,7 +136,7 @@ class LightScreenState extends State<LightScreen> {
               CircularSeekBar(
                 width: double.infinity,
                 height: 280,
-                progress: _progress,
+                progress: progress,
                 minProgress: 0,
                 maxProgress: 100,
                 barWidth: 3,
@@ -157,41 +154,32 @@ class LightScreenState extends State<LightScreen> {
                 animation: false,
                 interactive: true,
                 valueNotifier: _valueNotifier,
-                onEnd: () {
-                  // Optional: Handle end of seek
-                },
-              ),
-              // Widget in the center of the circular seek bar
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
-                child: Center(
-                  child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: const Color(0xffCA8A2A),
-                  ),
-                  child: const Icon(
-                    Icons.power_settings_new,
-                    color: Colors.white,
-                  ),
-                ),
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.35,
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text("93%", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),),
-                    Text("Philips hue", style: TextStyle(fontSize: 15))
-                  ],
-                ),
-              )
+                child: ValueListenableBuilder(
+                    valueListenable: valueNotifier,
+                    builder: (_, double value, __)
+                    {
+                      _seekTimer?.cancel(); // Cancel previous timer
+                      _seekTimer = Timer(Duration(milliseconds: 500), () {
+                        widget.appModel.setCommand(widget.device.id, 'set_brightness');
 
-              
+                      });
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${value.round()}%',
+                                style: TextStyle(
+                                    color: Color(0xffCA8A2A),
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              Text('brightness',
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 13))
+                            ],
+                          );
+                        }),
+          ),
             ],
           ),
           const SizedBox(height: 20),

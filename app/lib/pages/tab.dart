@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/home_page_body.dart';
 import 'package:nextgen_software/pages/overview.dart';
-import 'package:nextgen_software/pages/setting.dart';
+import 'package:nextgen_software/pages/settings/setting.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 
 import '../scopedModel/connected_model_appliance.dart';
+import 'mode_page.dart';
 
 class CustomTabScreen extends StatefulWidget {
   final AppModel model;
@@ -21,6 +22,7 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       HomePageBody(appModel: widget.model),
+      ModeScreen(model: widget.model),
       OverviewScreen(),
       SettingScreen(model: widget.model,),
     ];
@@ -29,47 +31,29 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
         children: [
           screens[_currentIndex], // Display the current screen
           Positioned(
-            bottom: 20, // Adjust distance from the bottom of the screen
-            left: 20,
-            right: 20,
-            child: GestureDetector(
-              onHorizontalDragEnd: (details) {
-                if (details.primaryVelocity != null && details.primaryVelocity! > 0) {
-                  setState(() {
-                    if (_currentIndex >0){
-                      _currentIndex --;
-                    }
-                  });
-                }else if (details.primaryVelocity! < 0) {
-                  setState(() {
-                    if (_currentIndex < 2){
-                      _currentIndex ++;
-                    }
-                  });
-
-                }
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black, // Black background color
-                  borderRadius: BorderRadius.circular(15), // Rounded corners
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
-                ),
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem('assets/images/dashboard.png', 0, "dashboard"),
-                    _buildNavItem('assets/images/graph.png', 1, "overview"),
-                    _buildNavItem('assets/images/user.png', 2, "profile"),
-                  ],
-                ),
+            bottom: 0, // Adjust distance from the bottom of the screen
+            // left: 20,
+            // right: 20,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.1,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Color(0xffD2D2DA),
+                    width: 2.0
+                  )
+                )
+              ),
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem('assets/images/home.png', 0, "dashboard"),
+                  _buildNavItem('assets/images/window.png', 1, "overview"),
+                  _buildNavItem('assets/images/leaf.png', 2, "profile"),
+                  _buildNavItem('assets/images/profile_duck.png', 3, "profile"),
+                ],
               ),
             ),
           ),
@@ -86,29 +70,13 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
         });
       },
       child: Container(
-        padding: _currentIndex == index ? EdgeInsets.symmetric(horizontal: 15, vertical: 5) : EdgeInsets.all(0),
-        decoration: BoxDecoration(
-          color: _currentIndex == index ?   Colors.grey : Colors.transparent,
-          borderRadius: _currentIndex == index? BorderRadius.circular(5): BorderRadius.circular(0)
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(image, height: 15,),
-            if (_currentIndex == index)
-            SizedBox(width: 5,),
-            if (_currentIndex == index)
-            Text(
-              label,
-              style: TextStyle(
-                color: _currentIndex == index ? Colors.white : Colors.grey,
-                fontSize: 15,
-                fontWeight: FontWeight.w900
-              ),
-            ),
-          ],
-        ),
-      ),
+        padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: _currentIndex == index ? Color(0x1f00AB5E) : Colors.transparent,
+            border: Border.all(color: _currentIndex == index? Color(0xff00AB5E) : Colors.transparent, width: 2 ),
+            borderRadius: BorderRadius.circular(10)
+          ),
+          child: Image.asset(image, height: 30,)),
     );
   }
 }

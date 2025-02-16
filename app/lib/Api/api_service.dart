@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = "https://4316-2-51-18-183.ngrok-free.app";
+  final String baseUrl = "https://c67b-2-51-19-114.ngrok-free.app";
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = '$baseUrl/auth/login';
@@ -19,6 +19,24 @@ class ApiService {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to login');
+    }
+  }
+
+  Future<Map<String, dynamic>> getUser(String userId, String homeId) async {
+    final url = '$baseUrl/auth/user';
+    final headers = {'Content-Type': 'application/json'};
+    final body = jsonEncode({'user_id' : userId, 'home_id' : homeId});
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetched user');
     }
   }
 
