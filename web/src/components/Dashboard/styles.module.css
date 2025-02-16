@@ -1,0 +1,141 @@
+.main {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  
+  .topNav {
+    padding: 0 30px;
+    height: 13%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .navItems{
+      display: flex;
+      gap: 30px;
+      .item {
+        display: flex;
+        color: #ccc;
+        font-size: 0.8rem;
+        cursor: pointer;
+        user-select: none;  
+      }
+      .selected {
+        color: white;
+        font-weight: 900;
+      }
+    }
+    
+    
+  }
+  .mainContent {
+    display: flex;
+
+    .leftNav {
+      width: 10%;
+      height: 85vh;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      align-items: center;
+      justify-content: center;
+
+      .item{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+
+        .icon {
+          height: 40px;
+          width: 40px;
+          border-radius: 100px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .subtext {
+          font-size: 0.8rem;
+          color: white;
+        }
+      }
+      .active {
+        .icon {
+          background-color: white;
+        }
+      }
+    }
+
+    .body {
+      width: 87%;
+      height: 85vh;
+      margin-bottom: 20px;
+      background-color: white;
+      border-radius: 30px;
+      display: flex;
+
+      .content {
+        display: flex;
+        width: 100%;
+        overflow-y: auto;
+      }
+      
+      .stats{
+        width: 55%;
+        height: max(35%, 350px);
+        background: linear-gradient(135deg, #466e80, #f6d4c0);
+        border-radius: 20px;
+        margin: 20px;
+        display: flex;
+        padding: 30px;
+        justify-content: space-between;
+        align-items: center;
+
+        .left{
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 5px;
+
+          .small {
+            font-size: 0.8rem;
+            font-weight: 500;
+          }
+          .large {
+            font-size: 2.3rem;
+            font-weight: 900;
+          }
+
+          .button {
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+          }
+        }
+      }
+
+      .analytics {
+        margin: 20px;
+        height: max(35%, 350px);
+        width: 35%;
+        border-radius: 30px;
+        background-color: #f6d4c0;
+      }
+
+    }
+  }
+
+  
+}

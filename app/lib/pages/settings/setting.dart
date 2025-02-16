@@ -53,18 +53,11 @@ class SettingScreenState extends State<SettingScreen> {
         children: [
           SizedBox(height: 70,),
           GestureDetector(
-            onTap: (){
-              widget.model.logout();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage(appModel: widget.model)),
-              );
-              },
             child: Image.asset('assets/images/man.png', height: 120,),
           ),
           SizedBox(height: 10,),
-          Text(widget.model.userData['name'],  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),),
-          Text(widget.model.userData['email'],  style: TextStyle(fontWeight: FontWeight.w500),),
+          Text(widget.model.userData['name'] ?? '',  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),),
+          Text(widget.model.userData['email'] ?? '',  style: TextStyle(fontWeight: FontWeight.w500),),
           SizedBox(height: 30,),
           Container(
             height: MediaQuery.of(context).size.height * 0.12,
