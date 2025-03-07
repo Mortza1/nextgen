@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
+import 'package:nextgen_software/pages/components/toggle.dart';
 
 import '../../model/appliance.dart';
 import '../../scopedModel/app_model.dart';
@@ -18,6 +19,7 @@ class LightScreen extends StatefulWidget {
 class LightScreenState extends State<LightScreen> {
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
   late double progress;
+  late bool isOn;
 
   @override
   void initState() {
@@ -25,6 +27,7 @@ class LightScreenState extends State<LightScreen> {
 
     // Initialize the progress value from the appliance state
     var state = widget.device.state as LightState;
+    isOn = state.isOn;
     progress = state.brightness.toDouble();
 
     // Set the initial value of the ValueNotifier
@@ -57,9 +60,10 @@ class LightScreenState extends State<LightScreen> {
     return Scaffold(
       body: Column(
         children: [
+          SizedBox(height: 35,),
           _screenHeader(),
-          _settingOptions(),
-          _seekerControls(_valueNotifier, progress),
+          isOn ?
+          _seekerControls(_valueNotifier, progress) : deviceOff(),
         ],
       ),
     );
@@ -67,79 +71,63 @@ class LightScreenState extends State<LightScreen> {
 
   Widget _screenHeader() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.14,
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          Expanded(
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Bed Room",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20,
-                ),
-                textAlign: TextAlign.center,
+      height: MediaQuery.of(context).size.height * 0.06,
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Color(0xffD2D2DA), width: 2))
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);  // Goes back one screen
+              },
+              child: Image.asset(
+                'assets/images/cross.png',
+                height: 15,
               ),
             ),
-          ),
-          SizedBox(width: 48),
-        ],
+            Text(widget.device.title, style: TextStyle(color: Color(0xffAFB0BA), fontSize: 19, fontWeight: FontWeight.bold),),
+            ToggleMain(appModel: widget.appModel, device: widget.device)
+          ],
+        ),
       ),
     );
   }
-
-  Widget _settingOptions() {
-    return Container(
+  Widget deviceOff(){
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.5,
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.07,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text('Lights', style: TextStyle(fontSize: 20)),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.settings, size: 30, color: Colors.black),
-                onPressed: () {},
-                tooltip: "Settings",
-              ),
-            ],
-          ),
-        ],
+      child: Center(
+        child: Column(
+          children: [
+            Icon(Icons.tag_faces_outlined, color: Color(0xffBBBCC7),)
+          ],
+        ),
       ),
     );
   }
   Widget _seekerControls(valueNotifier, progress) {
-    Timer? _seekTimer;
+    Timer? seekTimer;
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       // height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
         children: [
-          SizedBox(height: 20,),
+          SizedBox(height: 50,),
           Stack(
             // alignment: Alignment.center, // Aligns children to the center of the stack
             children: [
               CircularSeekBar(
                 width: double.infinity,
-                height: 280,
+                height: 300,
                 progress: progress,
                 minProgress: 0,
                 maxProgress: 100,
-                barWidth: 3,
+                barWidth: 2,
                 startAngle: 45,
                 sweepAngle: 270,
                 strokeCap: StrokeCap.round,
@@ -158,8 +146,8 @@ class LightScreenState extends State<LightScreen> {
                     valueListenable: valueNotifier,
                     builder: (_, double value, __)
                     {
-                      _seekTimer?.cancel(); // Cancel previous timer
-                      _seekTimer = Timer(Duration(milliseconds: 500), () {
+                      seekTimer?.cancel(); // Cancel previous timer
+                      seekTimer = Timer(Duration(milliseconds: 500), () {
                         widget.appModel.setCommand(widget.device.id, 'set_brightness');
 
                       });
@@ -170,7 +158,7 @@ class LightScreenState extends State<LightScreen> {
                                 '${value.round()}%',
                                 style: TextStyle(
                                     color: Color(0xffCA8A2A),
-                                    fontSize: 35,
+                                    fontSize: 40,
                                     fontWeight: FontWeight.w900),
                               ),
                               Text('brightness',
@@ -183,31 +171,80 @@ class LightScreenState extends State<LightScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 40,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xffFEDC97)
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xffD1D1D8), width: 3),
+                    borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: Center(
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: Color(0xffFF4747),
+                        borderRadius: BorderRadius.circular(100)
+                      ),
+                    ),
+                  ),
                 ),
-                child: Center(child: Text("Hue", style: TextStyle(color: Color(0xffCA8A2A)),)),
-              ),
-              SizedBox(width: 10,),
-              Container(
-                height: 40,
-                width: 100,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Color(0xffC4EDD2)
+                Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xffD1D1D8), width: 3),
+                      borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: Center(
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                          color: Color(0xff8247FF),
+                          borderRadius: BorderRadius.circular(100)
+                      ),
+                    ),
+                  ),
                 ),
-                child: Center(child: Text("Hue", style: TextStyle(color: Color(0xff008914)),)),
-              )
-            ],
+                Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xffD1D1D8), width: 3),
+                      borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: Center(
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                          color: Color(0xff4BFF47),
+                          borderRadius: BorderRadius.circular(100)
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xffD1D1D8), width: 3),
+                      borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: Center(
+                    child: Icon(Icons.color_lens, color: Color(0xff626262), size: 30,),
+                  ),
+                )
+              ],
+            ),
           )
-          
+
         ],
       ),
     );

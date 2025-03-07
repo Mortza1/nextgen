@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/components/barchart.dart';
+import '../../scopedModel/app_model.dart';
 import '../components/piechart.dart';
 
 class OverviewScreen extends StatefulWidget {
-  const OverviewScreen({super.key});
+  final AppModel model;
+  const OverviewScreen({super.key, required this.model});
 
   @override
   _OverviewScreenState createState() => _OverviewScreenState();
@@ -11,7 +13,25 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   int _selectedIndex = 0; // Keeps track of the selected tab
+  String _selectedPeriod1 = 'Day';
+  String _selectedPeriod2 = 'Day';
+  String _selectedPeriod3 = 'Day';
 
+  // Example data for each tab
+  final Map<String, String> usageData = {
+    'Day': '17.43',
+    'Week': '102.5',
+    'Month': '412.8',
+    'Year': '4,520',
+  };
+  final Map<String, String> savedData = {
+    'Day': '3.0',
+    'Week': '34.22',
+    'Month': '109.92',
+    'Year': '498.8',
+  };
+
+  List<double> pi_data = [4.5, 3.2, 5.1, 1.2];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,67 +79,123 @@ class _OverviewScreenState extends State<OverviewScreen> {
   Widget chart() {
     return Column(
       children: [
-        period(),
+        period(_selectedPeriod1, (value) {
+          setState(() {
+            _selectedPeriod1 = value;
+          });
+        }),
         SizedBox(height: 40),
-        pi(),
+        pi(pi_data),
+        legend(),
         board(),
       ],
     );
   }
 
-  Widget period() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+  Widget legend() {
+    var labels = ['Lights', 'Cooling', 'Appliances', 'Security'];
+    var colors = [Color(0xff7EFCE3), Color(0xffFDA75C), Color(0xff7E84FC), Color(0xff93DB95)];
+
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.6,
+      alignment: Alignment.topCenter, // Align the container to the top center
+      padding: EdgeInsets.only(bottom: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.2,
-            padding: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffD1D2DA), width: 3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(child: Text('Day')),
+          // First row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              legendItem(colors[0], labels[0]),
+              legendItem(colors[1], labels[1]),
+            ],
           ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.2,
-            padding: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffD1D2DA), width: 3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(child: Text('Week')),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.2,
-            padding: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffD1D2DA), width: 3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(child: Text('Month')),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.2,
-            padding: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffD1D2DA), width: 3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(child: Text('Year')),
+          SizedBox(height: 10), // Add some vertical spacing
+          // Second row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              legendItem(colors[2], labels[2]),
+              legendItem(colors[3], labels[3]),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget pi() {
+// Reusable legend item widget
+  Widget legendItem(Color color, String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        SizedBox(width: 6),
+        Text(
+          label,
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+
+
+  Widget period(String selector, Function(String) onSelected) {
+    final periods = ['Day', 'Week', 'Month', 'Year'];
+
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: periods.map((period) {
+          final bool isSelected = selector == period;
+
+          return GestureDetector(
+            onTap: () {
+              onSelected(period); // Use the callback to update state
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.2,
+              padding: EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: isSelected ? Color(0xff4B504C) : Colors.white,
+                border: Border.all(color: Color(0xffD1D2DA), width: 3),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Text(
+                  period,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+
+
+  Widget pi(List<double> dataValues) {
     return Stack(
       children: [
         CustomPaint(
           size: Size(MediaQuery.of(context).size.width * 0.6, 100),
-          painter: SemiCirclePiePainter(),
+          painter: SemiCirclePiePainter(dataValues), // Pass dynamic values
         ),
         SizedBox(
             height: MediaQuery.of(context).size.height * 0.17,
@@ -132,10 +208,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   children: [
                     Text('Total usage', style: TextStyle(color: Color(0xff575757), fontSize: 11)),
                     SizedBox(width: 3),
-                    Text('today', style: TextStyle(color: Color(0xff575757), fontSize: 11, fontWeight: FontWeight.bold)),
+                    Text(_selectedPeriod1, style: TextStyle(color: Color(0xff575757), fontSize: 11, fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Text('17.43 kWh', style: TextStyle(color: Color(0xff575757), fontWeight: FontWeight.bold, fontSize: 22)),
+                Text('${usageData[_selectedPeriod1]} kWh', style: TextStyle(color: Color(0xff575757), fontWeight: FontWeight.bold, fontSize: 22)),
                 Text('Saved 11.34', style: TextStyle(color: Color(0xff34C759), fontWeight: FontWeight.bold, fontSize: 11)),
               ],
             ))),
@@ -158,7 +234,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             Column(
               children: [
                 Text('This week', style: TextStyle(color: Color(0xff575757), fontSize: 13)),
-                Text('90.7 kWh', style: TextStyle(color: Color(0xff575757), fontSize: 17, fontWeight: FontWeight.bold)),
+                Text('${usageData['Week'].toString()} kWh', style: TextStyle(color: Color(0xff575757), fontSize: 17, fontWeight: FontWeight.bold)),
               ],
             ),
             SizedBox(width: 15),
@@ -173,7 +249,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             Column(
               children: [
                 Text('This month', style: TextStyle(color: Color(0xff575757), fontSize: 13)),
-                Text('320.7 kWh', style: TextStyle(color: Color(0xff575757), fontSize: 17, fontWeight: FontWeight.bold)),
+                Text('${usageData['Month'].toString()} kWh', style: TextStyle(color: Color(0xff575757), fontSize: 17, fontWeight: FontWeight.bold)),
               ],
             ),
           ],
@@ -184,6 +260,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   // Custom Tabs Section
   Widget customTabs() {
+    var devices = widget.model.applianceModel.allFetch;
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(
@@ -228,53 +305,77 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
           SizedBox(height: 20),
           _selectedIndex == 0
-              ? Row(
-            children: [
-              Container(
-                height: 100,
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                width: MediaQuery.of(context).size.width * 0.39,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Color(0x17000000)),
-                  borderRadius: BorderRadius.circular(12)
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Icon(Icons.lightbulb, color: Colors.black, size: 15,),
-                    Text('Light', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.pie_chart_outline_outlined, color: Colors.green, size: 18,),
-                        Column(
-                          children: [
-                            Text('Used', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                            Text('4 kWh', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),)
-                          ],
-                        ),
-                        Container(
-                          width: 2,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              color: Color(0xffDFDFE1)
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Text('Saved', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                            Text('2 kWh', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),)
-                          ],
-                        ),
-                      ],
-                    )
+              ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(), // Prevents internal scrolling if within another scrollable widget
+              shrinkWrap: true, // Important for proper height handling
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 2 items per row
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 1.4, // Adjust this to control the height of the grid items
+              ),
+              itemCount: devices.length,
+              itemBuilder: (context, index) {
+                final appliance = devices[index];
 
-                  ],
-                ),
-              )
-            ],
+                return Container(
+                  height: 100,
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Color(0x17000000)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        appliance.title ?? 'Unknown',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(Icons.pie_chart_outline_outlined, color: Colors.green, size: 18),
+                          Column(
+                            children: [
+                              Text(
+                                'Used',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '4 kWh',
+                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: 2,
+                            height: 30,
+                            decoration: BoxDecoration(color: Color(0xffDFDFE1)),
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                'Saved',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '2 kWh',
+                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           )  // Devices content
               : roomCards(),    // Rooms content
         ],
@@ -299,13 +400,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
     ),
     );
   }
-  Widget roomCards(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        room('Bedroom'),
-        room('Living Room')
-      ],
+  Widget roomCards() {
+    var rooms = widget.model.homeData['rooms'] as List<dynamic>;
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(), // Avoids scroll conflicts
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // 2 items per row
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+        childAspectRatio: 1.8, // Adjust as needed
+      ),
+      itemCount: rooms.length,
+      itemBuilder: (BuildContext context, int index) {
+        var room = rooms[index];
+        String roomName = room['name'];
+        print(roomName);
+        return roomCard(roomName);
+      },
     );
   }
   Widget consumption(){
@@ -316,7 +429,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
         children: [
           Text('Energy Consumption', style: TextStyle(color: Color(0xffA1A2AA), fontSize: 18, fontWeight: FontWeight.bold),),
           SizedBox(height: 10,),
-          period(),
+          period(_selectedPeriod2, (value) {
+            setState(() {
+              _selectedPeriod2 = value;
+            });
+          }),
           SizedBox(height: 20,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -326,7 +443,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
-                Text('17.43', style: TextStyle(color: Color(0xff575757), fontSize: 22, fontWeight: FontWeight.bold)),
+                Text(usageData[_selectedPeriod2].toString(), style: TextStyle(color: Color(0xff575757), fontSize: 22, fontWeight: FontWeight.bold)),
                 SizedBox(width: 5,),
                 Text('kWh', style: TextStyle(color: Color(0xff575757), fontWeight: FontWeight.bold))
               ],
@@ -337,7 +454,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
       ),
     );
   }
-  Widget room(String name){
+  Widget roomCard(String name){
     return Container(
       width: MediaQuery.of(context).size.width * 0.39,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -388,7 +505,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
         children: [
           Text('Energy Saving Results', style: TextStyle(color: Color(0xffA1A2AA), fontSize: 18, fontWeight: FontWeight.bold),),
           SizedBox(height: 10,),
-          period(),
+          period(_selectedPeriod3, (value) {
+            setState(() {
+              _selectedPeriod3 = value;
+            });
+          }),
           SizedBox(height: 20,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -398,7 +519,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
-                Text('11.34', style: TextStyle(color: Color(0xff575757), fontSize: 22, fontWeight: FontWeight.bold)),
+                Text(savedData[_selectedPeriod3].toString(), style: TextStyle(color: Color(0xff575757), fontSize: 22, fontWeight: FontWeight.bold)),
                 SizedBox(width: 5,),
                 Text('kWh', style: TextStyle(color: Color(0xff575757), fontWeight: FontWeight.bold))
               ],

@@ -58,6 +58,35 @@ class CurtainState extends ApplianceState {
   }
 }
 
+class SmartLockState extends ApplianceState {
+  bool isOn;
+
+  SmartLockState({
+    this.isOn = false
+});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'isOn' : isOn
+    };
+  }
+}
+
+class SocketState extends ApplianceState {
+  bool isOn;
+
+  SocketState({this.isOn = false});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'isOn': isOn,
+    };
+  }
+}
+
+
 class SpeakerState extends ApplianceState {
   int volume;
   String trackTitle;
@@ -123,16 +152,15 @@ class CameraState extends ApplianceState {
 class ThermostatState extends ApplianceState {
   double currentTemperature;
   double setTemperature;
-  String mode;
   int fanSpeed;
+  bool isOn;
 
   ThermostatState(
       {
         this.currentTemperature = 22.0,
         this.setTemperature = 0.0,
-        this.mode = 'cool',
-        this.fanSpeed = 0
-
+        this.fanSpeed = 0,
+        this.isOn = false
       });
 
   @override
@@ -140,8 +168,8 @@ class ThermostatState extends ApplianceState {
     return {
       'currentTemperature': currentTemperature,
       'setTemperature': setTemperature,
-      'mode' : mode,
-      'fanSpeed' : fanSpeed
+      'fanSpeed' : fanSpeed,
+      'isOn' : isOn
     };
   }
 }

@@ -160,6 +160,10 @@ class AppModel extends Model {
         return 'assets/images/camera.png';
       case 'thermostat':
         return 'assets/images/thermostat.png';
+      case 'security lock':
+        return 'assets/images/lock.png';
+      case 'socket':
+        return 'assets/images/plug.png';
       default:
         return 'assets/images/default.png';
     }
@@ -184,15 +188,27 @@ class AppModel extends Model {
         );
       case 'light':
         return LightState(
-          isOn: device['current_data']['is_on'] ?? false,
-          brightness: device['current_data']['brightness'] ?? 50,
+          isOn: device['current_data']['metric']['is_on'] ?? false,
+          brightness: device['current_data']['metric']['brightness'] ?? 50,
         );
       case 'curtain':
         return CurtainState(opened: device['state']['opened'] ?? 50);
       case 'camera':
         return CameraState(isRecording: device['state']['isRecording'] ?? false);
       case 'thermostat':
-        return ThermostatState();
+        return ThermostatState(
+          isOn: device['current_data']['metric']['is_on'] ?? false,
+          currentTemperature: device['current_data']['metric']['current_temperature'] ?? 21,
+          setTemperature: device['current_data']['metric']['target_temperature'] ?? 18
+        );
+      case 'security lock':
+        return SmartLockState(
+          isOn: device['current_data']['is_on'] ?? false,
+        );
+      case 'socket':
+        return SocketState(
+          isOn: device['current_data']['metric']['is_plugged_in'] ?? false
+        );
       default:
         return null;
     }

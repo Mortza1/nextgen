@@ -6,11 +6,14 @@ import 'package:nextgen_software/pages/settings/preferences.dart';
 import 'package:nextgen_software/pages/settings/privacy.dart';
 import 'package:nextgen_software/pages/settings/profile.dart';
 
+import '../../model/appliance.dart';
 import '../../scopedModel/app_model.dart';
 
 class RoomScreen extends StatefulWidget {
-  // final AppModel model;
-  const RoomScreen({super.key});
+  final List<String> roomDevices;
+  final String title;
+  final AppModel model;
+  const RoomScreen({super.key, required this.roomDevices, required this.title, required this.model});
 
   @override
   RoomScreenState createState() => RoomScreenState();
@@ -79,7 +82,7 @@ class RoomScreenState extends State<RoomScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Bedroom', style: TextStyle(color: Color(0xffAFB0BA), fontSize: 19, fontWeight: FontWeight.bold),),
+                  Text(widget.title, style: TextStyle(color: Color(0xffAFB0BA), fontSize: 19, fontWeight: FontWeight.bold),),
                 ],
               ),
             )
@@ -89,8 +92,15 @@ class RoomScreenState extends State<RoomScreen> {
     );
   }
   Widget options(){
+    List<Appliance> appliances = [];
+
+    for (String deviceId in widget.roomDevices) {
+      Appliance? appliance = widget.model.applianceModel.getApplianceById(deviceId);
+      if (appliance != null) {
+        appliances.add(appliance);
+      }
+    }
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.35,
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +110,6 @@ class RoomScreenState extends State<RoomScreen> {
             child: Text('Devices', style: TextStyle(color: Color(0xffA1A2AA)),),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.3,
             width: MediaQuery.of(context).size.width * 0.8,
             decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffC2C3CD), width: 2),
@@ -108,83 +117,17 @@ class RoomScreenState extends State<RoomScreen> {
             ),
             child: Column(
               children: [
-                GestureDetector(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: (MediaQuery.of(context).size.height * 0.29)/4,
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: 2))
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('TV', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),),
-                          Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),)
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: (MediaQuery.of(context).size.height * 0.29)/4,
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: 2))
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Spotlights', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),),
-                          Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),)
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: (MediaQuery.of(context).size.height * 0.29)/4,
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: 2))
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Armchair socket', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),),
-                          Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),)
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: (MediaQuery.of(context).size.height * 0.29)/4,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Blinds', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),),
-                          Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),)
-                        ],
-                      ),
-                    ),
-                  ),
-                )
+                ...appliances.asMap().entries.map((entry) {
+              int index = entry.key;
+              var room = entry.value;
+              String roomName = room.title;
+              // List<String> deviceList = List<String>.from(room['devices'] ?? []);
+              //
+              return buildOptionRow(
+                title: roomName, // Pass the room name as the title
+                isLast: index == widget.roomDevices.length - 1, // Mark last item
+              );
+            })
               ],
             ),
           )
@@ -194,5 +137,28 @@ class RoomScreenState extends State<RoomScreen> {
     );
   }
 
+  Widget buildOptionRow(
+      {required String title, bool isLast = false}) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
+      height: (MediaQuery.of(context).size.height * 0.29)/4,
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: isLast ? Colors.transparent : Color(0xffC2C3CD), width: isLast ? 0 : 2))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
+            ),
+            Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),)
+          ],
+        ),
+      ),
+    );
+  }
 
 }

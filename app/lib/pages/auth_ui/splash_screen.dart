@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/tab.dart';
 import '../../scopedModel/app_model.dart';
+import 'login.dart';
 
 class SplashScreen extends StatefulWidget {
   final AppModel model;
@@ -38,16 +39,16 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       print('Navigating to LoginPage...');
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => LoginPage(appModel: widget.model)),
-      // );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => CustomTabScreen(model: widget.model),
-        ),
+        MaterialPageRoute(builder: (context) => LoginPage(appModel: widget.model)),
       );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => CustomTabScreen(model: widget.model),
+      //   ),
+      // );
     }
   }
 

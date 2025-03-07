@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/settings/room.dart';
 
+import '../../model/appliance.dart';
+import '../../scopedModel/app_model.dart';
+import '../../scopedModel/connected_model_appliance.dart';
+
 class ManageDevicesScreen extends StatefulWidget {
-  const ManageDevicesScreen({super.key});
+  final AppModel model;
+  const ManageDevicesScreen({super.key, required this.model});
 
   @override
   ManageDevicesScreenState createState() => ManageDevicesScreenState();
@@ -27,7 +32,7 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
           SizedBox(height: 40),
           top(),
           SizedBox(height: 40,),
-          options(),
+          options(widget.model.applianceModel),
           SizedBox(height: 40,),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
@@ -100,42 +105,31 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
       ),
     );
   }
-  Widget options() {
+  Widget options(ApplianceModel applianceModel) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.55,
+      // height: MediaQuery.of(context).size.height * 0.55,
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.55,
+            // height: MediaQuery.of(context).size.height * 0.55,
             width: MediaQuery.of(context).size.width * 0.8,
             decoration: BoxDecoration(
-                border: Border.all(color: Color(0xffC2C3CD), width: 2),
-                borderRadius: BorderRadius.circular(22)),
+              border: Border.all(color: Color(0xffC2C3CD), width: 2),
+              borderRadius: BorderRadius.circular(22),
+            ),
             child: Column(
               children: [
-                buildOptionRow(
-                    title: 'Security Camera',
-                    ),
-                buildOptionRow(
-                    title: 'Spotlights',
-                    ),
-                buildOptionRow(
-                    title: 'Armchair socket',
-                    ),
-                buildOptionRow(
-                  title: 'TV',
-                ),
-                buildOptionRow(
-                  title: 'Blinds',
-                ),
-                buildOptionRow(
-                  title: 'Thermostat',
-                ),
-                buildOptionRow(
-                    title: 'Speakers',
-                    isLast: true),
+                ...applianceModel.allFetch.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  Appliance appliance = entry.value;
+
+                  return buildOptionRow(
+                    title: appliance.title, // Use name from the model
+                    isLast: index == applianceModel.allFetch.length - 1, // Mark last item
+                  );
+                }),
               ],
             ),
           ),
@@ -144,6 +138,7 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
     );
   }
 
+
   // Helper method to build each option row with a toggle
   Widget buildOptionRow(
       {required String title, bool isLast = false}) {
@@ -151,7 +146,7 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
       width: MediaQuery.of(context).size.width * 0.8,
       height: (MediaQuery.of(context).size.height * 0.31) / 4,
       decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: isLast ? 0 : 2))),
+          border: Border(bottom: BorderSide(color: isLast ? Colors.transparent : Color(0xffC2C3CD), width: isLast ? 0 : 2))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
@@ -163,8 +158,8 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
               style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
             ),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('haha', style: TextStyle(fontSize: 12,color: Color(0xff929292)),),
                 Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(

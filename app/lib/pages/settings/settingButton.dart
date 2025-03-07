@@ -9,8 +9,8 @@ import 'package:nextgen_software/pages/settings/profile.dart';
 import '../../scopedModel/app_model.dart';
 
 class SettingButtonScreen extends StatefulWidget {
-  // final AppModel model;
-  const SettingButtonScreen({super.key});
+  final AppModel model;
+  const SettingButtonScreen({super.key, required this.model});
 
   @override
   SettingButtonScreenState createState() => SettingButtonScreenState();
@@ -254,15 +254,24 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
     );
   }
   Widget signout(){
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.07,
-      width: MediaQuery.of(context).size.width * 0.8,
-      decoration: BoxDecoration(
-          border: Border.all(color: Color(0x96C2C3CD), width: 5),
-          borderRadius: BorderRadius.circular(18)
-      ),
-      child: Center(
-        child: Text('Sign Out', style: TextStyle(color: Color(0xff5CC093), fontSize: 19, fontWeight: FontWeight.bold),),
+    return GestureDetector(
+      onTap: (){
+        widget.model.logout();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage(appModel: widget.model)),
+        );
+      },
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.07,
+        width: MediaQuery.of(context).size.width * 0.8,
+        decoration: BoxDecoration(
+            border: Border.all(color: Color(0x96C2C3CD), width: 5),
+            borderRadius: BorderRadius.circular(18)
+        ),
+        child: Center(
+          child: Text('Sign Out', style: TextStyle(color: Color(0xff5CC093), fontSize: 19, fontWeight: FontWeight.bold),),
+        ),
       ),
     );
   }

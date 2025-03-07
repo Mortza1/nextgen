@@ -32,7 +32,7 @@ class SettingScreenState extends State<SettingScreen> {
                 IconButton(onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SettingButtonScreen()),
+                    MaterialPageRoute(builder: (context) => SettingButtonScreen(model: widget.model,)),
                   );
                 }, icon: Icon(Icons.settings, size: 35),),
               ],
@@ -44,6 +44,8 @@ class SettingScreenState extends State<SettingScreen> {
   }
 
   Widget _settingHeader() {
+    int applianceCount = widget.model.applianceModel.allFetch.length;
+    var rooms = widget.model.homeData['rooms'];
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       width: MediaQuery.of(context).size.width,
@@ -96,14 +98,14 @@ class SettingScreenState extends State<SettingScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("My rooms", style: TextStyle(color: Colors.white),),
-                      Text('2', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),)
+                      Text(rooms?.length.toString() ?? '0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),)
                     ],
                   ),
                 ),
                 TextButton(onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ManageRoomsScreen()),
+                    MaterialPageRoute(builder: (context) => ManageRoomsScreen(appModel: widget.model,)),
                   );
                 }, child: Text('Manage', style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold)),)
               ],
@@ -133,14 +135,14 @@ class SettingScreenState extends State<SettingScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("My devices", style: TextStyle(color: Colors.white),),
-                      Text('9', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),)
+                      Text(applianceCount.toString() ?? '0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),)
                     ],
                   ),
                 ),
                 TextButton(onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ManageDevicesScreen()),
+                    MaterialPageRoute(builder: (context) => ManageDevicesScreen(model: widget.model,)),
                   );
                 }, child: Text('Manage', style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold)),)
               ],
@@ -156,7 +158,7 @@ class SettingScreenState extends State<SettingScreen> {
             ),
             child: Center(
               child: 
-              Text('Game Acheivements', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 18),),
+              Text('Game Achievements', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 18),),
             ),
           )
         ],

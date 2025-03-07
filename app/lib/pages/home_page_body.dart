@@ -7,8 +7,10 @@ import 'package:nextgen_software/pages/modes/add_mode_in_home.dart';
 import 'package:nextgen_software/pages/notifications.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 import 'package:nextgen_software/scopedModel/connected_mode.dart';
+import '../model/appliance.dart';
 import '../model/mode.dart';
 import '../scopedModel/connected_model_appliance.dart';
+import 'devices/lock.dart';
 import 'devices/speaker.dart';
 import 'devices/thermostat.dart';
 import 'devices/tv.dart';
@@ -44,7 +46,6 @@ class _HomePageBodyState extends State<HomePageBody> {
       print('Error in fetchDevices: $e');
     }
   }
-
   Future<void> getUser() async {
     try {
       await widget.appModel.getUser();
@@ -53,7 +54,6 @@ class _HomePageBodyState extends State<HomePageBody> {
       print('Error in fetchDevices: $e');
     }
   }
-
   Widget _topMyHomeSection() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -308,39 +308,67 @@ class _HomePageBodyState extends State<HomePageBody> {
     );
   }
   Widget _mainWidgetsSection(ApplianceModel model) {
+    var rooms = (widget.appModel.homeData['rooms'] as List<dynamic>?) ?? [];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.335,
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "My room",
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w800,
-                fontFamily: 'Roboto',
+        child: rooms.isNotEmpty
+            ? ListView.builder(
+          itemCount: rooms.length,
+          itemBuilder: (BuildContext context, int roomIndex) {
+            var room = rooms[roomIndex];
+            String roomName = room['name'] ?? 'Unnamed Room';
+            List<String> deviceIds = List<String>.from(room['devices'] ?? []);
+
+            // Fetch appliances by IDs, safely handle nulls
+            List<Appliance> appliances = deviceIds
+                .map((deviceId) => model.getApplianceById(deviceId))
+                .where((appliance) => appliance != null)
+                .cast<Appliance>()
+                .toList();
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    roomName,
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: 'Roboto',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 2.5,
+                    ),
+                    itemCount: appliances.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildDeviceTile(appliances[index]);
+                    },
+                  ),
+                ],
               ),
-            ),
-            Expanded(
-              child: GridView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                  childAspectRatio: 2.5,
-                ),
-                itemCount: model.allFetch.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildDeviceTile(model.allFetch[index]);
-                },
-              ),
-            ),
-          ],
+            );
+          },
+        )
+            : const Center(
+          child: Text(
+            'No rooms available',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
         ),
       ),
     );
@@ -371,14 +399,12 @@ class _HomePageBodyState extends State<HomePageBody> {
                 Text(device.title),
               ],
             ),
-            ['thermostat'].contains(device.type) ? SizedBox():
-            ToggleMain(deviceId: device.id, appModel: widget.appModel), // Pass only ID
+            ToggleMain(device: device, appModel: widget.appModel), // Pass only ID
           ],
         ),
       ),
     );
   }
-
   void _navigateToDeviceScreen(device) async {
     Widget? screen;
 
@@ -389,11 +415,14 @@ class _HomePageBodyState extends State<HomePageBody> {
       case "light":
         screen = LightScreen(appModel: widget.appModel, device: device);
         break;
+      case "security lock":
+        screen = LockScreen(appModel: widget.appModel, device: device);
+        break;
       case "speaker":
         screen = SpeakerScreen(device: device);
         break;
       case "thermostat":
-        screen = ThermostatScreen(device: device);
+        screen = ThermostatScreen(device: device, appModel: widget.appModel,);
         break;
       case "curtain":
         screen = CurtainScreen(device: device);
@@ -477,6 +506,7 @@ class _HomePageBodyState extends State<HomePageBody> {
           // _topWidgetSection(model),
           _modeSection(modeModel, model),
           _mainWidgetsSection(model),
+          SizedBox(height: 40,)
           // _assistantButton()
           // AssistantButton()
     ])));

@@ -23,7 +23,7 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
     final List<Widget> screens = [
       HomePageBody(appModel: widget.model),
       ModeScreen(model: widget.model),
-      OverviewScreen(),
+      OverviewScreen(model: widget.model),
       SettingScreen(model: widget.model,),
     ];
     return Scaffold(
@@ -38,6 +38,7 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.1,
               decoration: BoxDecoration(
+                color: Color(0xffF3F4FC),
                 border: Border(
                   top: BorderSide(
                     color: Color(0xffD2D2DA),

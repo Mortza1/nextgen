@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/settings/room.dart';
 
+import '../../scopedModel/app_model.dart';
+
 class ManageRoomsScreen extends StatefulWidget {
-  const ManageRoomsScreen({super.key});
+  final AppModel appModel;
+  const ManageRoomsScreen({super.key, required this.appModel});
 
   @override
   ManageRoomsScreenState createState() => ManageRoomsScreenState();
@@ -70,9 +73,10 @@ class ManageRoomsScreenState extends State<ManageRoomsScreen> {
     );
   }
 
-  Widget roomBox(){
+  Widget roomBox() {
+    var rooms = widget.appModel.homeData['rooms'];
+
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.25,
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,74 +84,75 @@ class ManageRoomsScreenState extends State<ManageRoomsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Rooms', style: TextStyle(color: Color(0xffA1A2AA)),),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Rooms',
+                  style: TextStyle(color: Color(0xffA1A2AA)),
+                ),
               ),
-              IconButton(onPressed: (){}, icon: Icon(Icons.add, color: Color(0xffB4B6C6),))
+              IconButton(
+                onPressed: (){}, // Implement this method
+                icon: const Icon(Icons.add, color: Color(0xffB4B6C6)),
+              ),
             ],
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.15,
             width: MediaQuery.of(context).size.width * 0.8,
             decoration: BoxDecoration(
-                border: Border.all(color: Color(0xffC2C3CD), width: 2),
-                borderRadius: BorderRadius.circular(22)
+              border: Border.all(color: const Color(0xffC2C3CD), width: 2),
+              borderRadius: BorderRadius.circular(22),
             ),
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: ()=>{
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RoomScreen()),
-                    )
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: (MediaQuery.of(context).size.height * 0.29)/4,
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: 2))
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Bedroom', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),),
-                          Icon(Icons.navigate_next_outlined, color: Color(0xffC2C3CD),)
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: ()=>{
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RoomScreen()),
-                    )
-                  },
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: (MediaQuery.of(context).size.height * 0.29)/4,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Living Room', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),),
-                          Icon(Icons.navigate_next_outlined, color: Color(0xffC2C3CD),)
-                        ],
-                      ),
-                    ),
-                  ),
-                )
+                ...rooms.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  var room = entry.value;
+                  String roomName = room['name'];
+                  List<String> deviceList = List<String>.from(room['devices'] ?? []);
+
+                  return buildOptionRow(
+                    deviceList: deviceList,
+                    title: roomName, // Pass the room name as the title
+                    isLast: index == rooms.length - 1, // Mark last item
+                  );
+                }),
               ],
             ),
-          )
-
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget buildOptionRow(
+      {required String title, required List<String> deviceList, bool isLast = false}) {
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RoomScreen(roomDevices: deviceList, title: title, model: widget.appModel,)),
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        height: (MediaQuery.of(context).size.height * 0.29)/4,
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: isLast ? Colors.transparent : Color(0xffC2C3CD), width: isLast ? 0 : 2))),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
+              ),
+              Icon(Icons.navigate_next_outlined, color: Color(0xffC2C3CD),)
+            ],
+          ),
+        ),
       ),
     );
   }
