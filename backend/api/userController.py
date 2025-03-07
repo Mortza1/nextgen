@@ -1,5 +1,7 @@
 import traceback
 from fastapi import APIRouter, HTTPException
+from repositories.hub_repository import HubManager
+from repositories.home_repository import HomeManager
 from repositories.token_repository import TokenManager
 from repositories.user_repository import UserManager
 from model.deviceModel import LoginParams, RegisterDwellerParams, get_userParams, RegisterParams, ResponseInfo, ResponseObject
@@ -8,6 +10,8 @@ from model.deviceModel import LoginParams, RegisterDwellerParams, get_userParams
 userRouter = APIRouter()
 user_manager = UserManager()
 token_manager = TokenManager()
+home_manager = HomeManager()
+hub_manager = HubManager()
 
 @userRouter.post("/register-manager", response_model=ResponseObject)
 async def register_user(params: RegisterParams):
@@ -44,7 +48,7 @@ async def register_user(params: RegisterDwellerParams):
         response_info = ResponseInfo(
             statusCode=200, message="Success", detail="User updated successfully."
         )
-        return ResponseObject(data={"user_id": user_id}, statusCode=200, responseInfo=response_info)
+        return ResponseObject(data={"user_id": user_id, 'home_id' : home_id}, statusCode=200, responseInfo=response_info)
     except HTTPException as http_exc:
         # Re-raise HTTP exceptions
         raise http_exc
@@ -77,12 +81,16 @@ async def login_user(params: LoginParams):
 async def get_user(id: get_userParams):
     print(id)
     try:
-        user = user_manager.get_user_by_id(id=id.id)
-        if user:
+        user = user_manager.get_user_by_id(id=id.user_id)
+        home = home_manager.get_home_by_id(id.home_id)
+        rooms = hub_manager.getRooms(home['hub_id'])
+        if rooms:
+            home['rooms'] = rooms
+        if user and home:
             response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="Messages retrieved successfully."
             )
-            return ResponseObject(data={"user": user}, statusCode=200, responseInfo=response_info)
+            return ResponseObject(data={"user": user, 'home' : home}, statusCode=200, responseInfo=response_info)
         else:
             raise HTTPException(status_code=500, detail="Failed to fetch user")
     except Exception as e:

@@ -65,6 +65,7 @@ class UserManager:
             user = self.collection.find_one({"_id": ObjectId(id)})  
             if user:
                 user['_id'] = str(user['_id'])  # Convert ObjectId to string
+                user.pop('password')
                 return user
             else:
                 return None

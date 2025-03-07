@@ -1,0 +1,174 @@
+.main {
+  height: 100%;
+  color: black;
+  padding: 50px 20px;
+  overflow-y: auto;
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+
+  .manageHomeContainer {
+    position: relative;
+    margin-top: 20px;
+    padding: 15px; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .text {
+      font-size: 0.9rem;
+    }
+    .manageHomeBox {
+      background-color: #FFFDEE;
+      width: 100%;
+      height: 200px;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+
+      .home {
+        margin-top: 5px;
+        width: 40%;
+        height: 80%;
+        border: 1px solid rgba(0, 0, 0, 0.14);
+        border-radius: 10px;
+      }
+    }
+
+
+    .add {
+      position: absolute;
+      bottom: 0;
+      right: 50%;
+      padding: 10px 15px;
+      background-color: #FFFDEE;
+      border: 1px solid rgba(0, 0, 0, 0.19);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
+      transition: box-shadow 0.2s ease-in-out; /* Smooth effect */
+    }
+    
+    /* Optional: Add a hover effect for better UX */
+    .add:hover {
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+    }
+  }
+  .manageRoomContainer {
+    position: relative;
+    margin-top: 20px;
+    padding: 15px; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .text {
+      font-size: 0.9rem;
+    }
+    .manageRoomBox {
+      background-color: #FFFDEE;
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+
+      .rooms{
+        display: flex;
+        gap: 20px;
+        height: 100%;
+      
+        .home {
+          margin-top: 15px;
+          width: 10%;
+          height: 60%;
+          border: 1px solid rgba(0, 0, 0, 0.14);
+          border-radius: 10px;
+        }  
+      }
+
+      
+    }
+
+
+    .add {
+      position: absolute;
+      bottom: 0;
+      right: 50%;
+      padding: 10px 15px;
+      background-color: #FFFDEE;
+      border: 1px solid rgba(0, 0, 0, 0.19);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
+      transition: box-shadow 0.2s ease-in-out; /* Smooth effect */
+    }
+    
+    /* Optional: Add a hover effect for better UX */
+    .add:hover {
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .devicesContainer {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    align-items: center;
+
+    .add {
+      padding: 10px 15px;
+      background-color: #FFFDEE;
+      border: 1px solid rgba(0, 0, 0, 0.19);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
+      transition: box-shadow 0.2s ease-in-out; /* Smooth effect */
+    }
+    .add:hover {
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .dialogOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dialog {
+    background: #FFFDEE;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* text-align: center; */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .closeButton {
+    margin-top: 15px;
+    padding: 8px 15px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+}

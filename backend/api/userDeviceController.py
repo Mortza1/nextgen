@@ -6,7 +6,7 @@ from repositories.hub_repository import HubManager
 from repositories.token_repository import TokenManager
 from repositories.user_repository import UserManager
 import httpx
-from model.deviceModel import ConnectDeviceParams, GetDevicesParams, ResponseInfo, ResponseObject, SetDeviceParams
+from model.deviceModel import AddModeParams, ConnectDeviceParams, GetDevicesParams, ResponseInfo, ResponseObject, SetDeviceParams
 
 
 deviceRouter = APIRouter()
@@ -41,17 +41,31 @@ async def get_devices(params: GetDevicesParams):
             for id in device_list:
                 d = device_manager.get_device(id)
                 devices.append(d)
+
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"http://localhost:8010/devices/{params.hub_id}")
+
+            if response.status_code == 200:
+                latest_device_logs = response.json()
+                for device in devices:
+                    device_id = device['_id']
+                    for d in latest_device_logs:
+                        if device_id == list(d.keys())[0].replace('.json', ''):
+                            device['current_data'] = list(d.values())[0]
+            
+            else:
+                latest_device_logs = {"error": "Could not fetch device logs"}
+            
             response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="devices fetched successfully."
             )
-            return ResponseObject(data=devices, statusCode=200, responseInfo=response_info)
+            return ResponseObject(data={'devices' : devices}, statusCode=200, responseInfo=response_info)
         else:
             user = user_manager.get_user_by_id(params.user_id)
             home_id = user['associated_homes'][0]
             home = home_manager.get_home_by_id(home_id)
             hub_id = home['hub_id']
             device_list = hub_manager.getDevices(hub_id)
-            print(device_list, 'uuuuuuuuuuuuuu')
             devices = []
             for id in device_list:
                 d = device_manager.get_device(id)
@@ -64,7 +78,6 @@ async def get_devices(params: GetDevicesParams):
     except Exception as e:
         print("error: ", e)
         raise HTTPException(status_code=500, detail="Internal server error.")
-    
     
 
 @deviceRouter.post("/update_device", response_model=ResponseObject)
@@ -100,4 +113,20 @@ async def update_device(params: SetDeviceParams):
     
     except Exception as e:
         print(f"Error in toggle_light: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error.")
+
+
+@deviceRouter.post("/add_mode", response_model=ResponseObject)
+async def register_device(params: AddModeParams):
+    try:
+        home = home_manager.add_mode(params.home_id, params.mode)
+        if home:
+            response_info = ResponseInfo(
+                statusCode=200, message="Success", detail="device connected successfully."
+            )
+            return ResponseObject(data=True, statusCode=200, responseInfo=response_info)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to add mode...")
+    except Exception as e:
+        print("error: dasda ", e)
         raise HTTPException(status_code=500, detail="Internal server error.")

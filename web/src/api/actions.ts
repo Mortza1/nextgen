@@ -6,6 +6,11 @@ export interface RegisterParams {
   email: string;
   password: string
 }
+
+export interface LoginParams {
+  email: string;
+  password: string
+}
 export interface GetHomeParams {
   manager_id: string
 }
@@ -13,6 +18,11 @@ export interface SendInviteParams {
   manager_id: string,
   house_id: string,
   email: string
+}
+export interface GetDevicesParams {
+  user_id: string,
+  hub_id: string,
+  
 }
 export interface AddHomeParams {
   home_name: string
@@ -77,6 +87,23 @@ export const sendInvite = async ({
     //TODO:
   }
 };
+
+export const getDevices = async ({
+  user_id, hub_id
+} : GetDevicesParams) => {
+  try {
+    const { data } = await clientApi.room.getDevices({user_id, hub_id});
+    if (data.statusCode === 200 || data.statusCode === 201) {
+      console.log(data.data)
+      return data.data;
+    }
+    throw Error(data.responseInfo.message);
+  } catch (error) {
+    console.log(error, "ssssssssssss");
+    //TODO:
+  }
+};
+
 export const addHome = async ({
   home_name, address, manager_id
 } : AddHomeParams) => {
@@ -112,10 +139,10 @@ export const getUser = async () => {
 };
 
 export const loginUser = async ({
-  userId, profileId
-} : AuthParams) => {
+  email, password
+} : LoginParams) => {
   try {
-    const { data } = await clientApi.room.login(userId, profileId);
+    const { data } = await clientApi.room.login_manager({email, password});
     if (data.statusCode === 200 || data.statusCode === 201) {
       console.log(data.data)
       return data.data;
@@ -130,6 +157,7 @@ export const getHomeUsers = async ({
   user_ids
 } : getHomeUsersParams) => {
   try {
+    console.log(user_ids, 'klllllllllllll');
     const { data } = await clientApi.room.getHomeUsers({user_ids});
     if (data.statusCode === 200 || data.statusCode === 201) {
       console.log(data.data)

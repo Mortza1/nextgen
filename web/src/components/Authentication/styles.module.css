@@ -2,15 +2,30 @@
     display: flex;
     width: 100vw;
     height: 100vh;
-    background-color: black;
+    background-color: #FFFDEE;
 
     .loginBlock {
-        width: 65%;
+        width: 50%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #9D79BC;
+        background-color: #9CAD88;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .eco {
+          color: white;
+          font: 800 2.5rem 'Poppins', 'Roboto', sans-serif;
+          font-style: italic;
+        }
+        .ecosub {
+          padding-top: 10px;
+          font: 600 1rem 'Poppins', 'Roboto', sans-serif;
+          max-width: 50%;
+          text-align: center;
+        }
     }
     
     .loginImage {
@@ -21,31 +36,22 @@
       width: 90%;
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 15px;
+      
     }
 
     .loginFieldContainer {
-        padding: 8% 3% 20px 3%;
-        color: white;
-        margin-left: 14px;
+        padding: 0% 3% 20px 3%;
+        height: 80%;
+        color: black;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         width: 35%;
         overflow-y: auto;
-
-    }
-
-    .logoWelcome {
-        color: white;
-        font-weight: 600;
-        padding-top: 30px;
-        font-size: 1.2rem;
-    }
-
-    .logoSubText {
-        color: rgba(255, 255, 255, 0.8);
-        padding-top: 20px;
-        font-size: 0.9rem;
-        padding-bottom: 30px;
-        max-width: 80%;
+        gap: 50px;
     }
 
     
@@ -66,10 +72,10 @@
     width: 100%;
     padding: 15px 10px;
     font-size: 16px;
-    border: 1px solid #ddd;
+    border: 1px solid black;
     border-radius: 6px;
-    background-color: black;
-    color: white;
+    background-color: #FFFDEE;
+    color: black;
     font-size: 0.9rem;
     font-weight: 400;
   }
@@ -77,12 +83,12 @@
   /* Button styling */
   .button {
     position: relative;
-    width: 100%;
+    width: 60%;
     padding: 13px;
     font-size: 0.8rem;
-    color: #000;
+    color: white;
     font-weight: bold;
-    background-color: #fff;
+    background-color: #9CAD88;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -92,7 +98,7 @@
   }
   
   .button:hover {
-    background-color: #f9f9f9;
+    background-color: green;
   }
 
   .lastText {
@@ -130,6 +136,29 @@
   }
   
 
+  
+.orContainer{
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  .line {
+    height: 1px;
+    background-color: black;
+    width: 30%;
+  }
+  .or {
+    font-size: 0.9rem;
+  }
+}
+
+.textButton {
+  background-color: #FFFDEE;
+  border: none;
+  color: #007bff;
+  font-weight: 600;
+}
 
 
 /* ---------------------------- */
@@ -220,6 +249,7 @@
     justify-content: center;
     cursor: pointer;
   }
+  
 
   .privacy {
    display: flex;
@@ -267,8 +297,8 @@
     font-size: 0.9rem;
     font-weight: 600;
   }
-}
 
+}
 
 
 

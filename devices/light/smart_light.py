@@ -22,10 +22,10 @@ light_state = {
     "brightness": 100,  # Default 100%
     "power_consumption": 0.0,  # Power in watts
     "last_on_time": None,  # Time when light was turned on
-    "total_energy": 0.0  # Total energy consumed (Wh)
 }
+DELAY = 10
 
-POWER_CONSUMPTION_RATE = 0.1  # Watts per second at 100% brightness
+POWER_CONSUMPTION_RATE = 0.00000417  # Watts per second at 100% brightness
 
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
@@ -76,19 +76,20 @@ def publish_state():
     global light_state
 
     if light_state["is_on"]:
-        elapsed_time = time.time() - light_state["last_on_time"]
-        power_usage = (POWER_CONSUMPTION_RATE * light_state["brightness"] / 100) * elapsed_time / 3600
-        light_state["total_energy"] += power_usage
-        light_state["power_consumption"] = power_usage
+        power_usage = (POWER_CONSUMPTION_RATE * (light_state["brightness"] / 100)) * DELAY
+        light_state["power_consumption"] += power_usage
         light_state["last_on_time"] = time.time()
 
     state_entry = {
+        "device_id": DEVICE_ID,
+        "device_type": 'light',
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "is_on": light_state["is_on"],
-        "rgb": light_state["rgb"],
-        "brightness": light_state["brightness"],
-        "power_consumption": round(light_state["power_consumption"], 4),
-        "total_energy": round(light_state["total_energy"], 4)
+        'metric': {
+            "is_on": light_state["is_on"],
+            "rgb": light_state["rgb"],
+            "brightness": light_state["brightness"],
+            "power_consumption": round(light_state["power_consumption"], 4),
+        }
     }
 
     client.publish(STATE_TOPIC, json.dumps(state_entry))
@@ -104,6 +105,5 @@ client.loop_start()
 
 # Run logging and publishing loop
 while True:
-    publish_state()
-    interval = 3 if light_state["is_on"] else 10  # 3 sec when on, 10 sec when off
-    time.sleep(interval)
+    publish_state() if light_state["is_on"] else None 
+    time.sleep(DELAY)
