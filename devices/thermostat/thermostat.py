@@ -17,6 +17,7 @@ STATE_TOPIC = f"devices/{DEVICE_ID}/state"  # Topic to publish state updates
 
 # Thermostat State
 thermostat_state = {
+    "is_on" : True, 
     "current_temperature": 29.0,  # Initial temperature
     "target_temperature": 22.0,  # Default target temperature
     "fan_speed": 1,  # Fan speed: 1 (low), 2 (medium), 3 (high)
@@ -26,7 +27,7 @@ thermostat_state = {
 }
 
 # Simulation Parameters
-TEMP_CHANGE_RATE = 0.005  # Degrees per 10 seconds at fan speed 1
+TEMP_CHANGE_RATE = 0.5  # Degrees per 10 seconds at fan speed 1
 FAN_SPEED_MULTIPLIER = {1: 1.0, 2: 1.5, 3: 2.0}  # Higher fan speeds adjust temp faster
 POWER_USAGE = {1: 500, 2: 750, 3: 1000}  # Watts based on fan speed
 HEATER_POWER = 1500  # Watts when heating
@@ -57,7 +58,15 @@ def on_message(client, userdata, msg):
 
     command = payload.get("command")
 
-    if command == "increase_temp":
+    if command == "plug_in":
+        thermostat_state["is_on"] = True
+        print("Thermostat is now on")
+
+    elif command == "plug_out":
+        thermostat_state["is_on"] = False
+        print("Thermostat is now off")
+    
+    elif command == "increase_temp":
         increment = payload.get("value", 1)  # Default increase by 1°C
         thermostat_state["target_temperature"] += increment
         print(f"Target temperature increased to {thermostat_state['target_temperature']}°C")
@@ -81,42 +90,47 @@ def on_message(client, userdata, msg):
 def update_temperature():
     global thermostat_state
 
-    diff = thermostat_state["target_temperature"] - thermostat_state["current_temperature"]
-    fan_multiplier = FAN_SPEED_MULTIPLIER[thermostat_state["fan_speed"]]
-    
-    if abs(diff) > 0.05:  # Prevents micro adjustments
-        change = TEMP_CHANGE_RATE * fan_multiplier * (1 if diff > 0 else -1)
-        thermostat_state["current_temperature"] += change
-        thermostat_state["current_temperature"] = round(thermostat_state["current_temperature"], 2)  # Round for realism
-
-        # Determine heating/cooling state
-        thermostat_state["heating"] = diff > 0
-        thermostat_state["cooling"] = diff < 0
-
-        # Simulate power consumption
-        total_consumption = 0
-        fan_consumtion = energy_calculator(POWER_USAGE[thermostat_state["fan_speed"]], UPDATE_TIME) if diff != 0 else 0
-        if thermostat_state['heating']:
-            total_consumption = energy_calculator(HEATER_POWER, UPDATE_TIME) + fan_consumtion
-        elif thermostat_state['cooling']:
-            total_consumption = energy_calculator(COOLER_POWER, UPDATE_TIME) + fan_consumtion
-        else:
-            total_consumption = fan_consumtion
+    if thermostat_state["is_on"]:
+        diff = thermostat_state["target_temperature"] - thermostat_state["current_temperature"]
+        fan_multiplier = FAN_SPEED_MULTIPLIER[thermostat_state["fan_speed"]]
         
-        thermostat_state["power_consumption"] += total_consumption
+        if abs(diff) > 0.05:  # Prevents micro adjustments
+            change = TEMP_CHANGE_RATE * fan_multiplier * (1 if diff > 0 else -1)
+            thermostat_state["current_temperature"] += change
+            thermostat_state["current_temperature"] = round(thermostat_state["current_temperature"], 2)  # Round for realism
+
+            # Determine heating/cooling state
+            thermostat_state["heating"] = diff > 0
+            thermostat_state["cooling"] = diff < 0
+
+            # Simulate power consumption
+            total_consumption = 0
+            fan_consumtion = energy_calculator(POWER_USAGE[thermostat_state["fan_speed"]], UPDATE_TIME) if diff != 0 else 0
+            if thermostat_state['heating']:
+                total_consumption = energy_calculator(HEATER_POWER, UPDATE_TIME) + fan_consumtion
+            elif thermostat_state['cooling']:
+                total_consumption = energy_calculator(COOLER_POWER, UPDATE_TIME) + fan_consumtion
+            else:
+                total_consumption = fan_consumtion
+            
+            thermostat_state["power_consumption"] += total_consumption
 
 # Function to publish thermostat state
 def publish_state():
     state_entry = {
+        "device_id" : DEVICE_ID,
+        "device_type": 'thermostat',
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "current_temperature": thermostat_state["current_temperature"],
-        "target_temperature": thermostat_state["target_temperature"],
-        "fan_speed": thermostat_state["fan_speed"],
-        "heating": thermostat_state["heating"],
-        "cooling": thermostat_state["cooling"],
-        "power_consumption": thermostat_state["power_consumption"],
+        "metric": {
+            "is_on": thermostat_state["is_on"],
+            "current_temperature": thermostat_state["current_temperature"],
+            "target_temperature": thermostat_state["target_temperature"],
+            "fan_speed": thermostat_state["fan_speed"],
+            "heating": thermostat_state["heating"],
+            "cooling": thermostat_state["cooling"],
+            "power_consumption": thermostat_state["power_consumption"],
+        },
     }
-    print(state_entry)
 
     client.publish(STATE_TOPIC, json.dumps(state_entry))
 

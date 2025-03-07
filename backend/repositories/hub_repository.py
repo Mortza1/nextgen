@@ -27,11 +27,20 @@ class HubManager:
     
     def getDevices(self, hub_id):
         try:
-            devices = self.collection.find_one({"_id": ObjectId(hub_id)})
-            print(devices['devices'], 'hhjhhjhjh')
-            return devices['devices']
-
+            hub = self.collection.find_one({"_id": ObjectId(hub_id)})
+            ret = []
+            for i in hub['rooms']:
+                ret.extend(i['devices'])
+            return ret
+            
         except Exception as e:
             print("error: ", e)
             raise Exception("device fetch failed. ")
     
+    def getRooms(self, hub_id):
+        try:
+            hub = self.collection.find_one({"_id": ObjectId(hub_id)})
+            return hub['rooms']
+        except Exception as e:
+            print("error: ", e)
+            raise Exception("room fetch failed. ")

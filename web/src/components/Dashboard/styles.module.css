@@ -2,181 +2,128 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  
-  .topNav {
-    padding: 0 30px;
-    height: 13%;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .logo {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-    }
-    .navItems{
-      display: flex;
-      gap: 30px;
-      .item {
-        display: flex;
-        color: #ccc;
-        font-size: 0.8rem;
-        cursor: pointer;
-        user-select: none;  
-      }
-      .selected {
-        color: white;
-        font-weight: 900;
-      }
-    }
-    
-    
-  }
-
-  .leftNav{
-    width: 17%;
-    height: 85vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #9CAD88;
-    border-radius: 30px;
-    position: absolute; 
-    left: 0; 
-    top: 50%; 
-    transform: translateY(-50%);
-    margin-left: 20px; 
-
-    .logo img {
-      width: 50px;
-      height: 50px;
-      margin-top: 20px;
-    }
-
-    /* Navigation List */
-    .navList {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      padding-top: 15px;
-      /* gap: 15px; */
-    }
-    .navItem {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-left: 15px;
-      padding: 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      color: #fff;
-    }
-
-    /* Selected Item */
-    .selected {
-      background-color: #EEECDE;
-      color: #333;
-      font-weight: bold;
-    }
-
-    .navIcon {
-      width: 24px;
-      height: 24px;
-    }
-
-    .navText {
-      font-size: 0.9rem;
-    }
-
-    /* Pushes last item (Notifications) to the bottom */
-    .bottomItem {
-      margin-top: auto;
-      margin-bottom: 20px;
-      margin-left: 25px;
-    }
-    
-  }
-
-
-  .body{
-    height: 100%;
-    width: 80%;
-    position: absolute;
-    left: 20%;
-    overflow-y: hidden;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    .top{
-      height: 65vh;
-      width: 100%;
-      display: flex;
-
-      .left {
-        width: 70%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin-top: 10px;
-
-        .top{
-          height: 43%;
-          display: flex;
-          gap: 10px;
-
-          .leftTop{
-            flex: 1;  
-            border-radius: 15px;
-            background-color: #333;
-          }
-          .rightTop{
-            flex: 1;
-            border-radius: 15px;
-            background-color: #333;
-          }
-        }
-        .bottom{
-          height: 55%;
-          border-radius: 15px;
-          background-color: #333;
-        }
-      }
-      .right{
-        width: 30%;
-        border-radius: 15px;
-        background-color: #333;
-        padding: 20px;
-        margin: 10px 10px 0px 10px;
-      }
-    }
-    .bottom{
-      height: 33vh;
-      width: 100%;
-      display: flex;
-
-      .music {
-        width: 40%;
-        border-radius: 15px;
-        background-color: #333;
-        padding: 20px;
-        margin: 0px 10px 10px 0px;
-      }
-      .graph {
-        width: 60%;
-        border-radius: 15px;
-        background-color: #333;
-        padding: 10px;
-        margin: 0px 10px 10px 0px;
-      }
-    }
-  }
-  
 }
+
+.topNav {
+  padding: 0 30px;
+  height: 13%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.navItems {
+  display: flex;
+  gap: 30px;
+}
+
+.item {
+  display: flex;
+  color: #ccc;
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.selected {
+  color: white;
+  font-weight: 900;
+}
+
+.leftNav {
+  width: 17%;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #9CAD88;
+  border-radius: 30px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 20px;
+}
+
+.leftNav .logo img {
+  width: 50px;
+  height: 50px;
+  margin-top: 20px;
+}
+
+.navList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+}
+
+.navItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+.selected {
+  background-color: #EEECDE;
+  color: #333;
+  font-weight: bold;
+}
+
+.navIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.navText {
+  font-size: 0.9rem;
+}
+
+.bottomItem {
+  margin-top: auto;
+  margin-bottom: 20px;
+  margin-left: 25px;
+}
+
+.body {
+  height: 100%;
+  width: 80%;
+  position: absolute;
+  left: 20%;
+  overflow-y: auto;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+/* .content {
+  width: 100%; 
+  height: 98vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 10px;
+}
+
+.content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+} */

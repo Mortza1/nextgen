@@ -49,11 +49,13 @@ def on_message(client, userdata, msg):
     if command == "plug_in":
         socket_state["is_plugged_in"] = True
         socket_state['up_time'] = time.time()
+        print('socket plugged in')
             
 
     elif command == "unplug":
         socket_state['up_time'] = 0.0
         socket_state["is_plugged_in"] = False
+        print('socket plugged out')
     
 
     else:
@@ -70,14 +72,17 @@ def publish_state():
         socket_state['up_time'] += DELAY
 
     state_entry = {
+        "device_id": DEVICE_ID,
+        "device_type": 'socket',
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "is_plugged_in": socket_state["is_plugged_in"],
-        "total_power_consumption": round(socket_state["total_consumption"], 2),
-        "up_time": socket_state['up_time']
+        "metric": {
+            "is_plugged_in": socket_state["is_plugged_in"],
+            "power_consumption": round(socket_state["total_consumption"], 2),
+            "up_time": socket_state['up_time']
+        },
     }
 
     client.publish(STATE_TOPIC, json.dumps(state_entry))
-    print(f"Published state: {state_entry}")
 
 # Initialize MQTT client
 client = mqtt.Client()

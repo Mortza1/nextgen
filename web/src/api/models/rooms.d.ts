@@ -6,6 +6,11 @@ declare module "rooms-model" {
     password: string;
   }
 
+  export interface LoginRequestData {
+    email: string;
+    password: string;
+  }
+
   export interface AddHomeRequestData {
     home_name: string;
     address: string;
@@ -31,6 +36,11 @@ declare module "rooms-model" {
 
   export interface getHomeData {
     manager_id: string
+  }
+
+  export interface getDevicesData {
+    user_id: string,
+    hub_id: string
   }
 
   export interface getHomeUsersData {

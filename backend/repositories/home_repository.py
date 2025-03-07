@@ -53,10 +53,24 @@ class HomeManager:
             print(f"An error occurred while updating dwellers: {e}")
             return None
         
+    def add_mode(self, home_id: str, mode: dict):
+        try:
+            result = self.collection.update_one(
+                {"_id": ObjectId(home_id)},
+                {"$addToSet": {"modes": mode}}  # Ensure the mode is not duplicated
+            )
+            return result.modified_count > 0  # Returns True if a document was updated
+        except Exception as e:
+            print(f"An error occurred while adding modes: {e}")
+            return None
+
+        
     def get_home_by_id(self, home_id: str):
         try:
             home = self.collection.find_one({"_id": ObjectId(home_id)})
             if home:
+                home['_id'] = str(home['_id'])
+                home.pop('dwellers')
                 return home
         except Exception as e:
             print("error: ", e)

@@ -5,7 +5,7 @@ import { getUserFromToken } from '@app/components/Authentication/tokenUtils';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  // login: (token: string, tokenType: string) => void;
+  login: (email: string, password: string) => void;
   logout: () => void;
   register: (name:string, email: string, password: string) => Promise<void>;
 }
@@ -33,26 +33,21 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     }
   }, []);
 
-  // const login = async (token: string) => {
-  //   try {
-  //     localStorage.setItem('authToken', token);
-
-  //     const decodedUser = getUserFromToken(token);
-  //     if (decodedUser) {
-  //       const userId = decodedUser.userId;
-  //       localStorage.setItem('userId', userId);
-  //       // const profileId = decodedUser.ProfileID;
-  //       const userid = loginUser({userId, profileId});
-  //       if (await userid) {
-  //         setIsAuthenticated(true);
-  //       }
-        
-  //     }
-  //   } catch (error) {
-  //     setIsAuthenticated(false);
-  //     console.error('Log in failed:', error);
-  //   }
-  // };
+  const login = async (email: string, password: string) => {
+    try {
+      const userId = await loginUser({ email, password });
+      if (userId) {
+        localStorage.setItem('authToken', userId['user_id']);
+        // const decodedUser = getUserFromToken(userId['user_id']);
+        // if (decodedUser) {
+          setIsAuthenticated(true);
+        // }
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+      console.error('Registration failed:', error);
+    }
+  };
 
   const logout = () => {
     localStorage.removeItem('authToken');
@@ -79,7 +74,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, logout, register }}>
+    <AuthContext.Provider value={{ isAuthenticated, logout, login, register }}>
       {children}
     </AuthContext.Provider>
   );

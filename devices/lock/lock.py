@@ -40,6 +40,7 @@ lock_password = get_or_set_password()
 lock_state = {
     "is_locked": True,  # Initially locked
     "last_access": None,
+    "is_on" : True
 }
 
 # MQTT Callbacks
@@ -58,8 +59,30 @@ def on_message(client, userdata, msg):
     except json.JSONDecodeError as e:
         print(f"⚠️ JSON decode error: {e}. Payload received: {payload_str}")
         return
+    
+    command = payload.get("command")
 
-    process_unlock(payload.get("password", ""))
+    if command == "plug_in":
+        lock_state["is_on"] = True
+        print('lock is on')
+        publish_state()    
+
+    elif command == "unplug":
+        lock_state["is_on"] = True
+        print('lock is off')
+        publish_state()
+    
+    elif command == "unlock":
+        if lock_state["is_on"] and lock_state["is_locked"]:
+            lock_state["is_locked"] = False
+            lock_state["last_access"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print("✅ Access granted! Lock is now OPEN.")
+            publish_state()
+    else:
+        print(f"Unknown command: {command}")
+    
+
+    # process_unlock(payload.get("password", ""))
 
 # Function to process unlock attempt
 def process_unlock(password_attempt):
@@ -90,6 +113,7 @@ def publish_state():
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "is_locked": lock_state["is_locked"],
         "last_access": lock_state["last_access"],
+        "is_on": lock_state["is_on"]
     }
 
     client.publish(STATE_TOPIC, json.dumps(state_entry))
