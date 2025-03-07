@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../model/mode.dart';
-import 'curtain.dart';
+import 'devices/curtain.dart';
 
 class MorningScreen extends StatefulWidget {
   final Mode mode;

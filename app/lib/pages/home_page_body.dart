@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:nextgen_software/pages/curtain.dart';
-import 'package:nextgen_software/pages/light.dart';
-import 'package:nextgen_software/pages/speaker.dart';
-import 'package:nextgen_software/pages/thermostat.dart';
-import 'package:nextgen_software/pages/tv.dart';
+import 'package:nextgen_software/pages/components/assistant_button.dart';
+import 'package:nextgen_software/pages/components/consumption_dialog.dart';
+import 'package:nextgen_software/pages/devices/curtain.dart';
+import 'package:nextgen_software/pages/devices/light.dart';
+import 'package:nextgen_software/pages/modes/add_mode_in_home.dart';
+import 'package:nextgen_software/pages/notifications.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 import 'package:nextgen_software/scopedModel/connected_mode.dart';
-
+import '../model/mode.dart';
 import '../scopedModel/connected_model_appliance.dart';
-import 'add_mode.dart';
-import 'camera.dart';
+import 'devices/speaker.dart';
+import 'devices/thermostat.dart';
+import 'devices/tv.dart';
+import 'modes/add_mode.dart';
+import 'devices/camera.dart';
+import 'components/toggle.dart';
 import 'morning.dart';
+import 'package:intl/intl.dart';
 
 class HomePageBody extends StatefulWidget {
-  final AppModel app_model;
-  const HomePageBody({super.key, required this.app_model});
-
-  // HomePageBody(this.model);
-
-
+  final AppModel appModel;
+  const HomePageBody({super.key, required this.appModel});
 
   @override
   _HomePageBodyState createState() => _HomePageBodyState();
@@ -27,101 +29,66 @@ class HomePageBody extends StatefulWidget {
 class _HomePageBodyState extends State<HomePageBody> {
   bool _needsRebuild = false;
   Color _buttonColor = const Color(0xffFEDC97);
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+    fetchDevices();
+  }
+
+  Future<void> fetchDevices() async {
+    try {
+      await widget.appModel.getDevices();
+      setState(() {}); // Update UI after fetching devices
+    } catch (e) {
+      print('Error in fetchDevices: $e');
+    }
+  }
+
+  Future<void> getUser() async {
+    try {
+      await widget.appModel.getUser();
+      setState(() {}); // Update UI after fetching devices
+    } catch (e) {
+      print('Error in fetchDevices: $e');
+    }
+  }
+
   Widget _topMyHomeSection() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.09,
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      height: MediaQuery.of(context).size.height * 0.21,
+      padding: EdgeInsets.only(top: 50, left: 16, right: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'My Home',
-            style: TextStyle(
-              fontSize: 20.0, // Increase font size
-              fontWeight: FontWeight.w900, // Make text bold
-              fontFamily: 'Roboto', // Optional: change the font family (default is 'Roboto')
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset('assets/images/profile_female.png', width: 75, height: 75,),
+              SizedBox(height: 5,),
+              Text(
+                "Hello, ${widget.appModel.userData['name']?.split(' ')[0] ?? ''} ☀",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, fontFamily: 'Roboto'),
+              )
+            ],
           ),
-          Image.asset('assets/images/add.png',
-            width: 25,  // Set the width
-            height: 25, // Set the height
-            )
+          GestureDetector(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsScreen()),
+              );
+            },
+            child: Image.asset('assets/images/bell.png',
+              width: 45,  // Set the width
+              height: 45, // Set the height
+              ),
+          )
         ],
       ),
     );
   }
-  Widget _topWidgetSection(ApplianceModel model) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 5),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07, // Parent container height
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal, // Scroll horizontally
-          itemCount: model.allFetch.length, // Use the dynamic model list count
-          itemBuilder: (context, index) {
-            // Sort the list so enabled devices come first
-            var sortedList = List.from(model.allFetch)
-              ..sort((a, b) => (b.isEnable ? 1 : 0).compareTo(a.isEnable ? 1 : 0));
-
-            bool isEnabled = sortedList[index].isEnable;
-            Color boxColor = isEnabled ? Color(0xff32E1A1) : Color(0xffefefef);
-            String text = isEnabled ? 'active' : 'not active';
-
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  sortedList[index].isEnable = !isEnabled; // Toggle enable
-                });
-              },
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1, // Set box height
-                width: 120, // Box width
-                margin: EdgeInsets.symmetric(horizontal: 4.0), // Space between boxes
-                decoration: BoxDecoration(
-                  color: boxColor, // Use dynamic color
-                  borderRadius: BorderRadius.circular(5), // Rounded corners
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      blurRadius: 10,
-                      offset: Offset(0, 10),
-                      color: isEnabled ? Colors.grey.shade300 : Color(0xfff1f0f2),
-                    )
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(sortedList[index].mainIconString, height: 20),
-                    SizedBox(width: 10),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          sortedList[index].title, // Dynamic title
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        Text(
-                          text, // Dynamic status
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                    SizedBox(width: 10)
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-
   Widget _modeSection(ModeModel model, ApplianceModel deviceModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -138,32 +105,24 @@ class _HomePageBodyState extends State<HomePageBody> {
                 Text(
                   'Modes',
                   style: TextStyle(
-                    fontSize: 23.0, // Increase font size
-                    fontWeight: FontWeight.w600, // Make text bold
-                    fontFamily: 'Roboto', // Optional: change the font family
+                    fontSize: 19.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Roboto',
                   ),
                 ),
                 GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.push(
+                  onTap: (){
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AddModeScreen(
-                        model: deviceModel,
-                        modeModel: model,
-                      )),
+                      MaterialPageRoute(
+                        builder: (context) => AddModeInHome(model: widget.appModel,)
+                      ),
                     );
-
-                    // Check if TVScreen passed back the result to trigger rebuild
-                    if (result == true) {
-                      setState(() {
-                        _needsRebuild = true;
-                      });
-                    }
                   },
                   child: Image.asset(
                     'assets/images/add.png',
-                    width: 25, // Set the width
-                    height: 25, // Set the height
+                    width: 25,
+                    height: 25,
                   ),
                 ),
               ],
@@ -175,18 +134,12 @@ class _HomePageBodyState extends State<HomePageBody> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: model.allFetch.map((mode) {
-                      // Use dynamic modes from the model
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: GestureDetector(
                           onTap: () {
-                            // Dynamic navigation based on mode title
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MorningScreen(mode: mode),
-                              ),
-                            );
+                            // Show Dialog with Mode Details
+                            _showModeDetailsDialog(context, mode);
                           },
                           child: Container(
                             height: MediaQuery.of(context).size.height * 0.075,
@@ -196,7 +149,13 @@ class _HomePageBodyState extends State<HomePageBody> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xffd9d9d9), // Background based on isEnabled
+                              image: mode.backImg != null
+                                  ? DecorationImage(
+                                image: NetworkImage(mode.backImg!),
+                                fit: BoxFit.cover,
+                              )
+                                  : null,
+                              color: Color(int.parse('0x${mode.bgColor}')),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -205,9 +164,9 @@ class _HomePageBodyState extends State<HomePageBody> {
                                 Text(
                                   mode.title,
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 22,
                                     fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
                                 mode.isActive()
@@ -230,142 +189,154 @@ class _HomePageBodyState extends State<HomePageBody> {
       ),
     );
   }
-
-
+  void _showModeDetailsDialog(BuildContext context, Mode mode) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.white.withOpacity(0.8),
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: Colors.white,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              image: mode.backImg != null
+                  ? DecorationImage(
+                image: NetworkImage(mode.backImg!),
+                fit: BoxFit.cover,
+              )
+                  : null,
+              color: Color(int.parse('0x${mode.bgColor}')),
+              border: Border.all(width: 3),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(mode.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                    Icon(Icons.toggle_off, color: Colors.black, size: 35,)
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(width: 1),
+                    color: Colors.white
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.more_time_rounded, color: Colors.grey, size: 20,),
+                      SizedBox(width: 5,),
+                      Text('Scheduled : 6:00 - 20:00', style: TextStyle(color: Color(0xff7E7979), fontSize: 13, fontWeight: FontWeight.bold),)
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20,),
+                Align(alignment: Alignment.centerLeft, child: Text('Device routine', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)),
+                SizedBox(height: 5,),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: Expanded(
+                    child: GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // 2 boxes per row
+                        crossAxisSpacing: 8.0, // Spacing between columns
+                        mainAxisSpacing: 8.0, // Spacing between rows
+                        childAspectRatio: 1.7, // Adjust box proportions
+                      ),
+                      itemCount: mode.appliances.length, // Total number of appliances
+                      itemBuilder: (BuildContext context, int index) {
+                        final appliance = mode.appliances[index];
+                        return GestureDetector(
+                          onTap: () {
+                            if (appliance.type == 'curtain'){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CurtainScreen(device: appliance)),
+                              );
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffEFEFEF), // Inactive appliance color
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(width: 1)
+                            ),
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        appliance.mainIconString, // Dynamic icon path
+                                        height: 15,
+                                      ),
+                                      SizedBox(height: 5,),
+                                      Text(
+                                        appliance.title,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
   Widget _mainWidgetsSection(ApplianceModel model) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.335,
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Frequently used devices",
-                  style: TextStyle(
-                    fontSize: 18.0, // Increase font size
-                    fontWeight: FontWeight.w600, // Make text bold
-                    fontFamily: 'Roboto', // Optional: change the font family
-                  ),
-                ),
-              ],
+            const Text(
+              "My room",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w800,
+                fontFamily: 'Roboto',
+              ),
             ),
-            SizedBox(height: 5), // Add spacing between title and grid
             Expanded(
               child: GridView.builder(
-                physics: AlwaysScrollableScrollPhysics(), // Allow vertical scrolling
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 boxes per row
-                  crossAxisSpacing: 8.0, // Spacing between columns
-                  mainAxisSpacing: 8.0, // Spacing between rows
-                  childAspectRatio: 1.7, // Adjust box proportions
+                physics: const AlwaysScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 2.5,
                 ),
-                itemCount: model.allFetch.length, // Use model data length
+                itemCount: model.allFetch.length,
                 itemBuilder: (BuildContext context, int index) {
-                  var device = model.allFetch[index]; // Current device
-                  return GestureDetector(
-                    onTap: () async {
-                      // Navigate dynamically based on the device title
-                      if (device.type == "tv") {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => TVScreen(device: device)),
-                        );
-
-                        // Check if TVScreen passed back the result to trigger rebuild
-                        if (result == true) {
-                          setState(() {
-                            _needsRebuild = true;
-                          });
-                        }
-
-                      } else if (device.type == "light") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LightScreen()),
-                        );
-                      } else if (device.type == "speaker") {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SpeakerScreen(device: device)),
-                        );
-
-                        // Check if TVScreen passed back the result to trigger rebuild
-                        if (result == true) {
-                          setState(() {
-                            _needsRebuild = true;
-                          });
-                        }
-                      } else if (device.type == "thermostat") {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ThermostatScreen(device: device)),
-                        );
-
-                        // Check if TVScreen passed back the result to trigger rebuild
-                        if (result == true) {
-                          setState(() {
-                            _needsRebuild = true;
-                          });
-                        }
-                      } else if (device.type == "curtain") {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CurtainScreen(device: device)),
-                        );
-
-                        // Check if TVScreen passed back the result to trigger rebuild
-                        if (result == true) {
-                          setState(() {
-                            _needsRebuild = true;
-                          });
-                        }
-                      } else if (device.type == "camera") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CameraScreen()),
-                        );
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Color(0xffd9d9d9), // Background based on isEnable
-                        borderRadius: BorderRadius.circular(10.0), // Rounded corners
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 5,
-                            offset: Offset(0, 5),
-                            color: device.isEnable ? Colors.grey.shade300 : Color(0xfff1f0f2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(device.mainIconString, height: 15), // Dynamic image
-                              Text(device.title), // Dynamic title
-                              // Text("${device.deviceCount} device${device.deviceCount > 1 ? 's' : ''}"), // Dynamic device count
-                            ],
-                          ),
-                          !device.isEnable?
-                          IconButton(onPressed: (){setState(() {
-                            device.isEnable = !device.isEnable;
-                          });}, icon: Icon(Icons.toggle_off, color: Colors.black, size: 35,)) : // Static switch image
-                          IconButton(onPressed: (){setState(() {
-                            device.isEnable = !device.isEnable;
-                          });}, icon: Icon(Icons.toggle_on, color: Colors.green, size: 35,)) // Static switch image
-                        ],
-                      ),
-                    ),
-                  );
+                  return _buildDeviceTile(model.allFetch[index]);
                 },
               ),
             ),
@@ -374,8 +345,77 @@ class _HomePageBodyState extends State<HomePageBody> {
       ),
     );
   }
+  Widget _buildDeviceTile(device) {
+    return GestureDetector(
+      onTap: () => _navigateToDeviceScreen(device),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Color(0x3f000017)),
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 5,
+              offset: const Offset(0, 5),
+              color: device.isEnable ? Colors.grey.shade300 : const Color(0xfff1f0f2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(device.mainIconString, height: 15),
+                Text(device.title),
+              ],
+            ),
+            ['thermostat'].contains(device.type) ? SizedBox():
+            ToggleMain(deviceId: device.id, appModel: widget.appModel), // Pass only ID
+          ],
+        ),
+      ),
+    );
+  }
 
+  void _navigateToDeviceScreen(device) async {
+    Widget? screen;
 
+    switch (device.type) {
+      case "tv":
+        screen = TVScreen(device: device);
+        break;
+      case "light":
+        screen = LightScreen(appModel: widget.appModel, device: device);
+        break;
+      case "speaker":
+        screen = SpeakerScreen(device: device);
+        break;
+      case "thermostat":
+        screen = ThermostatScreen(device: device);
+        break;
+      case "curtain":
+        screen = CurtainScreen(device: device);
+        break;
+      case "camera":
+        screen = CameraScreen();
+        break;
+    }
+
+    if (screen != null) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => screen!),
+      );
+
+      if (result == true) {
+        setState(() {
+          _needsRebuild = true;
+        });
+      }
+    }
+  }
   Widget _assistantButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -422,22 +462,24 @@ class _HomePageBodyState extends State<HomePageBody> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    ApplianceModel model = widget.app_model.applianceModel;
-    ModeModel modeModel = widget.app_model.modeModel;
+    ApplianceModel model = widget.appModel.applianceModel;
+    ModeModel modeModel = widget.appModel.modeModel;
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: SingleChildScrollView(
         child: Column(
         children: <Widget>[
           _topMyHomeSection(),
-          _topWidgetSection(model),
+          // _consumptionBox(),
+          ConsumptionWidget(homeData: widget.appModel.homeData),
+          // _topWidgetSection(model),
           _modeSection(modeModel, model),
           _mainWidgetsSection(model),
-          _assistantButton()
-
+          // _assistantButton()
+          // AssistantButton()
     ])));
   }
+
 }
