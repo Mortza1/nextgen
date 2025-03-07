@@ -2,9 +2,11 @@ import type { AxiosInstance, AxiosProgressEvent, AxiosPromise } from "axios";
 import Base from "./base";
 import {
   AddHomeRequestData,
+  getDevicesData,
   getHomeData,
   getHomeUsersData,
   getUserData,
+  LoginRequestData,
   RegisterRequestData,
   RegisterResponse,
   sendInviteData,
@@ -35,6 +37,7 @@ export class RoomApi extends Base {
   getHomeUsers(
     data: getHomeUsersData
   ) {
+    console.log(data,'ppppppppppppppppp')
     return this.httpClient({
       url: `${this.url}/management/home-dwellers`,
       method: "POST",
@@ -47,6 +50,16 @@ export class RoomApi extends Base {
   ) {
     return this.httpClient({
       url: `${this.url}/management/homes`,
+      method: "POST",
+      data,
+    });
+  }
+
+  getDevices(
+    data: getDevicesData
+  ) {
+    return this.httpClient({
+      url: `${this.url}/device/get_devices`,
       method: "POST",
       data,
     });
@@ -67,6 +80,16 @@ export class RoomApi extends Base {
   ): AxiosPromise<CommonResponseApi<RegisterResponse>> {
     return this.httpClient({
       url: `${this.url}/auth/register-manager`,
+      method: "POST",
+      data,
+    });
+  }
+
+  login_manager(
+    data: LoginRequestData
+  ): AxiosPromise<CommonResponseApi<RegisterResponse>> {
+    return this.httpClient({
+      url: `${this.url}/auth/login`,
       method: "POST",
       data,
     });

@@ -66,9 +66,12 @@ async def get_dwellers_of_home(params: homeDwellersParams):
     try:
         users = []
         for i in params.user_ids:
+            print("user_id", i)
             user = user_manager.get_user_by_id(i)
             if user:
                 users.append(user)
+            else:
+                print('user is empty')
         response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="users fetched successfully."
             )

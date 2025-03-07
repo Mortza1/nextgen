@@ -140,6 +140,13 @@ class ConnectDeviceParams(BaseModel):
     hub_id: str
     device_id: str
 
+
+class AddModeParams(BaseModel):
+    home_id: str
+    mode : dict
+
+    
+
 class SetDeviceParams(BaseModel):
     device_id: str
     command: str
@@ -185,6 +192,7 @@ class addColumnParams(BaseModel):
     user_id : str
 
 class get_userParams(BaseModel):
-    id: str
+    user_id: str
+    home_id: str
 
 
