@@ -7,6 +7,7 @@ import 'package:nextgen_software/pages/settings/privacy.dart';
 import 'package:nextgen_software/pages/settings/profile.dart';
 
 import '../../scopedModel/app_model.dart';
+import '../components/snackbar.dart';
 
 class AddModeInHome extends StatefulWidget {
   final AppModel model;
@@ -109,16 +110,21 @@ class AddModeInHomeState extends State<AddModeInHome> {
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  Container(
-                    height: 40,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Color(0x87D9D9D9),
-                      border: Border.all(color: Colors.black, width: 3),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(
-                      child: Text('Remove'),
+                  GestureDetector(
+                    onTap: () {
+                      showComingSoonSnackBar(context, 'Action unavailable');
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Color(0x87D9D9D9),
+                        border: Border.all(color: Colors.black, width: 3),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(
+                        child: Text('Remove'),
+                      ),
                     ),
                   ),
                 ],

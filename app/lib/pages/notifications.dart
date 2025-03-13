@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nextgen_software/pages/auth_ui/login.dart';
 import 'package:nextgen_software/pages/settings/notificationSetting.dart';
 import 'package:nextgen_software/pages/settings/preferences.dart';
@@ -35,7 +36,6 @@ class NotificationsScreenState extends State<NotificationsScreen> {
         children: [
           SizedBox(height: 40,),
           top(),
-          SizedBox(height: 40,),
           box()
         ],
       ),
@@ -77,28 +77,15 @@ class NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
   Widget box(){
-    return Column(
-      children: [
-        Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.2,
-          decoration: BoxDecoration(
-            color: Color(0xffFAFAFF),
-            border: Border.all(color: Color(0x96C2C3CD)),
-            borderRadius: BorderRadius.circular(18)
-          ),
-        ),
-        SizedBox(height: 20,),
-        Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.2,
-          decoration: BoxDecoration(
-              color: Color(0xffFAFAFF),
-              border: Border.all(color: Color(0x96C2C3CD)),
-              borderRadius: BorderRadius.circular(18)
-          ),
-        )
-      ],
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.75,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.network('https://lottie.host/d844f636-cbec-4278-aab0-61c6706ecadd/P4N2NXrVA6.json', height: 200),
+          Text('No notifications', style: TextStyle(fontWeight: FontWeight.bold),)
+        ],
+      ),
     );
   }
 

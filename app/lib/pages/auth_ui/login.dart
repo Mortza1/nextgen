@@ -102,17 +102,21 @@ class _LoginPageState extends State<LoginPage> {
                                         builder: (context) => CustomTabScreen(model: widget.appModel),
                                       ),
                                     );
-
-                                    // Optionally, navigate or show success message
                                   } catch (e) {
-                                    // Handle error
-                                    print("Error: $e");
+                                    // Show Snackbar on login failure
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Login failed: ${e.toString()}"),
+                                        backgroundColor: Color(0xff9D79BC),
+                                      ),
+                                    );
                                   } finally {
                                     setState(() {
                                       _isLoading = false; // Stop loading
                                     });
                                   }
                                 },
+
                                 child: Container(
                                   height: 55,
                                   decoration: BoxDecoration(

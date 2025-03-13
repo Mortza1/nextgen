@@ -5,6 +5,7 @@ import 'package:nextgen_software/pages/settings/setting.dart';
 import 'package:nextgen_software/scopedModel/app_model.dart';
 
 import '../scopedModel/connected_model_appliance.dart';
+import 'game/game.dart';
 import 'modes/mode_page.dart';
 
 class CustomTabScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
     final List<Widget> screens = [
       HomePageBody(appModel: widget.model),
       ModeScreen(model: widget.model),
+      GameScreen(model: widget.model,),
       OverviewScreen(model: widget.model),
       SettingScreen(model: widget.model,),
     ];
@@ -52,8 +54,9 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
                 children: [
                   _buildNavItem('assets/images/home.png', 0, "dashboard"),
                   _buildNavItem('assets/images/window.png', 1, "overview"),
-                  _buildNavItem('assets/images/leaf.png', 2, "profile"),
-                  _buildNavItem('assets/images/profile_duck.png', 3, "profile"),
+                  _buildNavItem('assets/images/gamify.png', 2, "game"),
+                  _buildNavItem('assets/images/leaf.png', 3, "profile"),
+                  _buildNavItem('assets/images/profile_duck.png', 4, "profile"),
                 ],
               ),
             ),
@@ -77,7 +80,7 @@ class _CustomTabScreenState extends State<CustomTabScreen> {
             border: Border.all(color: _currentIndex == index? Color(0xff00AB5E) : Colors.transparent, width: 2 ),
             borderRadius: BorderRadius.circular(10)
           ),
-          child: Image.asset(image, height: 30,)),
+          child: Image.asset(image, height: index == 2 ? 45 : 30,)),
     );
   }
 }

@@ -44,3 +44,28 @@ class HubManager:
         except Exception as e:
             print("error: ", e)
             raise Exception("room fetch failed. ")
+        
+
+    def add_device(self, hub_id, device_id, room):
+        try:
+            # Find the hub and update the specific room's devices array
+            result = self.collection.update_one(
+                {
+                    "_id": ObjectId(hub_id),  # Match the hub by its ID
+                    "rooms.name": room,       # Match the room by its name
+                },
+                {
+                    "$addToSet": {"rooms.$.devices": device_id}  # Add device_id to the matched room's devices array
+                }
+            )
+
+            # Check if the update was successful
+            if result.modified_count == 1:
+                print(f"Device {device_id} successfully added to room {room}.")
+                return True
+            else:
+                print(f"No hub found with ID {hub_id} or no room found with name {room}.")
+                return False
+        except Exception as e:
+            print("error: ", e)
+            return {"status": "error", "message": str(e)}

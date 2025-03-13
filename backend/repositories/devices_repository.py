@@ -21,5 +21,16 @@ class DeviceManager:
             import traceback
             traceback.print_exc()
             raise Exception("device fetch failed.")
+        
+    def update_device(self, device_id, name):
+        try:
+            device = self.collection.update_one({"_id": ObjectId(device_id)}, {"$set": {"name": name}})
+            if device:
+                return True
+        except Exception as e:
+            print("error:", e)
+            import traceback
+            traceback.print_exc()
+            raise Exception("device update failed.")
     
 

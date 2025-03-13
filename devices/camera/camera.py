@@ -169,9 +169,13 @@ if not camera_capture.isOpened():
 def generate_dummy_frame():
     """Simulate a video frame and return both raw and encoded versions."""
     frame = np.random.randint(0, 256, (RESOLUTION[1], RESOLUTION[0], 3), dtype=np.uint8)
-    _, buffer = cv2.imencode('.jpg', frame)
+    success, buffer = cv2.imencode('.jpg', frame)
+    if not success:
+        print("Error encoding frame, returning empty frame")
+        return frame, ""
     encoded_frame = base64.b64encode(buffer).decode('utf-8')
     return frame, encoded_frame
+
 
 def compress_frame(frame_data):
     """Stub function for compression (to be implemented)."""
@@ -182,24 +186,29 @@ def calculate_power_usage(mode, duration):
     return round((POWER_USAGE[mode] / 3600) * duration, 4)
 
 def publish_frames():
-    """Capture, compress, and send frames in batches."""
     global camera_state
-    
+
     frames = []
     for _ in range(FRAME_BATCH):
         if camera_capture:
             ret, raw_frame = camera_capture.read()
             if not ret:
-                print("Failed to capture frame from webcam.")
+                print("Failed to capture frame from webcam, using dummy frame.")
                 raw_frame, encoded_frame = generate_dummy_frame()
+            else:
+                _, buffer = cv2.imencode('.jpg', raw_frame)
+                encoded_frame = base64.b64encode(buffer).decode('utf-8')
         else:
             raw_frame, encoded_frame = generate_dummy_frame()
         
+        if not encoded_frame:  # Handle empty frame
+            print("Skipping empty frame.")
+            continue  # Skip adding to frames list
+
         frames.append(compress_frame(encoded_frame))  # Send encoded frame
 
-        # **Show locally** with proper refresh
         cv2.imshow("Camera Feed", raw_frame)
-        if cv2.waitKey(10) & 0xFF == ord('q'):  # Quit on pressing 'q'
+        if cv2.waitKey(10) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             exit()
 
@@ -212,6 +221,7 @@ def publish_frames():
     camera_state["last_transmission"] = payload["timestamp"]
     camera_state["power_consumption"] += calculate_power_usage(camera_state["mode"], FRAME_BATCH / FRAME_RATE)
     publish_state()
+
 
 def publish_state():
     """Publish camera state."""

@@ -27,6 +27,7 @@ class AppModel extends Model {
     _isLoggedIn = true;
     print(result['data']['user_id'] + 'klklll');
     await prefs.setString('user_id', result['data']['user_id']);
+    await prefs.setString('home_id', result['data']['home_id']);
     notifyListeners();
   }
   Future<void> getUser() async {
@@ -34,9 +35,9 @@ class AppModel extends Model {
     String? userId = prefs.getString('user_id');
     String? homeId = prefs.getString('home_id');
 
-    if (userId != null && homeId != null) {
+    if (userId != null) {
       try {
-        final result = await _apiService.getUser(userId, homeId);
+        final result = await _apiService.getUser(userId, homeId ?? '');
 
         if (result['statusCode'] == 200) {  // Assuming API response contains a success field
           // Extract user details from API response
@@ -56,6 +57,16 @@ class AppModel extends Model {
     }
 
     notifyListeners();  // Update UI
+  }
+  Future<Map<String, dynamic>?> getDevice(String deviceId) async {
+      final result = await _apiService.getDevice(deviceId);
+      if (result['statusCode'] == 200) {
+        return result['data'];
+      } else {
+        print("Failed to fetch user data: ${result['message']}");
+      }
+  notifyListeners();
+  return null;  // Update UI
   }
   Future<void> register(String name, String token, String email, String password) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -82,6 +93,12 @@ class AppModel extends Model {
     print(result);
     notifyListeners();
   }
+  Future<void> addDevice(String deviceId, String name, String room) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? hubId = prefs.getString('hub_id');
+    final result = await _apiService.addDevice(hubId ?? '', deviceId, name, room);
+    notifyListeners();
+  }
   Future<void> logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _isLoggedIn = false;
@@ -90,6 +107,7 @@ class AppModel extends Model {
     notifyListeners();
   }
   Future<void> getDevices() async {
+    print("running the getDevices method");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('user_id');
     String? hubId = prefs.getString('hub_id');
@@ -115,7 +133,7 @@ class AppModel extends Model {
         }).toList();
         applianceModel.setAppliances(appliances);
         // Handle modes
-        if (homeData != null && homeData.containsKey('modes')) {
+        if (homeData.containsKey('modes')) {
           List<Mode> modes = (homeData['modes'] ?? []).map<Mode>((mode) {
             var devices = (mode['devices'] as List<dynamic>)
                 .map((e) => e.toString()) // Convert each element to String
@@ -145,6 +163,7 @@ class AppModel extends Model {
     } else {
       print('User ID is null');
     }
+    notifyListeners();
   }
   String _getIconPath(String? type) {
     switch (type) {
@@ -162,6 +181,8 @@ class AppModel extends Model {
         return 'assets/images/thermostat.png';
       case 'security lock':
         return 'assets/images/lock.png';
+      case 'cameras':
+        return 'assets/images/camera.png';
       case 'socket':
         return 'assets/images/plug.png';
       default:
@@ -203,28 +224,25 @@ class AppModel extends Model {
         );
       case 'security lock':
         return SmartLockState(
-          isOn: device['current_data']['is_on'] ?? false,
+          isOn: device['current_data']['metric']['is_on'] ?? false,
         );
       case 'socket':
         return SocketState(
           isOn: device['current_data']['metric']['is_plugged_in'] ?? false
         );
+      case 'cameras':
+        return SocketState(
+        );
       default:
         return null;
     }
   }
-  Future<Appliance?> getDeviceById(String deviceId) async {
+  Appliance? getDeviceById(String deviceId) {
     try {
-      // Get all devices
-      await getDevices();
-
-      // Filter the list to find the device by ID
-      List<Appliance> matchingDevices = applianceModel.allFetch.where(
+      // Directly look for the device in the existing list
+      return applianceModel.allFetch.firstWhere(
             (appliance) => appliance.id == deviceId,
-      ).toList();
-
-      // Return the first match or null if not found
-      return matchingDevices.isNotEmpty ? matchingDevices.first : null;
+      );
     } catch (e) {
       print('Error fetching device by ID: $e');
       return null;

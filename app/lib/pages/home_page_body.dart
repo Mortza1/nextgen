@@ -314,7 +314,7 @@ class _HomePageBodyState extends State<HomePageBody> {
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.335,
+        height: MediaQuery.of(context).size.height * 0.4,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: rooms.isNotEmpty
             ? ListView.builder(
@@ -377,9 +377,9 @@ class _HomePageBodyState extends State<HomePageBody> {
     return GestureDetector(
       onTap: () => _navigateToDeviceScreen(device),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0x3f000017)),
+          border: Border.all(color: const Color(0x3f000017)),
           borderRadius: BorderRadius.circular(10.0),
           boxShadow: [
             BoxShadow(
@@ -392,13 +392,39 @@ class _HomePageBodyState extends State<HomePageBody> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(device.mainIconString, height: 15),
-                Text(device.title),
-              ],
+            // Device Icon and Title
+            Expanded(
+              child: Column(
+                children: [
+                  // Device Icon
+                  Image.asset(
+                    device.mainIconString,
+                    height: 15,
+                    width: 15,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 10), // Add spacing between icon and title
+
+                  // Device Title (with truncation and tooltip)
+                  Expanded(
+                    child: Tooltip(
+                      message: device.title, // Show full title on hover/long-press
+                      child: Text(
+                        device.title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1, // Limit to 1 line
+                        overflow: TextOverflow.ellipsis, // Add ellipsis if text overflows
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
+
+            // Toggle Button
             ToggleMain(device: device, appModel: widget.appModel), // Pass only ID
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:nextgen_software/pages/auth_ui/login.dart';
+import 'package:nextgen_software/pages/components/snackbar.dart';
 import 'package:nextgen_software/pages/settings/notificationSetting.dart';
 import 'package:nextgen_software/pages/settings/preferences.dart';
 import 'package:nextgen_software/pages/settings/privacy.dart';
@@ -41,21 +42,24 @@ class RoomScreenState extends State<RoomScreen> {
           SizedBox(height: 20,),
           options(),
           SizedBox(height: 40,),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.06,
-            width: MediaQuery.of(context).size.width * 0.8,
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffC2C3CD), width: 2),
-              borderRadius: BorderRadius.circular(22)
-            ),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('DELETE', style: TextStyle(color: Color(0xffCC0202), fontWeight: FontWeight.bold),),
-                  SizedBox(width: 5,),
-                  Icon(Icons.delete, color: Color(0xffCC0202), size: 20,)
-                ],
+          GestureDetector(
+            onTap: (){showComingSoonSnackBar(context, 'action denied');},
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.06,
+              width: MediaQuery.of(context).size.width * 0.8,
+              decoration: BoxDecoration(
+                border: Border.all(color: Color(0xffC2C3CD), width: 2),
+                borderRadius: BorderRadius.circular(22)
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('DELETE', style: TextStyle(color: Color(0xffCC0202), fontWeight: FontWeight.bold),),
+                    SizedBox(width: 5,),
+                    Icon(Icons.delete, color: Color(0xffCC0202), size: 20,)
+                  ],
+                ),
               ),
             ),
           )
@@ -154,7 +158,7 @@ class RoomScreenState extends State<RoomScreen> {
               title,
               style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
             ),
-            Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),)
+            GestureDetector(onTap: (){showComingSoonSnackBar(context, 'Feature in progress');}, child: Text('REMOVE', style: TextStyle(color: Color(0xff00AB5E), fontSize: 13, fontWeight: FontWeight.bold),))
           ],
         ),
       ),

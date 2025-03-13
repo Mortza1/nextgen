@@ -6,3 +6,6 @@ uvicorn
 ngrok
 paho-mqtt
 httpx
+opencv-python
+ngrok
+numpy

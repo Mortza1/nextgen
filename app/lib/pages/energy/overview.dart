@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/components/barchart.dart';
+import 'package:nextgen_software/pages/components/snackbar.dart';
 import '../../scopedModel/app_model.dart';
 import '../components/piechart.dart';
 
@@ -16,6 +17,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   String _selectedPeriod1 = 'Day';
   String _selectedPeriod2 = 'Day';
   String _selectedPeriod3 = 'Day';
+  bool isEnergySavingOn = false;
 
   // Example data for each tab
   final Map<String, String> usageData = {
@@ -294,12 +296,15 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Text('filter', style: TextStyle(color: Color(0xffA1A2AA), fontSize: 15),),
-                  SizedBox(width: 5,),
-                  Icon(Icons.filter_alt, color: Color(0xffA1A2AA), size: 15, )
-                ],
+              GestureDetector(
+                onTap: (){showComingSoonSnackBar(context, 'yet to be implemented');},
+                child: Row(
+                  children: [
+                    Text('filter', style: TextStyle(color: Color(0xffA1A2AA), fontSize: 15),),
+                    SizedBox(width: 5,),
+                    Icon(Icons.filter_alt, color: Color(0xffA1A2AA), size: 15, )
+                  ],
+                ),
               )
             ],
           ),
@@ -383,21 +388,32 @@ class _OverviewScreenState extends State<OverviewScreen> {
     );
   }
   Widget energySaving(){
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.85,
-      height: MediaQuery.of(context).size.height * 0.08,
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xffD5FFB8), Color(0xff8FD993)]),
-        borderRadius: BorderRadius.circular(12)
-      ),child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Image.asset('assets/images/leaf_a.png', height: 30,),
-        Text('Turn on energy saving', style: TextStyle(fontWeight: FontWeight.bold),),
-        Icon(Icons.toggle_off, size: 35,)
-      ],
-    ),
+    return GestureDetector(
+        onTap: () {
+          setState(() {
+            isEnergySavingOn = !isEnergySavingOn; // Toggle state
+          });
+        },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.85,
+        height: MediaQuery.of(context).size.height * 0.08,
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [Color(0xffD5FFB8), Color(0xff8FD993)]),
+          borderRadius: BorderRadius.circular(12)
+        ),child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset('assets/images/leaf_a.png', height: 30,),
+          Text('Turn on energy saving', style: TextStyle(fontWeight: FontWeight.bold),),
+          Icon(
+            isEnergySavingOn ? Icons.toggle_on : Icons.toggle_off,
+            size: 35,
+            color: isEnergySavingOn ? Colors.green : Colors.black, // Color change on toggle
+          ),
+        ],
+      ),
+      ),
     );
   }
   Widget roomCards() {

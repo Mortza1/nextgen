@@ -11,13 +11,13 @@ load_dotenv()
 # MQTT Configuration
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
-DEVICE_ID = os.getenv("DEVICE_ID", "smart_light_default")
+DEVICE_ID = os.getenv("DEVICE_ID")
 COMMAND_TOPIC = f"devices/{DEVICE_ID}/command"
 STATE_TOPIC = f"devices/{DEVICE_ID}/state"  # Topic to publish state updates
 
 # Smart Light State
 light_state = {
-    "is_on": False,
+    "is_on": False, 
     "rgb": (255, 255, 255),  # Default White
     "brightness": 100,  # Default 100%
     "power_consumption": 0.0,  # Power in watts

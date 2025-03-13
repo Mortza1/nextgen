@@ -63,12 +63,12 @@ async def register_user(params: RegisterDwellerParams):
 async def login_user(params: LoginParams):
     try:
         
-        user_id = user_manager.login_user(params.email, params.password)
-        if user_id:
+        user_id, home_id = user_manager.login_user(params.email, params.password)
+        if user_id and home_id:
             response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="Logged in successfully"
             )
-            return ResponseObject(data={'user_id' : user_id}, statusCode=200, responseInfo=response_info)
+            return ResponseObject(data={'user_id' : user_id, 'home_id' : home_id}, statusCode=200, responseInfo=response_info)
         else:
             raise HTTPException(status_code=500, detail="Failed to log in")
     except Exception as e:

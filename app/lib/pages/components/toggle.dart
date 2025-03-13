@@ -33,15 +33,17 @@ class _ToggleMainState extends State<ToggleMain> {
       isLoading = true;
     });
 
-    var device = widget.device;
+    // Get the latest device state from the model
+    var device = model.getDeviceById(deviceId);
     if (device == null) {
+      print("Device not found");
       setState(() {
         isLoading = false;
       });
       return;
     }
 
-    // Handle device-specific commands
+    // Determine command based on latest device state
     String command;
     switch (device.type) {
       case 'light':
@@ -52,19 +54,25 @@ class _ToggleMainState extends State<ToggleMain> {
         break;
       case 'thermostat':
         command = (device.state as ThermostatState).isOn ? 'plug_out' : 'plug_in';
+        break;
       case 'security lock':
         command = (device.state as SmartLockState).isOn ? 'unplug' : 'plug_in';
+        break;
       default:
-        command = 'toggle'; // Default command
+        command = 'toggle';
     }
 
     await model.setCommand(device.id, command);
-    await model.getDevices(); // Refresh devices
+    await model.getDevices(); // Refresh device list
+
+    // Get the updated state after refreshing
+    var updatedDevice = model.getDeviceById(deviceId);
 
     setState(() {
       isLoading = false;
     });
   }
+
 
   // Factory method for device icons
   Widget getDeviceIcon(Appliance device) {
@@ -103,30 +111,49 @@ class _ToggleMainState extends State<ToggleMain> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
       builder: (context, child, model) {
-        return FutureBuilder<Appliance?>(
-          future: model.getDeviceById(deviceId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return SizedBox(
-                height: 15,
-                width: 15,
-                child: CircularProgressIndicator(color: Color(0xffE8CA52)),
-              );
-            }
+        var device = model.getDeviceById(deviceId);
 
-            if (!snapshot.hasData || snapshot.data == null) {
-              return SizedBox(); // Handle no device found
-            }
+        if (device == null) {
+          return SizedBox(); // Handle no device found
+        }
 
-            var device = snapshot.data!;
-
-            return IconButton(
-              onPressed: () => toggleDevice(model),
-              icon: getDeviceIcon(device),
-            );
-          },
+        return IconButton(
+          onPressed: () => toggleDevice(model),
+          icon: getDeviceIcon(device),
         );
       },
     );
   }
+
+
+// @override
+  // Widget build(BuildContext context) {
+  //   return ScopedModelDescendant<AppModel>(
+  //     builder: (context, child, model) {
+  //       return FutureBuilder<Appliance?>(
+  //         future: model.getDeviceById(deviceId),
+  //         builder: (context, snapshot) {
+  //           if (snapshot.connectionState == ConnectionState.waiting) {
+  //             return SizedBox(
+  //               height: 15,
+  //               width: 15,
+  //               child: CircularProgressIndicator(color: Color(0xffE8CA52)),
+  //             );
+  //           }
+  //
+  //           if (!snapshot.hasData || snapshot.data == null) {
+  //             return SizedBox(); // Handle no device found
+  //           }
+  //
+  //           var device = snapshot.data!;
+  //
+  //           return IconButton(
+  //             onPressed: () => toggleDevice(model),
+  //             icon: getDeviceIcon(device),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 }

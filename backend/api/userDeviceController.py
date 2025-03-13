@@ -6,7 +6,7 @@ from repositories.hub_repository import HubManager
 from repositories.token_repository import TokenManager
 from repositories.user_repository import UserManager
 import httpx
-from model.deviceModel import AddModeParams, ConnectDeviceParams, GetDevicesParams, ResponseInfo, ResponseObject, SetDeviceParams
+from model.deviceModel import AddModeParams, ConnectDeviceParams, GetDeviceParams, GetDevicesParams, RegisterDeviceParams, ResponseInfo, ResponseObject, SetDeviceParams
 
 
 deviceRouter = APIRouter()
@@ -55,7 +55,6 @@ async def get_devices(params: GetDevicesParams):
             
             else:
                 latest_device_logs = {"error": "Could not fetch device logs"}
-            
             response_info = ResponseInfo(
                 statusCode=200, message="Success", detail="devices fetched successfully."
             )
@@ -130,3 +129,35 @@ async def register_device(params: AddModeParams):
     except Exception as e:
         print("error: dasda ", e)
         raise HTTPException(status_code=500, detail="Internal server error.")
+    
+
+
+@deviceRouter.post("/register_device", response_model=ResponseObject)
+async def device_registration(params: RegisterDeviceParams):
+    try:
+    
+        update_device = device_manager.update_device(params.device_id, params.device_name)
+        add_device = hub_manager.add_device(params.hub_id, params.device_id, params.device_room)
+        if update_device and add_device:
+            response_info = ResponseInfo(
+                statusCode=200, message="Success", detail="device added successfully."
+            )
+            return ResponseObject(data=True, statusCode=200, responseInfo=response_info)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to add device...")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error. {e}")
+    
+
+@deviceRouter.post("/get_device", response_model=ResponseObject)
+async def get_device(params: GetDeviceParams):
+    device_id = params.device_id
+    try:
+        device = device_manager.get_device(device_id)
+        response_info = ResponseInfo(
+            statusCode=200, message="Success", detail="device fetched successfully."
+        )
+        return ResponseObject(data=device, statusCode=200, responseInfo=response_info)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error. {e}")
+

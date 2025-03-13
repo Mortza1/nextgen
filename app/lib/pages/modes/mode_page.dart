@@ -3,6 +3,7 @@ import 'package:nextgen_software/pages/auth_ui/login.dart';
 import '../../scopedModel/app_model.dart';
 import '../../scopedModel/connected_mode.dart';
 import '../../scopedModel/connected_model_appliance.dart';
+import '../components/snackbar.dart';
 import 'add_mode.dart';
 import '../morning.dart';
 
@@ -16,6 +17,7 @@ class ModeScreen extends StatefulWidget {
 
 class ModeScreenState extends State<ModeScreen> {
   int _selectedTab = 0; // Keeps track of selected tab
+  bool isEnergySavingActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -251,18 +253,35 @@ class ModeScreenState extends State<ModeScreen> {
                         ),
                         Column(
                           children: [
-                            const Icon(Icons.toggle_off,
-                                color: Colors.black, size: 50),
-                            Container(
-                              height: 40,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                color: Color(0x87D9D9D9),
-                                border: Border.all(color: Colors.black, width: 3),
-                                borderRadius: BorderRadius.circular(10),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isEnergySavingActive = !isEnergySavingActive;
+                                });
+                              },
+                              child: Icon(
+                                isEnergySavingActive
+                                    ? Icons.toggle_on
+                                    : Icons.toggle_off,
+                                color: isEnergySavingActive ? Colors.green : Colors.black,
+                                size: 50,
                               ),
-                              child: const Center(
-                                child: Text('Edit'),
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                showComingSoonSnackBar(context, 'feature coming soon');
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: Color(0x87D9D9D9),
+                                  border: Border.all(color: Colors.black, width: 3),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text('Edit'),
+                                ),
                               ),
                             ),
                           ],
@@ -332,16 +351,21 @@ class ModeScreenState extends State<ModeScreen> {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              Container(
-                height: 40,
-                width: 60,
-                decoration: BoxDecoration(
-                    color: Color(0x87D9D9D9),
-                    border: Border.all(color: Colors.black, width: 3 ),
-                    borderRadius: BorderRadius.circular(10)
-                ),
-                child: Center(
-                  child: Text('Add'),
+              GestureDetector(
+                onTap: () {
+                  showComingSoonSnackBar(context, 'Coming Soon!');
+                },
+                child: Container(
+                  height: 40,
+                  width: 60,
+                  decoration: BoxDecoration(
+                      color: Color(0x87D9D9D9),
+                      border: Border.all(color: Colors.black, width: 3 ),
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Center(
+                    child: Text('Add'),
+                  ),
                 ),
               )
             ],

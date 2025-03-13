@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:nextgen_software/pages/auth_ui/login.dart';
+import 'package:nextgen_software/pages/components/snackbar.dart';
 import 'package:nextgen_software/pages/settings/notificationSetting.dart';
 import 'package:nextgen_software/pages/settings/preferences.dart';
 import 'package:nextgen_software/pages/settings/privacy.dart';
@@ -218,30 +219,36 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
             ),
             child: Column(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: (MediaQuery.of(context).size.height * 0.29)/4,
-                  decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: 2))
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Text('Help Center', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),)
-                      ],
+                GestureDetector(
+                  onTap: (){showComingSoonSnackBar(context, 'Will be linked to the website');},
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: (MediaQuery.of(context).size.height * 0.29)/4,
+                    decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Color(0xffC2C3CD), width: 2))
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          Text('Help Center', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),)
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: (MediaQuery.of(context).size.height * 0.29)/4,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Text('Feedback', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),)
-                      ],
+                GestureDetector(
+                  onTap: (){showComingSoonSnackBar(context, 'Will be linked to the website');},
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: (MediaQuery.of(context).size.height * 0.29)/4,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          Text('Feedback', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),)
+                        ],
+                      ),
                     ),
                   ),
                 )

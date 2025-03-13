@@ -129,9 +129,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                         builder: (context) => CustomTabScreen(model: widget.model),
                                       ),
                                     );
-                                    
                                     // Optionally, navigate or show success message
                                   } catch (e) {
+                                    // Show Snackbar on registration failure
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Registration failed: $e"),
+                                        backgroundColor: Color(0xff9D79BC),
+                                      ),
+                                    );
                                     // Handle error
                                     print("Error: $e");
                                   } finally {

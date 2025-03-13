@@ -140,6 +140,12 @@ class ConnectDeviceParams(BaseModel):
     hub_id: str
     device_id: str
 
+class RegisterDeviceParams(BaseModel):
+    hub_id: str
+    device_id: str
+    device_name: str
+    device_room: str
+
 
 class AddModeParams(BaseModel):
     home_id: str
@@ -154,6 +160,9 @@ class SetDeviceParams(BaseModel):
 class GetDevicesParams(BaseModel):
     user_id: str
     hub_id : str
+
+class GetDeviceParams(BaseModel):
+    device_id: str
 
 class RegisterDwellerParams(BaseModel):
     email: str
