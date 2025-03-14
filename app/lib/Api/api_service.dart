@@ -22,6 +22,24 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> addRoom(String hubId, String name ) async {
+    final url = '$baseUrl/device/add_room';
+    final headers = {'Content-Type': 'application/json'};
+    final body = jsonEncode({'hub_id' : hubId, 'name' : name});
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to add room');
+    }
+  }
+
   Future<Map<String, dynamic>> getUser(String userId, String homeId) async {
     final url = '$baseUrl/auth/user';
     final headers = {'Content-Type': 'application/json'};

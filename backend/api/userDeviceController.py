@@ -6,7 +6,7 @@ from repositories.hub_repository import HubManager
 from repositories.token_repository import TokenManager
 from repositories.user_repository import UserManager
 import httpx
-from model.deviceModel import AddModeParams, ConnectDeviceParams, GetDeviceParams, GetDevicesParams, RegisterDeviceParams, ResponseInfo, ResponseObject, SetDeviceParams
+from model.deviceModel import AddModeParams, AddRoomParams, ConnectDeviceParams, GetDeviceParams, GetDevicesParams, RegisterDeviceParams, ResponseInfo, ResponseObject, SetDeviceParams
 
 
 deviceRouter = APIRouter()
@@ -161,3 +161,18 @@ async def get_device(params: GetDeviceParams):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error. {e}")
 
+@deviceRouter.post("/add_room", response_model=ResponseObject)
+async def add_room(params: AddRoomParams):
+    try:
+        hub = hub_manager.add_room(params.hub_id, params.name)
+        if hub:
+            response_info = ResponseInfo(
+                statusCode=200, message="Success", detail="Room added successfully."
+            )
+            return ResponseObject(data=True, statusCode=200, responseInfo=response_info)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to add room...")
+    except Exception as e:
+        print("error: dasda ", e)
+        raise HTTPException(status_code=500, detail="Internal server error.")
+    

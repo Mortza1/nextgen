@@ -23,7 +23,7 @@ socket_state = {
 }
 
 power_rate = 200
-DELAY = 5
+DELAY = 100
 
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):

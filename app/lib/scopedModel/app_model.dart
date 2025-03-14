@@ -93,6 +93,12 @@ class AppModel extends Model {
     print(result);
     notifyListeners();
   }
+  Future<void> addRoom(String name) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? hubId = prefs.getString('hub_id');
+    final result = await _apiService.addRoom(hubId ?? '', name);
+    notifyListeners();
+  }
   Future<void> addDevice(String deviceId, String name, String room) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? hubId = prefs.getString('hub_id');

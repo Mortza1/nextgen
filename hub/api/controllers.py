@@ -81,7 +81,6 @@ async def get_device_data(hub_id: str):  # Added `hub_id` as a parameter
 
         if not latest_data:
             raise HTTPException(status_code=404, detail="No latest device data found")
-
         return latest_data
 
     except Exception as e:

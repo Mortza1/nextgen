@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../scopedModel/app_model.dart';
+
 class ConsumptionWidget extends StatefulWidget {
   final Map<String, dynamic> homeData;
+  final AppModel model;
 
-  ConsumptionWidget({required this.homeData});
+  const ConsumptionWidget({super.key, required this.homeData, required this.model});
 
   @override
   _ConsumptionWidgetState createState() => _ConsumptionWidgetState();
@@ -125,6 +128,8 @@ class _ConsumptionWidgetState extends State<ConsumptionWidget> {
   }
 
   void _showConsumptionDialog(BuildContext context) {
+    int applianceCount = widget.model.applianceModel.allFetch.length;
+    var rooms = widget.homeData['rooms'];
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -246,7 +251,7 @@ class _ConsumptionWidgetState extends State<ConsumptionWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Total devices running', style: TextStyle(color: Color(0xffD3B84F), fontSize: 12, fontWeight: FontWeight.w600),),
-                      Text('15', style: TextStyle(color: Color(0xffD3B74C), fontSize: 14, fontWeight: FontWeight.bold),)
+                      Text(applianceCount.toString(), style: TextStyle(color: Color(0xffD3B74C), fontSize: 14, fontWeight: FontWeight.bold),)
                     ],
                   ),
                 ),
@@ -259,76 +264,53 @@ class _ConsumptionWidgetState extends State<ConsumptionWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            height: 35,
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            decoration: BoxDecoration(
-                              color: Color(0xffFFEA96),
-                              borderRadius: BorderRadius.circular(30)
-                            ),
-                            child: Center(
-                              child: Text('Bedroom', style: TextStyle(color: Color(0xffD3B84F), fontSize: 12, fontWeight: FontWeight.bold),),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                height: 35,
-                                width: 35,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(40),
-                                    color: Color(0xffFFEA96)
-                                ),
-                                child: Center(
-                                  child: Image.asset('assets/images/energy.png', height: 15,),
+                    children: rooms.map<Widget>((room) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: 35,
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              decoration: BoxDecoration(
+                                  color: Color(0xffFFEA96),
+                                  borderRadius: BorderRadius.circular(30)),
+                              child: Center(
+                                child: Text(
+                                  room['name'], // Dynamically set room name
+                                  style: TextStyle(
+                                      color: Color(0xffD3B84F),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              SizedBox(width: 4,),
-                              Text('31.7kWh', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.bold),)
-                            ],
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 5,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            height: 35,
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            decoration: BoxDecoration(
-                                color: Color(0xffFFEA96),
-                                borderRadius: BorderRadius.circular(30)
                             ),
-                            child: Center(
-                              child: Text('Living Room', style: TextStyle(color: Color(0xffD3B84F), fontSize: 12, fontWeight: FontWeight.bold),),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                height: 35,
-                                width: 35,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(40),
-                                    color: Color(0xffFFEA96)
+                            Row(
+                              children: [
+                                Container(
+                                  height: 35,
+                                  width: 35,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(40),
+                                      color: Color(0xffFFEA96)),
+                                  child: Center(
+                                    child: Image.asset('assets/images/energy.png', height: 15),
+                                  ),
                                 ),
-                                child: Center(
-                                  child: Image.asset('assets/images/energy.png', height: 15,),
-                                ),
-                              ),
-                              SizedBox(width: 4,),
-                              Text('31.7kWh', style: TextStyle(color: Color(0xffD3B74C), fontWeight: FontWeight.bold),)
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                                SizedBox(width: 4),
+                                Text(
+                                  '31.4kWh', // Dynamically set energy consumption
+                                  style: TextStyle(
+                                      color: Color(0xffD3B74C), fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  )
                 )
 
               ],

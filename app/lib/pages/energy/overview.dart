@@ -296,16 +296,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   ),
                 ],
               ),
-              GestureDetector(
-                onTap: (){showComingSoonSnackBar(context, 'yet to be implemented');},
-                child: Row(
-                  children: [
-                    Text('filter', style: TextStyle(color: Color(0xffA1A2AA), fontSize: 15),),
-                    SizedBox(width: 5,),
-                    Icon(Icons.filter_alt, color: Color(0xffA1A2AA), size: 15, )
-                  ],
-                ),
-              )
             ],
           ),
           SizedBox(height: 20),

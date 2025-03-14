@@ -45,6 +45,16 @@ class HubManager:
             print("error: ", e)
             raise Exception("room fetch failed. ")
         
+    def add_room(self, hub_id, room_name):
+        try:
+            result = self.collection.update_one(
+                {"_id": ObjectId(hub_id)},
+                {"$addToSet": {"rooms": {"name": room_name, "devices": []}}}
+            )
+        except Exception as e:
+            print("error: ", e)
+            raise Exception("room add failed. ")
+        
 
     def add_device(self, hub_id, device_id, room):
         try:

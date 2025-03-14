@@ -528,7 +528,7 @@ class _HomePageBodyState extends State<HomePageBody> {
         children: <Widget>[
           _topMyHomeSection(),
           // _consumptionBox(),
-          ConsumptionWidget(homeData: widget.appModel.homeData),
+          ConsumptionWidget(homeData: widget.appModel.homeData, model: widget.appModel,),
           // _topWidgetSection(model),
           _modeSection(modeModel, model),
           _mainWidgetsSection(model),

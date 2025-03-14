@@ -189,7 +189,7 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
@@ -198,22 +198,6 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
                     color: Color(0xffA1A2AA),
                     fontWeight: FontWeight.bold,
                     fontSize: 17)),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Color(0xffC2C3CD),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Center(
-                    child: Text(
-                        'Bedroom',
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

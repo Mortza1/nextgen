@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nextgen_software/pages/components/snackbar.dart';
+import 'package:nextgen_software/pages/settings/add_room.dart';
 import 'package:nextgen_software/pages/settings/room.dart';
 
 import '../../scopedModel/app_model.dart';
@@ -93,7 +94,12 @@ class ManageRoomsScreenState extends State<ManageRoomsScreen> {
                 ),
               ),
               IconButton(
-                onPressed: (){showComingSoonSnackBar(context, 'Adding room coming soon');}, // Implement this method
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddRoomScreen(model: widget.appModel)),
+                  );
+                }, // Implement this method
                 icon: const Icon(Icons.add, color: Color(0xffB4B6C6)),
               ),
             ],

@@ -125,35 +125,4 @@ class _ToggleMainState extends State<ToggleMain> {
     );
   }
 
-
-// @override
-  // Widget build(BuildContext context) {
-  //   return ScopedModelDescendant<AppModel>(
-  //     builder: (context, child, model) {
-  //       return FutureBuilder<Appliance?>(
-  //         future: model.getDeviceById(deviceId),
-  //         builder: (context, snapshot) {
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             return SizedBox(
-  //               height: 15,
-  //               width: 15,
-  //               child: CircularProgressIndicator(color: Color(0xffE8CA52)),
-  //             );
-  //           }
-  //
-  //           if (!snapshot.hasData || snapshot.data == null) {
-  //             return SizedBox(); // Handle no device found
-  //           }
-  //
-  //           var device = snapshot.data!;
-  //
-  //           return IconButton(
-  //             onPressed: () => toggleDevice(model),
-  //             icon: getDeviceIcon(device),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }

@@ -68,7 +68,7 @@ def on_message(client, userdata, msg):
         publish_state()    
 
     elif command == "unplug":
-        lock_state["is_on"] = True
+        lock_state["is_on"] = False
         print('lock is off')
         publish_state()
     
@@ -77,6 +77,7 @@ def on_message(client, userdata, msg):
             lock_state["is_locked"] = False
             lock_state["last_access"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print("✅ Access granted! Lock is now OPEN.")
+            threading.Timer(AUTO_LOCK_TIME, auto_lock).start()
             publish_state()
     else:
         print(f"Unknown command: {command}")
@@ -110,10 +111,14 @@ def auto_lock():
 # Function to publish lock state
 def publish_state():
     state_entry = {
+        "device_id": DEVICE_ID,
+        "device_type": 'security lock',
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "is_locked": lock_state["is_locked"],
-        "last_access": lock_state["last_access"],
-        "is_on": lock_state["is_on"]
+        "metric" : {
+            "is_locked": lock_state["is_locked"],
+            "last_access": lock_state["last_access"],
+            "is_on": lock_state["is_on"]
+        }
     }
 
     client.publish(STATE_TOPIC, json.dumps(state_entry))

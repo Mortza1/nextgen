@@ -32,7 +32,7 @@ FAN_SPEED_MULTIPLIER = {1: 1.0, 2: 1.5, 3: 2.0}  # Higher fan speeds adjust temp
 POWER_USAGE = {1: 500, 2: 750, 3: 1000}  # Watts based on fan speed
 HEATER_POWER = 1500  # Watts when heating
 COOLER_POWER = 1200  # Watts when cooling
-UPDATE_TIME = 10  # Update every 10 seconds
+UPDATE_TIME = 100  # Update every 10 seconds
 
 def energy_calculator(usage, time):
     return round((usage / 3600) * time)

@@ -15,7 +15,8 @@ migrate_working_dir/
 env
 devices/light/smart_light_log.txt
 output.log
-
+env/
+app/
 # IntelliJ related
 *.iml
 *.ipr

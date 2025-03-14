@@ -81,3 +81,4 @@ async def get_dwellers_of_home(params: homeDwellersParams):
         print("error: ", e)
         raise HTTPException(status_code=500, detail="Internal server error.")
 
+

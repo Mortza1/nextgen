@@ -151,6 +151,10 @@ class AddModeParams(BaseModel):
     home_id: str
     mode : dict
 
+class AddRoomParams(BaseModel):
+    hub_id: str
+    name: str
+
     
 
 class SetDeviceParams(BaseModel):
