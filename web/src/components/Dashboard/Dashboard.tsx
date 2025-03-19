@@ -30,8 +30,8 @@ const Dashboard: React.FC = () => {
 
         // Fetch homes data
         const homes = await getHomes({ manager_id: manager_id ?? '' });
-        console.log("Homes response:", homes);
-        setHouseId(homes['homes'][0]['_id']); // Store the house ID in state
+        if (homes){
+          setHouseId(homes['homes'][0]['_id']); // Store the house ID in state
         const hub_id = homes['homes'][0]['hub_id']; 
         // Extract user IDs from homes
         const users = homes['homes'][0]['dwellers'] || []; // Ensure `homes` is an array
@@ -53,6 +53,7 @@ const Dashboard: React.FC = () => {
         const devicesResponse = await getDevices({ user_id: managerId, hub_id: hub_id });
         console.log("Fetched devices:", devicesResponse);
         setDevices(devicesResponse.devices || []);
+        }
       } catch (error) {
         console.error("Error fetching homes:", error);
       }

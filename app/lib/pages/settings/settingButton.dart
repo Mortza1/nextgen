@@ -106,7 +106,7 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
                   onTap: ()=>{
                   Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PreferenceScreen()),
+                  MaterialPageRoute(builder: (context) => PreferenceScreen(appModel: widget.model,)),
                   )
                   },
                   child: Container(
@@ -129,7 +129,7 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
                   onTap: ()=>{
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
+                      MaterialPageRoute(builder: (context) => ProfileScreen(appModel: widget.model,)),
                     )
                   },
                   child: Container(
@@ -152,7 +152,7 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
                   onTap: ()=>{
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => NotificationSettingScreen()),
+                      MaterialPageRoute(builder: (context) => NotificationSettingScreen(appModel: widget.model,)),
                     )
                   },
                   child: Container(
@@ -175,7 +175,7 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
                   onTap: ()=>{
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PrivacySettingScreen()),
+                      MaterialPageRoute(builder: (context) => PrivacySettingScreen(model: widget.model,)),
                     )
                   },
                   child: SizedBox(

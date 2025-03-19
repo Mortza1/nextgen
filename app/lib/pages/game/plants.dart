@@ -10,6 +10,7 @@ class PlantsScreen extends StatefulWidget {
 }
 
 class PlantsScreenState extends State<PlantsScreen> {
+  int? selectedPot = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +30,13 @@ class PlantsScreenState extends State<PlantsScreen> {
             SizedBox(height: 40),
             top(),
             SizedBox(height: 10,),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child: Text('Save energy everyday to earn water drops and unlock new plants!', textAlign: TextAlign.center,)),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                child: Text(
+                  'Save energy everyday to earn water drops and unlock new plants!',
+                  textAlign: TextAlign.center,
+                )
+            ),
             plants()
           ],
         ),
@@ -42,7 +48,8 @@ class PlantsScreenState extends State<PlantsScreen> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.06,
       decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Color(0xffD2D2DA), width: 2))),
+          border: Border(bottom: BorderSide(color: Color(0xffD2D2DA), width: 2))
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Row(
@@ -58,7 +65,9 @@ class PlantsScreenState extends State<PlantsScreen> {
                       style: TextStyle(
                           color: Color(0xffAFB0BA),
                           fontSize: 19,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
                 ],
               ),
             ),
@@ -66,24 +75,27 @@ class PlantsScreenState extends State<PlantsScreen> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: Text('DONE',
+                child: Text(
+                    'DONE',
                     style: TextStyle(
-                        color: Color(0xff00AB5E), fontWeight: FontWeight.bold))),
+                        color: Color(0xff00AB5E), fontWeight: FontWeight.bold
+                    )
+                )
+            ),
           ],
         ),
       ),
     );
   }
+
   Widget plants() {
-    // List of image paths for each row
     final List<String> imagePaths = [
       'assets/images/montesor.png',
-      'assets/images/bamboo-in.png', // Example second image
-      'assets/images/rose.png', // Example third image
-      'assets/images/bonsai.png', // Example fourth image
+      'assets/images/bamboo-in.png',
+      'assets/images/rose.png',
+      'assets/images/bonsai.png',
     ];
 
-    // List of plant names for each row
     final List<String> plantNames = [
       'Monsterra',
       'Bamboo',
@@ -91,41 +103,54 @@ class PlantsScreenState extends State<PlantsScreen> {
       'Bonsai',
     ];
 
-    // List of tick image paths for each row
     final List<String> tickImagePaths = [
       'assets/images/tick.png',
-      'assets/images/tick.png', // Example second tick image
-      'assets/images/lock_price.png', // Example third tick image
-      'assets/images/lock_price.png', // Example fourth tick image
+      'assets/images/tick.png',
+      'assets/images/lock_price.png',
+      'assets/images/lock_price.png',
     ];
 
     return Expanded(
       child: SizedBox(
         child: ListView.separated(
-          itemCount: 4, // Number of rows
-          separatorBuilder: (context, index) => const SizedBox(height: 0), // No space between rows
+          itemCount: 4,
+          separatorBuilder: (context, index) => const SizedBox(height: 0),
           itemBuilder: (context, rowIndex) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey, width: rowIndex == 0 ? 2 : 1), // Top border
-                  bottom: BorderSide(color: Colors.grey, width: rowIndex == 3 ? 2 : 1), // Bottom border
+            return GestureDetector(
+              onTap: () {
+                if (rowIndex == 0 || rowIndex == 1) {
+                  setState(() {
+                    selectedPot = rowIndex;
+                  });
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: Colors.grey, width: rowIndex == 0 ? 2 : 1),
+                    bottom: BorderSide(color: Colors.grey, width: rowIndex == 3 ? 2 : 1),
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between items
-                children: [
-                  Image.asset(
-                    imagePaths[rowIndex], // Use rowIndex to access the corresponding image
-                    height: 50,
-                  ),
-                  Text(plantNames[rowIndex]), // Use rowIndex to access the corresponding plant name
-                  rowIndex == 1 ? SizedBox(width: 30,) : Image.asset(
-                    tickImagePaths[rowIndex], // Use rowIndex to access the corresponding tick image
-                    height: rowIndex == 2 || rowIndex == 3 ? 40 : 30,
-                  ),
-                ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      imagePaths[rowIndex],
+                      height: 50,
+                    ),
+                    Text(plantNames[rowIndex]),
+                    if (rowIndex == 0 || rowIndex == 1)
+                      (selectedPot == rowIndex
+                          ? Image.asset('assets/images/tick.png', height: 30)
+                          : SizedBox(width: 30))
+                    else
+                      Image.asset(
+                        tickImagePaths[rowIndex],
+                        height: rowIndex == 2 || rowIndex == 3 ? 40 : 30,
+                      )
+                  ],
+                ),
               ),
             );
           },
@@ -133,5 +158,4 @@ class PlantsScreenState extends State<PlantsScreen> {
       ),
     );
   }
-
 }

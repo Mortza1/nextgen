@@ -11,9 +11,9 @@ class HomeManager:
         except Exception as e:
             print("error: ", e)
 
-    def create_home(self, home_name: str, address: str, manager_id: str, dwellers: list[dict] = [], devices: list[str] = []):
+    def create_home(self, home_name: str, address: str, manager_id: str, hub_id: str, dwellers: list[dict] = [], devices: list[str] = []):
         try:
-            home = Home(name=home_name, address=address, manager_id=manager_id, dwellers=dwellers, devices=devices)
+            home = Home(name=home_name, address=address, manager_id=manager_id, dwellers=dwellers, hub_id=hub_id)
             home_data = home.to_dict()
             # Insert the new home into the collection
             result = self.collection.insert_one(home_data)

@@ -4,7 +4,7 @@ from repositories.hub_repository import HubManager
 from repositories.home_repository import HomeManager
 from repositories.token_repository import TokenManager
 from repositories.user_repository import UserManager
-from model.deviceModel import LoginParams, RegisterDwellerParams, get_userParams, RegisterParams, ResponseInfo, ResponseObject
+from model.deviceModel import LoginParams, RegisterDwellerParams, UpdateDwellerParams, get_userParams, RegisterParams, ResponseInfo, ResponseObject, settingsParams
 
 
 userRouter = APIRouter()
@@ -16,16 +16,46 @@ hub_manager = HubManager()
 @userRouter.post("/register-manager", response_model=ResponseObject)
 async def register_user(params: RegisterParams):
     try:
-        message_id = user_manager.create_user(email = params.email, password=params.password, name=params.name, role='manager')
-        if message_id:
-            response_info = ResponseInfo(
-                statusCode=200, message="Success", detail="User inserted successfully."
-            )
-            return ResponseObject(data={"user_id": message_id}, statusCode=200, responseInfo=response_info)
-        else:
-            raise HTTPException(status_code=500, detail="Failed to add user")
+        
+        message_id = user_manager.create_user(
+            email=params.email,
+            password=params.password,
+            name=params.name,
+            role='manager'
+        )
+
+        if not message_id:
+            raise HTTPException(status_code=500, detail="Failed to create manager account.")
+
+        home_id = home_manager.create_home(
+            home_name='My Home', 
+            address='somewhere on Earth', 
+            manager_id=message_id, 
+            hub_id=params.hub_id
+        )
+
+        if not home_id:
+            raise HTTPException(status_code=500, detail="Failed to create home.")
+
+
+        update_user = user_manager.update_user(
+            email=params.email,
+            password=params.password,
+            name=params.name,
+            home_id=home_id
+        )
+
+        if not update_user:
+            raise HTTPException(status_code=500, detail="Failed to update user with home ID.")
+
+        # If all steps are successful
+        response_info = ResponseInfo(
+            statusCode=200, message="Success", detail="User and home created successfully."
+        )
+        return ResponseObject(data={"user_id": message_id}, statusCode=200, responseInfo=response_info)
+
     except Exception as e:
-        print("error: dasda ", e)
+        print(f"error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error.")
     
 
@@ -56,6 +86,21 @@ async def register_user(params: RegisterDwellerParams):
         # Log and return a generic internal server error
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error.")
+
+@userRouter.post("/update-user", response_model=ResponseObject)
+async def update_user(params: UpdateDwellerParams):
+    try:
+        user = user_manager.update_user_profile(user_id=params.user_id, key=params.key, value=params.value)
+        if user:
+            response_info = ResponseInfo(
+                statusCode=200, message="Success", detail="Messages retrieved successfully."
+            )
+            return ResponseObject(data=True, statusCode=200, responseInfo=response_info)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to fetch user")
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal server error.")   
 
 
 
@@ -94,4 +139,19 @@ async def get_user(id: get_userParams):
         else:
             raise HTTPException(status_code=500, detail="Failed to fetch user")
     except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error.")   
+    
+@userRouter.post("/update-settings", response_model=ResponseObject)
+async def update_settings(params: settingsParams):
+    try:
+        user = user_manager.update_settings(id=params.user_id, value=params.value, path=params.path)
+        if user:
+            response_info = ResponseInfo(
+                statusCode=200, message="Success", detail="Messages retrieved successfully."
+            )
+            return ResponseObject(data=True, statusCode=200, responseInfo=response_info)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to fetch user")
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Internal server error.")   

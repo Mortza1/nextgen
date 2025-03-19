@@ -13,7 +13,6 @@ interface LeftNavProps {
 
 const navItems = [
   { id: "DASHBOARD", icon: <BsGraphUpArrow size={20} />, text: "Dashboard" },
-  { id: "HOMES", icon: <FaHome size={20} />, text: "Homes" },
   { id: "DEVICES", icon: <BiSolidDevices size={20} />, text: "Devices" },
   { id: "DWELLERS", icon: <MdPeopleAlt size={20} />, text: "Dwellers" },
   { id: "MONITORING", icon: <MdEnergySavingsLeaf size={20} />, text: "Energy Monitoring" },
@@ -29,7 +28,7 @@ const LeftNav: React.FC<LeftNavProps> = ({ activeScreen, setActiveScreen }) => {
   return (
     <div className={styles.leftNav}>
       <div className={styles.logo}>
-        <img src="logo.png" alt="Logo" />
+      <img src="logo.png" alt="Logo" height="100"/>
       </div>
 
       <div className={styles.navList}>

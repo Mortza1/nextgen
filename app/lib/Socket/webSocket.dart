@@ -5,7 +5,7 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'package:nextgen_software/scopedModel/app_model.dart';
 
 class WebSocketService {
-  final String url = 'wss://5a22-2-51-16-105.ngrok-free.app/ws';
+  final String url = 'wss://8e6a-2-51-16-105.ngrok-free.app/ws';
   late WebSocketChannel channel;
   final AppModel model;  // Add AppModel reference
 

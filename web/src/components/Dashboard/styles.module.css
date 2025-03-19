@@ -14,10 +14,8 @@
 }
 
 .logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
+  height: auto; /* Ensure it respects the specified height */
+  max-height: none;
 }
 
 .navItems {
@@ -28,7 +26,7 @@
 .item {
   display: flex;
   color: #ccc;
-  font-size: 0.8rem;
+  font-size: 1rem;
   cursor: pointer;
   user-select: none;
 }
@@ -63,16 +61,16 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: 15px;
+  padding-top: 25%;
 }
 
 .navItem {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   margin-left: 15px;
-  padding: 10px;
+  padding: 25px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -91,7 +89,7 @@
 }
 
 .navText {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 .bottomItem {
@@ -111,7 +109,74 @@
 .content {
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+
+  .top{
+    margin-top: 20px;
+    margin-right: 5px;
+    width: 78vw;
+    height: 55vh;
+    background-color: orange;
+  }
+  .bottom {
+    margin-top: 20px;
+    margin-right: 5px;
+    width: 78vw;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    .totalDevices {
+      width: 40%;
+      height: 90%;
+      background-color: #FFFDEE;
+      border: 1px solid black;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .title {
+        color: black;
+        font-size: 1.2rem;
+        font-weight: 600;
+        padding: 20px;
+      }
+
+      .percentageCol {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      .percentageRow{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+      }
+      .percentage {
+        color: #635959;
+        font-size: 2rem;
+      }
+    }
+
+    .usageGraph {
+      width: 58%;
+      height: 90%;
+      background-color: #2164614F;
+      border: 1px solid black;
+      border-radius: 15px;
+      overflow: hidden; /* Prevent chart from overflowing */
+      display: flex;
+      align-items: center; /* Center vertically */
+      justify-content: center; /* Center horizontally */
+    }
+    
+    
+  }
 }
 /* .content {
   width: 100%; 

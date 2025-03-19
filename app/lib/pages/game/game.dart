@@ -14,21 +14,40 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late final AnimationController _controllerFirst;
-  late final AnimationController _controllerSecond;
-  bool _isSecondAnimationPlayed = false;
+  int _currentImageIndex = 0; // Track the current plant stage
+
+  List<String> images = [
+    'assets/images/sapling.png',
+    'assets/images/sap2.png',
+    'assets/images/sap3.PNG',
+    'assets/images/sap4.png'
+  ];
 
   @override
   void initState() {
     super.initState();
     _controllerFirst = AnimationController(vsync: this);
-    _controllerSecond = AnimationController(vsync: this, duration: Duration(seconds: 1)); // Second animation runs only once
+
+    // Listen for animation completion
+    _controllerFirst.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        // Change the image after animation ends
+        setState(() {
+          _currentImageIndex = (_currentImageIndex + 1) % images.length;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _controllerFirst.dispose();
-    _controllerSecond.dispose();
     super.dispose();
+  }
+
+  void _waterPlant() {
+    _controllerFirst.reset();
+    _controllerFirst.forward(); // Start the animation
   }
 
   @override
@@ -63,8 +82,12 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       ),
                       child: Center(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/fire.png', height: 30),
+                            Image.asset('assets/images/fire.png', height: 25),
+                            SizedBox(width: 10,),
+                            Text('18', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)
                           ],
                         ),
                       ),
@@ -79,8 +102,12 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       ),
                       child: Center(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/water.png', height: 30),
+                            Image.asset('assets/images/water.png', height: 25),
+                            SizedBox(width: 10,),
+                            Text('4', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)
                           ],
                         ),
                       ),
@@ -90,26 +117,11 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () {
-                      // Reset and play the first animation
-                      _controllerFirst.reset(); // Reset to the beginning
-                      _controllerFirst.forward(); // Start the first animation
-
-                      // Play the second animation only once after the first finishes
-                      if (!_isSecondAnimationPlayed) {
-                        Future.delayed(_controllerFirst.duration ?? Duration.zero, () {
-                          _controllerSecond.forward();
-                          setState(() {
-                            _isSecondAnimationPlayed = true;
-                          });
-                        });
-                      }
-                    },
+                    onTap: _currentImageIndex == 3 ? null : _waterPlant,
                     child: Lottie.network(
                       'https://lottie.host/c3ef8a40-5a55-407e-ac16-feda68e10df7/HjPokfeeWS.json',
                       controller: _controllerFirst,
                       onLoaded: (composition) {
-                        // Configure the AnimationController for the first animation
                         _controllerFirst.duration = composition.duration;
                       },
                       width: 200,
@@ -118,24 +130,29 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                // Second Lottie animation that will run only once
-                Lottie.network(
-                  'https://lottie.host/470c7925-7eae-430f-be9f-0e10bfd776a7/Am2UMK3c4X.json',
-                  controller: _controllerSecond,
-                  onLoaded: (composition) {
-                    // Configure the AnimationController for the second animation
-                    _controllerSecond.duration = composition.duration;
-                  },
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.fill,
+                // Show the current plant image based on state
+                SizedBox(
+                  // height: MediaQuery.of(context).size.height * 0.30,
+                  child: Center(
+                    child: Stack(
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(height: 100,),
+                            Align(alignment:Alignment.bottomCenter, child: Image.asset('assets/images/pot.png')),
+                          ],
+                        ),
+                        Align(alignment: Alignment.topCenter, child: Image.asset(images[_currentImageIndex], height: 180,)),
+                      ],
+                    ), // Updated dynamically
+                  ),
                 ),
-                SizedBox(height: 50,),
+                SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => PotsScreen(model: widget.model)),
@@ -147,15 +164,15 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                           color: Color(0xffF3F4FC),
                           border: Border.all(color: Color(0xffCACBD5), width: 2),
-                          borderRadius: BorderRadius.circular(50)
+                          borderRadius: BorderRadius.circular(50),
                         ),
                         child: Center(
-                          child: Image.asset('assets/images/pot.png', height: 30,),
+                          child: Image.asset('assets/images/pot.png', height: 30),
                         ),
                       ),
                     ),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => PlantsScreen(model: widget.model)),
@@ -165,15 +182,15 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         height: 60,
                         width: 60,
                         decoration: BoxDecoration(
-                            color: Color(0xffF3F4FC),
-                            border: Border.all(color: Color(0xffCACBD5), width: 2),
-                            borderRadius: BorderRadius.circular(50)
+                          color: Color(0xffF3F4FC),
+                          border: Border.all(color: Color(0xffCACBD5), width: 2),
+                          borderRadius: BorderRadius.circular(50),
                         ),
                         child: Center(
-                          child: Image.asset('assets/images/bamboo.png', height: 30,),
+                          child: Image.asset('assets/images/bamboo.png', height: 30),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 Align(
@@ -183,14 +200,20 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(22),
-                      color: Color(0x8C3B3A4B)
+                      color: Color(0x8C3B3A4B),
                     ),
                     child: Center(
-                      child: Image.asset('assets/images/heart.png', height: 25,),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset('assets/images/heart.png', height: 25),
+                          SizedBox(width: 10,),
+                          Text('100%', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)
+                        ],
+                      ),
                     ),
                   ),
-                )
-                
+                ),
               ],
             ),
           ),

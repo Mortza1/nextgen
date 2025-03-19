@@ -99,6 +99,18 @@ class AppModel extends Model {
     final result = await _apiService.addRoom(hubId ?? '', name);
     notifyListeners();
   }
+  Future<void> updateSettings(bool value, List<String> path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('user_id');
+    final result = await _apiService.updateSettings(userId ?? '', value, path);
+    notifyListeners();
+  }
+  Future<void> updateUser(String key, String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('user_id');
+    final result = await _apiService.updateUser(userId ?? '', key, value);
+    notifyListeners();
+  }
   Future<void> addDevice(String deviceId, String name, String room) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? hubId = prefs.getString('hub_id');
@@ -144,20 +156,23 @@ class AppModel extends Model {
             var devices = (mode['devices'] as List<dynamic>)
                 .map((e) => e.toString()) // Convert each element to String
                 .toList();
+
             var appliances = devices
                 .map((id) => applianceModel.getApplianceById(id))
                 .where((appliance) => appliance != null)
                 .cast<Appliance>()
                 .toList();
+
             return Mode(
-                title: mode['name'] ?? '',
-                startTime: DateTime.now(),
-                endTime: DateTime.now(),
-                backImg: mode['bgImage'],
-                bgColor: mode['bgColor'],
-                appliances: appliances
+              title: mode['name'] ?? '',
+              startTime: mode['startTime'] != null ? DateTime.parse(mode['startTime']) : DateTime.now(),
+              endTime: mode['endTime'] != null ? DateTime.parse(mode['endTime']) : DateTime.now(),
+              backImg: mode['bgImage'],
+              bgColor: mode['bgColor'],
+              appliances: appliances,
             );
           }).toList();
+
           modeModel.setModes(modes);
         } else {
           print('homeData or modes is null');

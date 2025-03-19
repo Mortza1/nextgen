@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../scopedModel/app_model.dart';
+
 class PreferenceScreen extends StatefulWidget {
-  const PreferenceScreen({super.key});
+  final AppModel appModel;
+  const PreferenceScreen({super.key, required this.appModel});
 
   @override
   PreferenceScreenState createState() => PreferenceScreenState();
@@ -13,6 +16,41 @@ class PreferenceScreenState extends State<PreferenceScreen> {
   bool areNotificationsEnabled = false;
   bool isColorEnabled = false;
   bool isGamificationEnabled = false;
+
+  // Store individual loading states for each setting
+  Map<String, bool> isLoading = {
+    'voice_assistant': false,
+    'notifications': false,
+    'gamification': false,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    isVoiceAssistantEnabled = widget.appModel.userData['settings']['preferences']['voice_assistant'];
+    areNotificationsEnabled = widget.appModel.userData['settings']['preferences']['Notifications'];
+    isGamificationEnabled = widget.appModel.userData['settings']['preferences']['gamification'];
+  }
+
+  Future<void> toggleSetting(String key, bool currentValue, List<String> path) async {
+    setState(() {
+      isLoading[key] = true; // Show loading for the specific toggle
+    });
+
+    // Update settings in backend
+    await widget.appModel.updateSettings(!currentValue, path);
+
+    // Fetch the updated user data from backend
+    await widget.appModel.getUser();
+
+    // Update the local state with new user settings
+    setState(() {
+      isVoiceAssistantEnabled = widget.appModel.userData['settings']['preferences']['voice_assistant'];
+      areNotificationsEnabled = widget.appModel.userData['settings']['preferences']['Notifications'];
+      isGamificationEnabled = widget.appModel.userData['settings']['preferences']['gamification'];
+      isLoading[key] = false; // Hide loading for the specific toggle
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +127,7 @@ class PreferenceScreenState extends State<PreferenceScreen> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.223,
             width: MediaQuery.of(context).size.width * 0.8,
             decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffC2C3CD), width: 2),
@@ -97,38 +135,24 @@ class PreferenceScreenState extends State<PreferenceScreen> {
             child: Column(
               children: [
                 buildOptionRow(
-                    title: 'Voice assistant',
-                    isEnabled: isVoiceAssistantEnabled,
-                    onTap: () {
-                      setState(() {
-                        isVoiceAssistantEnabled = !isVoiceAssistantEnabled;
-                      });
-                    }),
+                  title: 'Voice assistant',
+                  isEnabled: isVoiceAssistantEnabled,
+                  isLoading: isLoading['voice_assistant']!,
+                  onTap: () => toggleSetting('voice_assistant', isVoiceAssistantEnabled, ['preferences', 'voice_assistant']),
+                ),
                 buildOptionRow(
-                    title: 'Notifications',
-                    isEnabled: areNotificationsEnabled,
-                    onTap: () {
-                      setState(() {
-                        areNotificationsEnabled = !areNotificationsEnabled;
-                      });
-                    }),
+                  title: 'Notifications',
+                  isEnabled: areNotificationsEnabled,
+                  isLoading: isLoading['notifications']!,
+                  onTap: () => toggleSetting('notifications', areNotificationsEnabled, ['preferences', 'Notifications']),
+                ),
                 buildOptionRow(
-                    title: 'Color',
-                    isEnabled: isColorEnabled,
-                    onTap: () {
-                      setState(() {
-                        isColorEnabled = !isColorEnabled;
-                      });
-                    }),
-                buildOptionRow(
-                    title: 'Gamification',
-                    isEnabled: isGamificationEnabled,
-                    isLast: true,
-                    onTap: () {
-                      setState(() {
-                        isGamificationEnabled = !isGamificationEnabled;
-                      });
-                    }),
+                  title: 'Gamification',
+                  isEnabled: isGamificationEnabled,
+                  isLoading: isLoading['gamification']!,
+                  isLast: true,
+                  onTap: () => toggleSetting('gamification', isGamificationEnabled, ['preferences', 'gamification']),
+                ),
               ],
             ),
           ),
@@ -137,9 +161,13 @@ class PreferenceScreenState extends State<PreferenceScreen> {
     );
   }
 
-  // Helper method to build each option row with a toggle
-  Widget buildOptionRow(
-      {required String title, required bool isEnabled, required VoidCallback onTap, bool isLast = false}) {
+  Widget buildOptionRow({
+    required String title,
+    required bool isEnabled,
+    required bool isLoading,
+    required VoidCallback onTap,
+    bool isLast = false,
+  }) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: (MediaQuery.of(context).size.height * 0.29) / 4,
@@ -154,7 +182,13 @@ class PreferenceScreenState extends State<PreferenceScreen> {
               title,
               style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
             ),
-            IconButton(
+            isLoading
+                ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 3, color: Colors.orange),
+            )
+                : IconButton(
               onPressed: onTap,
               icon: Icon(
                 isEnabled ? Icons.toggle_on : Icons.toggle_off,

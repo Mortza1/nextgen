@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../scopedModel/app_model.dart';
+
 class NotificationSettingScreen extends StatefulWidget {
-  const NotificationSettingScreen({super.key});
+  final AppModel appModel;
+  const
+  NotificationSettingScreen({super.key, required this.appModel});
 
   @override
   NotificationSettingScreenState createState() => NotificationSettingScreenState();
@@ -13,6 +17,45 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
   bool areSusAiEnabled = false;
   bool isModeEnabled = false;
   bool isRoutineEnabled = false;
+
+  // Store individual loading states
+  Map<String, bool> isLoading = {
+    'energy_ai': false,
+    'sustainability_ai': false,
+    'mode_notifications': false,
+    'routine': false,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    isEnergyAIEnabled = widget.appModel.userData['settings']['Notifications']['energy_ai_suggestions'];
+    areSusAiEnabled = widget.appModel.userData['settings']['Notifications']['sustainability_ai'];
+    isModeEnabled = widget.appModel.userData['settings']['Notifications']['mode'];
+    isRoutineEnabled = widget.appModel.userData['settings']['Notifications']['routine'];
+  }
+
+  Future<void> toggleSetting(String key, bool currentValue, List<String> path) async {
+    setState(() {
+      isLoading[key] = true; // Show loading for the specific toggle
+    });
+
+    // Update settings in backend
+    await widget.appModel.updateSettings(!currentValue, path);
+
+    // Fetch the updated user data from backend
+    await widget.appModel.getUser();
+
+    // Update the local state with new user settings
+    setState(() {
+      isEnergyAIEnabled = widget.appModel.userData['settings']['Notifications']['energy_ai_suggestions'];
+      areSusAiEnabled = widget.appModel.userData['settings']['Notifications']['sustainability_ai'];
+      isModeEnabled = widget.appModel.userData['settings']['Notifications']['mode'];
+      isRoutineEnabled = widget.appModel.userData['settings']['Notifications']['routine'];
+      isLoading[key] = false;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -92,36 +135,24 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                 buildOptionRow(
                     title: 'Energy AI suggestions',
                     isEnabled: isEnergyAIEnabled,
-                    onTap: () {
-                      setState(() {
-                        isEnergyAIEnabled = !isEnergyAIEnabled;
-                      });
-                    }),
+                    isLoading: isLoading['energy_ai']!,
+                    onTap: () => toggleSetting('energy_ai', isEnergyAIEnabled, ['Notifications', 'energy_ai_suggestions']),),
                 buildOptionRow(
                     title: 'Sustainability AI',
                     isEnabled: areSusAiEnabled,
-                    onTap: () {
-                      setState(() {
-                        areSusAiEnabled = !areSusAiEnabled;
-                      });
-                    }),
+                    isLoading: isLoading['sustainability_ai']!,
+                    onTap: () => toggleSetting('sustainability_ai', areSusAiEnabled, ['Notifications', 'sustainability_ai']),),
                 buildOptionRow(
                     title: 'Mode notifications',
                     isEnabled: isModeEnabled,
-                    onTap: () {
-                      setState(() {
-                        isModeEnabled = !isModeEnabled;
-                      });
-                    }),
+                    isLoading: isLoading['mode_notifications']!,
+                  onTap: () => toggleSetting('mode_notifications', isModeEnabled, ['Notifications', 'mode']),),
                 buildOptionRow(
                     title: 'Routine',
                     isEnabled: isRoutineEnabled,
+                    isLoading: isLoading['routine']!,
                     isLast: true,
-                    onTap: () {
-                      setState(() {
-                        isRoutineEnabled = !isRoutineEnabled;
-                      });
-                    }),
+                  onTap: () => toggleSetting('routine', isRoutineEnabled, ['Notifications', 'routine']),),
               ],
             ),
           ),
@@ -130,9 +161,13 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
     );
   }
 
-  // Helper method to build each option row with a toggle
-  Widget buildOptionRow(
-      {required String title, required bool isEnabled, required VoidCallback onTap, bool isLast = false}) {
+  Widget buildOptionRow({
+    required String title,
+    required bool isEnabled,
+    required bool isLoading,
+    required VoidCallback onTap,
+    bool isLast = false,
+  }) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: (MediaQuery.of(context).size.height * 0.29) / 4,
@@ -147,7 +182,13 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
               title,
               style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
             ),
-            IconButton(
+            isLoading
+                ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 3, color: Colors.orange),
+            )
+                : IconButton(
               onPressed: onTap,
               icon: Icon(
                 isEnabled ? Icons.toggle_on : Icons.toggle_off,

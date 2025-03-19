@@ -57,7 +57,7 @@ class SettingScreenState extends State<SettingScreen> {
         children: [
           SizedBox(height: 70,),
           GestureDetector(
-            child: Image.asset('assets/images/man.png', height: 120,),
+            child: Image.asset(widget.model.userData['gender'] == 'male' ? 'assets/images/man.png' : 'assets/images/profile_female.png', height: 120,),
           ),
           SizedBox(height: 10,),
           Text(widget.model.userData['name'] ?? '',  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),),

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import '../../scopedModel/app_model.dart';
 
 class PrivacySettingScreen extends StatefulWidget {
-  const PrivacySettingScreen({super.key});
+  final AppModel model;
+  const PrivacySettingScreen({super.key, required this.model});
 
   @override
   PrivacySettingScreenState createState() => PrivacySettingScreenState();
 }
 
 class PrivacySettingScreenState extends State<PrivacySettingScreen> {
-  // Define state variables to hold the toggle states for each option
   bool isEnergyAIEnabled = false;
-  bool areSusAiEnabled = false;
-  bool isModeEnabled = false;
-  bool isRoutineEnabled = false;
+  late bool isTracking;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isTracking = widget.model.userData['settings']['tracking'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +97,32 @@ class PrivacySettingScreenState extends State<PrivacySettingScreen> {
               children: [
                 buildOptionRow(
                     title: 'Tracking and personalization for advertising',
-                    isEnabled: isEnergyAIEnabled,
+                    isEnabled: isTracking,
                     isLast: true,
-                    onTap: () {
-                      setState(() {
-                        isEnergyAIEnabled = !isEnergyAIEnabled;
-                      });
-                    }),
+                  onTap: () async {
+                    setState(() {
+                      isLoading = true; // Show loading indicator
+                    });
+
+                    bool newValue = !isTracking; // Toggle the value
+
+                    // Update settings in backend
+                    await widget.model.updateSettings(
+                        !isTracking,
+                        ['tracking']
+                    );
+
+                    // Fetch the updated user data from backend
+                    await widget.model.getUser();
+
+                    // Update the local state with new user settings
+                    setState(() {
+                      isTracking = widget.model.userData['settings']['tracking'];
+                      isLoading = false; // Hide loading indicator
+                    });
+                  },
+
+                ),
               ],
             ),
           ),
@@ -106,9 +131,12 @@ class PrivacySettingScreenState extends State<PrivacySettingScreen> {
     );
   }
 
-  // Helper method to build each option row with a toggle
-  Widget buildOptionRow(
-      {required String title, required bool isEnabled, required VoidCallback onTap, bool isLast = false}) {
+  Widget buildOptionRow({
+    required String title,
+    required bool isEnabled,
+    required VoidCallback onTap,
+    bool isLast = false,
+  }) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: (MediaQuery.of(context).size.height * 0.29) / 4,
@@ -119,11 +147,7 @@ class PrivacySettingScreenState extends State<PrivacySettingScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Text(
-            //   title,
-            //   style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 17),
-            // ),
-            Expanded( // Wrap text inside Expanded to prevent overflow
+            Expanded(
               child: Text(
                 title,
                 style: TextStyle(
@@ -131,12 +155,18 @@ class PrivacySettingScreenState extends State<PrivacySettingScreen> {
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
-                softWrap: true, // Enable text wrapping
-                overflow: TextOverflow.ellipsis, // Show '...' if text is too long
-                maxLines: 2, // Limits to 2 lines before truncation
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
             ),
-            IconButton(
+            isLoading
+                ? SizedBox(
+              width: 15,
+              height: 15,
+              child: CircularProgressIndicator(strokeWidth: 4, color: Colors.orange,),
+            ) // Show loading spinner
+                : IconButton(
               onPressed: onTap,
               icon: Icon(
                 isEnabled ? Icons.toggle_on : Icons.toggle_off,

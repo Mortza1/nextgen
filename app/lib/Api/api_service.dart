@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = "https://5a22-2-51-16-105.ngrok-free.app";
+  final String baseUrl = "https://8e6a-2-51-16-105.ngrok-free.app";
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = '$baseUrl/auth/login';
@@ -40,6 +40,42 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> updateSettings(String userId, bool value, List<String> path) async {
+    final url = '$baseUrl/auth/update-settings';
+    final headers = {'Content-Type': 'application/json'};
+    final body = jsonEncode({'user_id' : userId, 'value' : value, 'path' : path});
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update settings');
+    }
+  }
+
+  Future<Map<String, dynamic>> updateUser(String userId, String key, String value) async {
+    final url = '$baseUrl/auth/update-user';
+    final headers = {'Content-Type': 'application/json'};
+    final body = jsonEncode({'user_id' : userId, 'key' : key, 'value' : value});
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update user');
+    }
+  }
+
   Future<Map<String, dynamic>> getUser(String userId, String homeId) async {
     final url = '$baseUrl/auth/user';
     final headers = {'Content-Type': 'application/json'};
@@ -72,7 +108,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to fetched user');
+      throw Exception('Failed to add mode');
     }
   }
 

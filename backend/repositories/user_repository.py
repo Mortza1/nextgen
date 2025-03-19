@@ -74,6 +74,34 @@ class UserManager:
             logger.error(f"An error occurred while retrieving user: {e}")
             return None
         
+    def update_settings(self, id, value, path):
+        try:
+            # Ensure user_id is converted to ObjectId
+            user = self.collection.find_one({"_id": ObjectId(id)})
+            if not user:
+                logger.error("User not found")
+                return False
+
+            # Construct the MongoDB update query path
+            key = ".".join(path)
+
+            # Update the user settings dynamically
+            update_query = {"$set": {f"settings.{key}": value}}
+
+            result = self.collection.update_one({"_id": ObjectId(id)}, update_query)
+
+            if result.modified_count > 0:
+                logger.info("User settings updated successfully")
+                return True
+            else:
+                logger.warning("No settings were modified")
+                return False
+
+        except Exception as e:
+            logger.error(f"An error occurred while updating settings: {e}")
+            return False
+        
+        
     def update_user(self, name: str, email: str, password: str, home_id: str):
         try:
             # Find the user by email
@@ -83,7 +111,9 @@ class UserManager:
                 # Prepare updates
                 updates = {
                     "name": name,
-                    "password": generate_password_hash(password, method="pbkdf2:sha256"),  # Securely hash the new password
+                    'gender': 'male',
+                    "password": generate_password_hash(password, method="pbkdf2:sha256"),  
+                    "settings":{"tracking":False,"Notifications":{"energy_ai_suggestions":False,"sustainability_ai":False,"mode":False,"routine":False},"preferences":{"voice_assistant":False,"Notifications":False,"gamification":False}}
                 }
                 
                 # Update associated_homes
@@ -99,6 +129,28 @@ class UserManager:
             else:
                 # Return None if the user does not exist
                 return None
+
+        except Exception as e:
+            logger.error(f"An error occurred while updating user: {e}")
+            return False  # Indicate a failure to update
+        
+    def update_user_profile(self, user_id: str, key: str, value: str):
+        try:
+            # Find the user by email
+            user = self.collection.find_one({"_id": ObjectId(user_id)})
+            if not user:
+                logger.error("User not found")
+                return False
+        
+            update_query = {"$set": {key: value}}
+            result = self.collection.update_one({"_id": ObjectId(user_id)}, update_query)
+
+            if result.modified_count > 0:
+                logger.info("User profile updated successfully")
+                return True
+            else:
+                logger.warning("No profiles were modified")
+                return False
 
         except Exception as e:
             logger.error(f"An error occurred while updating user: {e}")

@@ -65,7 +65,7 @@ class _HomePageBodyState extends State<HomePageBody> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset('assets/images/profile_female.png', width: 75, height: 75,),
+              Image.asset(widget.appModel.userData['gender'] == 'male' ? 'assets/images/man.png' : 'assets/images/profile_female.png', width: 75, height: 75,),
               SizedBox(height: 5,),
               Text(
                 "Hello, ${widget.appModel.userData['name']?.split(' ')[0] ?? ''} ☀",
@@ -90,6 +90,14 @@ class _HomePageBodyState extends State<HomePageBody> {
     );
   }
   Widget _modeSection(ModeModel model, ApplianceModel deviceModel) {
+    List<Mode> allModes = model.allFetch;
+
+    // Prioritize active modes first
+    List<Mode> sortedModes = [
+      ...allModes.where((mode) => mode.isActive()), // Active modes first
+      ...allModes.where((mode) => !mode.isActive()), // Inactive modes next
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
@@ -110,35 +118,19 @@ class _HomePageBodyState extends State<HomePageBody> {
                     fontFamily: 'Roboto',
                   ),
                 ),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddModeInHome(model: widget.appModel,)
-                      ),
-                    );
-                  },
-                  child: Image.asset(
-                    'assets/images/add.png',
-                    width: 25,
-                    height: 25,
-                  ),
-                ),
               ],
             ),
-            // Scrollable List of Modes
+            // Display all modes, sorted
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 9),
                 child: SingleChildScrollView(
                   child: Column(
-                    children: model.allFetch.map((mode) {
+                    children: sortedModes.map((mode) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: GestureDetector(
                           onTap: () {
-                            // Show Dialog with Mode Details
                             _showModeDetailsDialog(context, mode);
                           },
                           child: Container(
@@ -189,7 +181,12 @@ class _HomePageBodyState extends State<HomePageBody> {
       ),
     );
   }
+
   void _showModeDetailsDialog(BuildContext context, Mode mode) {
+    // Format the start and end time
+    String formattedStartTime = DateFormat('h:mm a').format(mode.startTime);
+    String formattedEndTime = DateFormat('h:mm a').format(mode.endTime);
+
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -218,86 +215,106 @@ class _HomePageBodyState extends State<HomePageBody> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(mode.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                    Icon(Icons.toggle_off, color: Colors.black, size: 35,)
+                    Text(
+                      mode.title,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    mode.isActive()
+                        ? const Icon(Icons.toggle_on,
+                        color: Colors.green, size: 35)
+                        : const Icon(Icons.toggle_off,
+                        color: Colors.black, size: 35),
                   ],
                 ),
-                SizedBox(height: 10,),
+                SizedBox(height: 10),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   height: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(width: 1),
-                    color: Colors.white
+                    color: Colors.white,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.more_time_rounded, color: Colors.grey, size: 20,),
-                      SizedBox(width: 5,),
-                      Text('Scheduled : 6:00 - 20:00', style: TextStyle(color: Color(0xff7E7979), fontSize: 13, fontWeight: FontWeight.bold),)
+                      Icon(Icons.more_time_rounded, color: Colors.grey, size: 20),
+                      SizedBox(width: 5),
+                      Text(
+                        'Scheduled: $formattedStartTime - $formattedEndTime',
+                        style: TextStyle(
+                          color: Color(0xff7E7979),
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20,),
-                Align(alignment: Alignment.centerLeft, child: Text('Device routine', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)),
-                SizedBox(height: 5,),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Device routine',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 5),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.3,
-                  child: Expanded(
-                    child: GridView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 2 boxes per row
-                        crossAxisSpacing: 8.0, // Spacing between columns
-                        mainAxisSpacing: 8.0, // Spacing between rows
-                        childAspectRatio: 1.7, // Adjust box proportions
-                      ),
-                      itemCount: mode.appliances.length, // Total number of appliances
-                      itemBuilder: (BuildContext context, int index) {
-                        final appliance = mode.appliances[index];
-                        return GestureDetector(
-                          onTap: () {
-                            if (appliance.type == 'curtain'){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => CurtainScreen(device: appliance)),
-                              );
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffEFEFEF), // Inactive appliance color
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(width: 1)
-                            ),
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        appliance.mainIconString, // Dynamic icon path
-                                        height: 15,
-                                      ),
-                                      SizedBox(height: 5,),
-                                      Text(
-                                        appliance.title,
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                  child: GridView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 1.7,
                     ),
+                    itemCount: mode.appliances.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final appliance = mode.appliances[index];
+                      return GestureDetector(
+                        onTap: () {
+                          if (appliance.type == 'curtain') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CurtainScreen(device: appliance),
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffEFEFEF),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(width: 1),
+                          ),
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      appliance.mainIconString,
+                                      height: 15,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      appliance.title,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -314,13 +331,11 @@ class _HomePageBodyState extends State<HomePageBody> {
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.4,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: rooms.isNotEmpty
-            ? ListView.builder(
-          itemCount: rooms.length,
-          itemBuilder: (BuildContext context, int roomIndex) {
-            var room = rooms[roomIndex];
+            ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: rooms.map((room) {
             String roomName = room['name'] ?? 'Unnamed Room';
             List<String> deviceIds = List<String>.from(room['devices'] ?? []);
 
@@ -346,8 +361,8 @@ class _HomePageBodyState extends State<HomePageBody> {
                   ),
                   const SizedBox(height: 10),
                   GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true, // Prevents unnecessary scrolling
+                    physics: const NeverScrollableScrollPhysics(), // Disable scrolling
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 8.0,
@@ -362,7 +377,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                 ],
               ),
             );
-          },
+          }).toList(),
         )
             : const Center(
           child: Text(
@@ -373,6 +388,7 @@ class _HomePageBodyState extends State<HomePageBody> {
       ),
     );
   }
+
   Widget _buildDeviceTile(device) {
     return GestureDetector(
       onTap: () => _navigateToDeviceScreen(device),

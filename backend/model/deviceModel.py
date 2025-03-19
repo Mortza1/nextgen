@@ -130,6 +130,7 @@ class clear_roomsParams(BaseModel):
 class RegisterParams(BaseModel):
     email: str
     password: str
+    hub_id: str = ''
     role: str = ''
     name: str
     token: str = ''
@@ -174,6 +175,10 @@ class RegisterDwellerParams(BaseModel):
     name: str
     token: str
 
+class UpdateDwellerParams(BaseModel):
+    user_id: str
+    key: str
+    value: str
 
 class AddHomeParams(BaseModel):
     home_name: str
@@ -208,4 +213,7 @@ class get_userParams(BaseModel):
     user_id: str
     home_id: str
 
-
+class settingsParams(BaseModel):
+    user_id: str
+    value: bool
+    path: list[str]

@@ -197,9 +197,18 @@ class AddModeScreenState extends State<AddModeScreen> {
                       var startTime = getDateTimeFromTime(hoursFrom, minutesFrom, amPmFrom);
                       var endTime = getDateTimeFromTime(hoursTo, minutesTo, amPmTo);
                       if(state == 5){
-                        Mode mode = Mode(title: _textController.text, startTime: startTime, endTime: endTime, appliances: selectedDevices);
                         var color = '${selectedColor?.value.toRadixString(16).toUpperCase()}';
-                        widget.appModel.addMode({'name': _textController.text, 'bgColor': color, 'startTime' : startTime, 'endTime' : endTime});
+                        List<String> devices  = [];
+                        for (var i in selectedDevices){
+                          devices.add(i.id);
+                        }
+                        widget.appModel.addMode({
+                          'name': _textController.text,
+                          'bgColor': color,
+                          'devices' : devices,
+                          'startTime': startTime.toIso8601String(), // Convert to String
+                          'endTime': endTime.toIso8601String(),     // Convert to String
+                        });
                         Navigator.pop(context, true); // Pass a value indicating that a change happened
                       }
                       setState(() {

@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:circular_seek_bar/circular_seek_bar.dart';
-import 'package:nextgen_software/pages/auth_ui/login.dart';
-import 'package:nextgen_software/pages/settings/preferences.dart';
+import 'package:nextgen_software/pages/components/snackbar.dart';
+import '../../scopedModel/app_model.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final AppModel appModel;
+  const ProfileScreen({super.key, required this.appModel});
 
   @override
   ProfileScreenState createState() => ProfileScreenState();
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
+  late String selectedAvatar;
+  bool isLoading = false;
+  final TextEditingController nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAvatar = widget.appModel.userData['gender'] == 'male'
+        ? 'assets/images/man.png'
+        : 'assets/images/profile_female.png';
+    nameController.text = widget.appModel.userData['name'] ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +37,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     return SingleChildScrollView(
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.only(bottom: 20), // Prevents keyboard overlap
+        padding: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(color: Color(0xffF3F4FC)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,11 +47,9 @@ class ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 20),
             icon(),
             SizedBox(height: 20),
-            field('Name'),
-            field('Username'),
-            field('Password'),
-            field('Email'),
-            field('Phone number'),
+            field('Name', nameController),
+            SizedBox(height: 30),
+            saveButton(),
           ],
         ),
       ),
@@ -83,24 +94,68 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget icon() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.15,
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset('assets/images/man.png', height: 80),
-          SizedBox(height: 5),
-          Text(
-            'Change Avatar',
-            style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => openAvatarDialog(),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.15,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(selectedAvatar, height: 80),
+            SizedBox(height: 5),
+            Text(
+              'Change Avatar',
+              style: TextStyle(color: Color(0xff00AB5E), fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget field(String text) {
+  void openAvatarDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Avatar'),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              avatarOption('assets/images/man.png'),
+              SizedBox(width: 10),
+              avatarOption('assets/images/profile_female.png'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget avatarOption(String avatarPath) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedAvatar = avatarPath;
+        });
+        var value = avatarPath == 'assets/images/man.png' ? 'male' : 'female';
+        widget.appModel.updateUser('gender', value);
+        widget.appModel.getUser();
+        Navigator.pop(context);
+      },
+      child: Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          border: Border.all(color: selectedAvatar == avatarPath ? Colors.green : Colors.transparent, width: 2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Image.asset(avatarPath, height: 80),
+      ),
+    );
+  }
+
+  Widget field(String text, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SizedBox(
@@ -114,26 +169,11 @@ class ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 5),
             TextFormField(
+              controller: controller,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Reduced padding
+                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0x96C2C3CD), width: 3),
-                  borderRadius: BorderRadius.all(Radius.circular(18)), // Smaller rounded corners
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x96C2C3CD), width: 3),
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red, width: 2),
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.redAccent, width: 2.5),
                   borderRadius: BorderRadius.all(Radius.circular(18)),
                 ),
               ),
@@ -143,4 +183,52 @@ class ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+  Widget saveButton() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.85,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xff00AB5E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 12),
+        ),
+        onPressed: () async {
+          setState(() {
+            isLoading = true;
+          });
+
+          try {
+            await widget.appModel.updateUser('name', nameController.text);
+            showComingSoonSnackBar(context, 'Changes saved');
+          } catch (e) {
+            showComingSoonSnackBar(context, 'Failed to save changes. Try again.');
+          } finally {
+            Future.delayed(Duration(seconds: 2), () {
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                });
+              }
+            });
+          }
+        },
+        child: isLoading
+            ? SizedBox(
+          height: 15,
+          width: 15,
+          child: CircularProgressIndicator(color: Colors.white),
+        )
+            : Text(
+          'Save',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+
 }
