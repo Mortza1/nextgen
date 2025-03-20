@@ -141,15 +141,16 @@ class _HomePageBodyState extends State<HomePageBody> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              image: mode.backImg != null
+                              image: (mode.backImg.isNotEmpty)
                                   ? DecorationImage(
-                                image: NetworkImage(mode.backImg!),
+                                image: NetworkImage(mode.backImg),
                                 fit: BoxFit.cover,
                               )
                                   : null,
                               color: Color(int.parse('0x${mode.bgColor}')),
                               borderRadius: BorderRadius.circular(8),
                             ),
+
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -328,7 +329,7 @@ class _HomePageBodyState extends State<HomePageBody> {
     var rooms = (widget.appModel.homeData['rooms'] as List<dynamic>?) ?? [];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.only(left: 5, right:5, bottom: 40),
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -347,7 +348,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                 .toList();
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
+              padding: const EdgeInsets.only(bottom: 60.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -548,7 +549,6 @@ class _HomePageBodyState extends State<HomePageBody> {
           // _topWidgetSection(model),
           _modeSection(modeModel, model),
           _mainWidgetsSection(model),
-          SizedBox(height: 40,)
           // _assistantButton()
           // AssistantButton()
     ])));

@@ -130,148 +130,71 @@ class ModeScreenState extends State<ModeScreen> {
   Widget _tabViews() {
     return _selectedTab == 0 ? _yourModesWidget() : _featuredWidget();
   }
-
-  /// **Placeholder Widgets for Tabs**
   Widget _yourModesWidget() {
-    return Expanded( // Use Expanded to allow scrolling
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 9),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Automated',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 9),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Automated',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
               ),
-              Column(
-                children: widget.model.modeModel.allFetch.map((mode) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MorningScreen(mode: mode),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.15,
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
+            ),
+            Column(
+              children: widget.model.modeModel.allFetch.map((mode) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MorningScreen(mode: mode),
                         ),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(mode.backImg),
-                            fit: BoxFit.cover,
-                          ),
-                          color: Color(int.parse('0x${mode.bgColor}')),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(width: 2),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              mode.title,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                            Column(
-                              children: [
-                                mode.isActive()
-                                    ? const Icon(Icons.toggle_on,
-                                    color: Colors.green, size: 50)
-                                    : const Icon(Icons.toggle_off,
-                                    color: Colors.black, size: 50),
-                                Container(
-                                  height: 40,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Color(0x87D9D9D9),
-                                    border: Border.all(color: Colors.black, width: 3),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Center(
-                                    child: Text('Edit'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      );
+                    },
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Manual',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                    ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xffD5FFB8), Color(0xff8FD993)],
+                      decoration: BoxDecoration(
+                        image: (mode.backImg.isNotEmpty)
+                            ? DecorationImage(
+                          image: NetworkImage(mode.backImg),
+                          fit: BoxFit.cover,
+                        )
+                            : null,
+                        color: Color(int.parse('0x${mode.bgColor}')),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(width: 2),
                       ),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(width: 2),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Energy Saving',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isEnergySavingActive = !isEnergySavingActive;
-                                });
-                              },
-                              child: Icon(
-                                isEnergySavingActive
-                                    ? Icons.toggle_on
-                                    : Icons.toggle_off,
-                                color: isEnergySavingActive ? Colors.green : Colors.black,
-                                size: 50,
-                              ),
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            mode.title,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w300,
                             ),
-                            GestureDetector(
-                              onTap: (){
-                                showComingSoonSnackBar(context, 'feature coming soon');
-                              },
-                              child: Container(
+                          ),
+                          Column(
+                            children: [
+                              mode.isActive()
+                                  ? const Icon(Icons.toggle_on,
+                                  color: Colors.green, size: 50)
+                                  : const Icon(Icons.toggle_off,
+                                  color: Colors.black, size: 50),
+                              Container(
                                 height: 40,
                                 width: 60,
                                 decoration: BoxDecoration(
@@ -283,16 +206,92 @@ class ModeScreenState extends State<ModeScreen> {
                                   child: Text('Edit'),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Manual',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xffD5FFB8), Color(0xff8FD993)],
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(width: 2),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Energy Saving',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isEnergySavingActive = !isEnergySavingActive;
+                              });
+                            },
+                            child: Icon(
+                              isEnergySavingActive
+                                  ? Icons.toggle_on
+                                  : Icons.toggle_off,
+                              color: isEnergySavingActive ? Colors.green : Colors.black,
+                              size: 50,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: (){
+                              showComingSoonSnackBar(context, 'feature coming soon');
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Color(0x87D9D9D9),
+                                border: Border.all(color: Colors.black, width: 3),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                child: Text('Edit'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

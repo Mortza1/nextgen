@@ -122,6 +122,9 @@ class PlantsScreenState extends State<PlantsScreen> {
                   setState(() {
                     selectedPot = rowIndex;
                   });
+
+                  // Return the selected plant back to the GameScreen
+                  Navigator.pop(context, plantNames[rowIndex]);
                 }
               },
               child: Container(
@@ -158,4 +161,5 @@ class PlantsScreenState extends State<PlantsScreen> {
       ),
     );
   }
+
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = "https://8e6a-2-51-16-105.ngrok-free.app";
+  final String baseUrl = "https://little-spiders-thank.loca.lt";
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = '$baseUrl/auth/login';

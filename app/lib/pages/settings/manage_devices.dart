@@ -44,66 +44,64 @@ class ManageDevicesScreenState extends State<ManageDevicesScreen> {
   }
 
   Widget main() {
-    return Expanded(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: Color(0xffF3F4FC)),
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            top(),
-            SizedBox(height: 40),
-            options(widget.model.applianceModel),
-            SizedBox(height: 40),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: (){showComingSoonSnackBar(context, 'Action denied');},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.38,
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xffC2C3CD), width: 2),
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      child: Center(
-                        child: Text(
-                            'Remove Device',
-                            style: TextStyle(
-                                color: Color(0xff00AB5E),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13)),
-                      ),
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(color: Color(0xffF3F4FC)),
+      child: Column(
+        children: [
+          SizedBox(height: 40),
+          top(),
+          SizedBox(height: 40),
+          options(widget.model.applianceModel),
+          SizedBox(height: 40),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: (){showComingSoonSnackBar(context, 'Action denied');},
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.38,
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xffC2C3CD), width: 2),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Center(
+                      child: Text(
+                          'Remove Device',
+                          style: TextStyle(
+                              color: Color(0xff00AB5E),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13)),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => _navigateToQRScanner(context),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.38,
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xffC2C3CD), width: 2),
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      child: Center(
-                        child: Text(
-                            'Add Device',
-                            style: TextStyle(
-                                color: Color(0xff00AB5E),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13)),
-                      ),
+                ),
+                GestureDetector(
+                  onTap: () => _navigateToQRScanner(context),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.38,
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xffC2C3CD), width: 2),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Center(
+                      child: Text(
+                          'Add Device',
+                          style: TextStyle(
+                              color: Color(0xff00AB5E),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13)),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
