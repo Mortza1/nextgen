@@ -17,6 +17,7 @@ class ThermostatScreen extends StatefulWidget {
 
 class ThermostatScreenState extends State<ThermostatScreen> {
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+  late int speed;
 
   @override
   void initState() {
@@ -24,6 +25,8 @@ class ThermostatScreenState extends State<ThermostatScreen> {
 
     // Initialize ValueNotifier with the initial volume
     double currentTemperature = widget.device.state.toMap()['setTemperature'].toDouble();
+    print(widget.device.state.toMap());
+    speed = widget.device.state.toMap()['fanSpeed'];
     _valueNotifier.value = ((currentTemperature - 16)/14)*100;
 
     // Listener to sync appliance state with ValueNotifier
@@ -49,7 +52,7 @@ class ThermostatScreenState extends State<ThermostatScreen> {
           _screenHeader(),
           SizedBox(height: 50,),
           Text('Living Room', style: TextStyle(color: Color(0xff8247FF), fontWeight: FontWeight.bold, fontSize: 18),),
-          _seekerControls(_valueNotifier),
+          _seekerControls(_valueNotifier, speed),
         ],
       ),
     );
@@ -84,7 +87,7 @@ class ThermostatScreenState extends State<ThermostatScreen> {
     );
   }
 
-  Widget _seekerControls(valueNotifier) {
+  Widget _seekerControls(valueNotifier, speed) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       // height: MediaQuery.of(context).size.height * 0.4,
@@ -115,8 +118,9 @@ class ThermostatScreenState extends State<ThermostatScreen> {
                 interactive: true,
                 valueNotifier: valueNotifier,
                 onEnd: () {
-                  // Ensure appliance state updates when interaction ends
+                  print(valueNotifier.value.round());
                   setState(() {
+
                     widget.device.state.toMap()['setTemperature'] = valueNotifier.value.round();
                   });
                 },
@@ -143,11 +147,12 @@ class ThermostatScreenState extends State<ThermostatScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if (valueNotifier.value > 0) {
-                            valueNotifier.value -= (100 / 14); // Decrease by 1°C (100% / 14 = ~7.14%)
-                            if (valueNotifier.value < 0) valueNotifier.value = 0; // Ensure value doesn't go below 0
-                          }
+
                           setState(() async {
+                            if (valueNotifier.value > 0) {
+                              valueNotifier.value -= (100 / 14); // Decrease by 1°C (100% / 14 = ~7.14%)
+                              if (valueNotifier.value < 0) valueNotifier.value = 0; // Ensure value doesn't go below 0
+                            }
                             await widget.appModel.setCommand(widget.device.id, 'decrease_temp');
                             await widget.appModel.getDevices();
                           });
@@ -167,11 +172,11 @@ class ThermostatScreenState extends State<ThermostatScreen> {
                       SizedBox(width: 25,),
                       GestureDetector(
                         onTap: () {
-                          if (valueNotifier.value < 100) {
-                            valueNotifier.value += (100 / 14); // Increase by 1°C (100% / 14 = ~7.14%)
-                            if (valueNotifier.value > 100) valueNotifier.value = 100; // Ensure value doesn't go above 100
-                          }
                           setState(() async {
+                            if (valueNotifier.value < 100) {
+                              valueNotifier.value += (100 / 14); // Increase by 1°C (100% / 14 = ~7.14%)
+                              if (valueNotifier.value > 100) valueNotifier.value = 100; // Ensure value doesn't go above 100
+                            }
                             await widget.appModel.setCommand(widget.device.id, 'increase_temp');
                             await widget.appModel.getDevices();
                           });
@@ -205,14 +210,18 @@ class ThermostatScreenState extends State<ThermostatScreen> {
                   color: Color(0x52D9D9D9),
                   borderRadius: BorderRadius.circular(30)
                 ),
-                child: Center(child: Text('Indoor ${(widget.device.state as ThermostatState).currentTemperature}°C', style: TextStyle(color: Color(0xffABACB8), fontWeight: FontWeight.bold, fontSize: 17),)),
+                child: Center(child: Text('Indoor ${(widget.device.state as ThermostatState).currentTemperature.round()}°C', style: TextStyle(color: Color(0xffABACB8), fontWeight: FontWeight.bold, fontSize: 17),)),
               ),
               SizedBox(width: 15,),
               GestureDetector(
-                onTap: (){
-                  setState(() async {
-                    await widget.appModel.setCommand(widget.device.id, 'set_fan_speed');
-                    await widget.appModel.getDevices();
+                onTap: () async {
+                  setState(() {
+                    speed += 1; // Update speed first
+                  });
+                  await widget.appModel.setCommand(widget.device.id, 'set_fan_speed');
+                  await widget.appModel.getDevices();
+                  setState(() { // Add this setState
+                    speed = widget.device.state.toMap()['fanSpeed'];
                   });
                 },
                 child: Container(
@@ -222,7 +231,8 @@ class ThermostatScreenState extends State<ThermostatScreen> {
                       color: Color(0x52D9D9D9),
                       borderRadius: BorderRadius.circular(30)
                   ),
-                  child: Center(child: Text('Fan Speed 49%', style: TextStyle(color: Color(0xffABACB8), fontWeight: FontWeight.bold, fontSize: 17),)),
+                  child: Center(child: Text(
+                    'fan speed: $speed', style: TextStyle(color: Color(0xffABACB8), fontWeight: FontWeight.bold, fontSize: 17),)),
                 ),
               )
             ],

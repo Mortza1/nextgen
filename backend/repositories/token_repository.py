@@ -46,7 +46,39 @@ class TokenManager:
             msg["From"] = sender_email
             msg["To"] = recipient_email
             msg["Subject"] = 'token for home invitation'
-            msg.attach(MIMEText(f'The following is your token: {token}', "plain"))
+            body = f"""
+                    Hello!
+
+                    You've been invited to join our smart home! We're thrilled to welcome you to a more convenient and connected living experience.
+
+                    To get started, please follow these simple steps:
+
+                    1.  **Download the App:**
+                        Click on the following link to download the smart home app: [Download App](https://www.upload-apk.com/REt6qHf3Bn6lN7Y)
+                        (Please allow installation from unknown sources if prompted.)
+
+                    2.  **Register Your Account:**
+                        Open the app and navigate to the "Register" page.
+
+                    3.  **Enter Your Details:**
+                        * Your Name: Enter your full name.
+                        * Email Address: {recipient_email}
+                        * Token: {token}
+                        * Password: Create a new, secure password for your account.
+
+                    Once you've registered, you'll have full access to control and manage your smart home devices.
+
+                    **Important:** If you have successfully registered and accessed the smart home, please disregard this email.
+
+                    We're excited for you to experience the convenience of a smart home! If you have any questions or need assistance, please don't hesitate to reach out.
+
+                    Welcome aboard!
+
+                    Best regards,
+
+                    The Smart Home Team
+                    """
+            msg.attach(MIMEText(body, "plain"))
             with smtplib.SMTP(smtp_server, smtp_port) as server:
                 server.starttls()
                 server.login(sender_email, sender_password)

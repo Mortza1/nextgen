@@ -14,18 +14,41 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late final AnimationController _controllerFirst;
-  int _currentImageIndex = 0; // Track the current plant stage
+  int _currentImageIndex = 0;
+  int waterLevel = 2;
 
-  List<String> monteseraImages = [
+  List<String> monClay = [
     'assets/images/mon-clay-1.PNG',
     'assets/images/mon-clay-2.PNG',
     'assets/images/mon-clay-3.PNG',
   ];
 
-  List<String> bambooImages = [
+  List<String> bamClay = [
     'assets/images/bam-clay-1.PNG',
     'assets/images/bam-clay-2.PNG',
     'assets/images/bam-clay-3.PNG',
+  ];
+
+  List<String> bamPaint = [
+    'assets/images/bam-paint-1.PNG',
+    'assets/images/bam-paint-2.PNG',
+    'assets/images/bam-paint-3.PNG',
+  ];
+  List<String> monPaint = [
+    'assets/images/mon-paint-1.PNG',
+    'assets/images/mon-paint-2.PNG',
+    'assets/images/mon-paint-3.PNG',
+  ];
+
+  List<String> bamGalactic = [
+    'assets/images/bam-gal-1.PNG',
+    'assets/images/bam-gal-2.PNG',
+    'assets/images/bam-gal-3.PNG',
+  ];
+  List<String> monGalactic = [
+    'assets/images/mon-gal-1.PNG',
+    'assets/images/mon-gal-2.PNG',
+    'assets/images/mon-gal-3.PNG',
   ];
 
   @override
@@ -38,7 +61,7 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (status == AnimationStatus.completed) {
         // Change the image after animation ends
         setState(() {
-          _currentImageIndex = (_currentImageIndex + 1) % monteseraImages.length;
+          _currentImageIndex = (_currentImageIndex + 1) % 3;
         });
       }
     });
@@ -51,8 +74,14 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _waterPlant() {
-    _controllerFirst.reset();
-    _controllerFirst.forward(); // Start the animation
+    if (waterLevel > 0){
+      _controllerFirst.reset();
+      _controllerFirst.forward();
+      setState(() {
+        waterLevel -= 1;
+      });
+    }
+
   }
 
   @override
@@ -76,7 +105,7 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: Center(
-                    child: Image.asset(bambooImages[_currentImageIndex], height: 550,), // Updated dynamically
+                      child: Image.asset(widget.model.selectedPlant == 'mon-clay' ? monClay[_currentImageIndex] :widget.model.selectedPlant == 'mon-painted' ? monPaint[_currentImageIndex] :  widget.model.selectedPlant == 'bam-clay' ? bamClay[_currentImageIndex] : widget.model.selectedPlant == 'bam-galactic' ? bamGalactic[_currentImageIndex] : widget.model.selectedPlant == 'mon-galactic' ? monGalactic[_currentImageIndex] :  bamPaint[_currentImageIndex], height: 550,), // Updated dynamically
                   ),
                 ),
                 Column(
@@ -120,7 +149,7 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                               children: [
                                 Image.asset('assets/images/water.png', height: 25),
                                 SizedBox(width: 10,),
-                                Text('4', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)
+                                Text(waterLevel.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)
                               ],
                             ),
                           ),
@@ -149,11 +178,12 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => PotsScreen(model: widget.model)),
                             );
+                            setState(() {});
                           },
                           child: Container(
                             height: 60,
@@ -169,11 +199,13 @@ class GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push( // Await the result
                               context,
                               MaterialPageRoute(builder: (context) => PlantsScreen(model: widget.model)),
                             );
+                            // No need to handle return value explicitly, as setState will rebuild if model changes.
+                            setState(() {});
                           },
                           child: Container(
                             height: 60,

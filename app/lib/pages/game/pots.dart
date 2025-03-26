@@ -10,6 +10,21 @@ class PotsScreen extends StatefulWidget {
 }
 
 class PotsScreenState extends State<PotsScreen> {
+  late int? selectedPotIndex; // Track the selected pot index
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.model.selectedPlant);
+    String pot = widget.model.selectedPlant.split('-')[1];
+    if (pot == 'clay'){
+      selectedPotIndex = 0;
+    } else if (pot == 'painted') {
+      selectedPotIndex = 1;
+    } else {
+      selectedPotIndex = 5;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +34,23 @@ class PotsScreenState extends State<PotsScreen> {
   }
 
   Widget main() {
-    return Expanded(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: Color(0xffF3F4FC)),
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            top(),
-            SizedBox(height: 10,),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: Text('Save energy everyday to earn water drops and unlock new pots!', textAlign: TextAlign.center,)),
-            pots()
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(color: Color(0xffF3F4FC)),
+      child: Column(
+        children: [
+          SizedBox(height: 40),
+          top(),
+          SizedBox(height: 10),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: Text(
+                'Save energy everyday to earn water drops and unlock new pots!',
+                textAlign: TextAlign.center,
+              )),
+          pots(),
+        ],
       ),
     );
   }
@@ -53,8 +70,7 @@ class PotsScreenState extends State<PotsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                      'Pots',
+                  Text('Pots',
                       style: TextStyle(
                           color: Color(0xffAFB0BA),
                           fontSize: 19,
@@ -74,8 +90,8 @@ class PotsScreenState extends State<PotsScreen> {
       ),
     );
   }
+
   Widget pots() {
-    // List of image paths for each row
     final List<String> imagePaths = [
       'assets/images/clay-pot.png',
       'assets/images/painted_pot.png',
@@ -85,21 +101,19 @@ class PotsScreenState extends State<PotsScreen> {
       'assets/images/galactic_pot.png',
     ];
 
-    // List of plant names for each row
     final List<String> plantNames = [
       'Clay Pot',
       'Painted Clay Pot',
       'Ceramic Pot Pink',
       'Ceramic Pot Black',
       'Modern Pot',
-      'Intergalactic Pot'
+      'Intergalactic Pot',
     ];
 
-    // List of tick image paths for each row
     final List<String> tickImagePaths = [
       'assets/images/tick.png',
-      'assets/images/tick.png', // Example second tick image
-      'assets/images/lock_price.png', // Example third tick image
+      'assets/images/tick.png',
+      'assets/images/lock_price.png',
       'assets/images/lock_price.png',
       'assets/images/lock_price.png',
       'assets/images/lock_price.png',
@@ -108,30 +122,54 @@ class PotsScreenState extends State<PotsScreen> {
     return Expanded(
       child: SizedBox(
         child: ListView.separated(
-          itemCount: 6, // Number of rows
-          separatorBuilder: (context, index) => const SizedBox(height: 0), // No space between rows
+          itemCount: 6,
+          separatorBuilder: (context, index) => const SizedBox(height: 0),
           itemBuilder: (context, rowIndex) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey, width: rowIndex == 0 ? 2 : 1), // Top border
-                  bottom: BorderSide(color: Colors.grey, width: rowIndex == 5 ? 2 : 1), // Bottom border
+            return GestureDetector(
+              onTap: () {
+                if (rowIndex == 0 || rowIndex == 1 || rowIndex == 5) {
+                  if (rowIndex == 0){
+                    widget.model.updatePot('clay');
+                  } else if (rowIndex == 1){
+                    widget.model.updatePot('painted');
+                  } else {
+                    widget.model.updatePot('galactic');
+                  }
+                  setState(() {
+                    selectedPotIndex = rowIndex;
+                  });
+                  // Update the model with the selected pot if needed
+                  // Example:
+                  // widget.model.currentPot = plantNames[rowIndex];
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: Colors.grey, width: rowIndex == 0 ? 2 : 1),
+                    bottom: BorderSide(color: Colors.grey, width: rowIndex == 5 ? 2 : 1),
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between items
-                children: [
-                  Image.asset(
-                    imagePaths[rowIndex], // Use rowIndex to access the corresponding image
-                    height: 45,
-                  ),
-                  Text(plantNames[rowIndex]), // Use rowIndex to access the corresponding plant name
-                  rowIndex == 1 ? SizedBox(width: 30,) : Image.asset(
-                    tickImagePaths[rowIndex], // Use rowIndex to access the corresponding tick image
-                    height: rowIndex != 0 ? 40 : 30,
-                  ),
-                ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      imagePaths[rowIndex],
+                      height: 75,
+                    ),
+                    Text(plantNames[rowIndex]),
+                    if (rowIndex == 0 || rowIndex == 1 || rowIndex == 5)
+                      (selectedPotIndex == rowIndex
+                          ? Image.asset('assets/images/tick.png', height: 30)
+                          : SizedBox(width: 30))
+                    else
+                      Image.asset(
+                        tickImagePaths[rowIndex],
+                        height: 40,
+                      ),
+                  ],
+                ),
               ),
             );
           },
@@ -139,5 +177,4 @@ class PotsScreenState extends State<PotsScreen> {
       ),
     );
   }
-
 }

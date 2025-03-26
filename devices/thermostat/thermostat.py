@@ -78,8 +78,12 @@ def on_message(client, userdata, msg):
 
     elif command == "set_fan_speed":
         fan_speed = max(1, min(3, payload.get("value", 1)))  # Clamp value between 1-3
-        thermostat_state["fan_speed"] = fan_speed
-        print(f"Fan speed set to {fan_speed}")
+        cur = thermostat_state["fan_speed"]
+        if cur == 3:
+            thermostat_state["fan_speed"] = 1
+        else:
+            thermostat_state["fan_speed"] += 1
+        print(f"Fan speed set to {thermostat_state['fan_speed']}")
 
     else:
         print(f"Unknown command: {command}")

@@ -10,7 +10,18 @@ class PlantsScreen extends StatefulWidget {
 }
 
 class PlantsScreenState extends State<PlantsScreen> {
-  int? selectedPot = 0;
+  late int? selectedPot;
+
+  @override
+  void initState() {
+    super.initState();
+    String plant = widget.model.selectedPlant.split('-')[0];
+    if (plant == 'mon'){
+      selectedPot = 0;
+    } else {
+      selectedPot = 1;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,26 +31,24 @@ class PlantsScreenState extends State<PlantsScreen> {
   }
 
   Widget main() {
-    return Expanded(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: Color(0xffF3F4FC)),
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            top(),
-            SizedBox(height: 10,),
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: Text(
-                  'Save energy everyday to earn water drops and unlock new plants!',
-                  textAlign: TextAlign.center,
-                )
-            ),
-            plants()
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(color: Color(0xffF3F4FC)),
+      child: Column(
+        children: [
+          SizedBox(height: 40),
+          top(),
+          SizedBox(height: 10,),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: Text(
+                'Save energy everyday to earn water drops and unlock new plants!',
+                textAlign: TextAlign.center,
+              )
+          ),
+          plants()
+        ],
       ),
     );
   }
@@ -119,12 +128,17 @@ class PlantsScreenState extends State<PlantsScreen> {
             return GestureDetector(
               onTap: () {
                 if (rowIndex == 0 || rowIndex == 1) {
+                  if (rowIndex == 0){
+                    widget.model.updatePlant('mon');
+                  } else {
+                    widget.model.updatePlant('bam');
+                  }
                   setState(() {
                     selectedPot = rowIndex;
                   });
 
                   // Return the selected plant back to the GameScreen
-                  Navigator.pop(context, plantNames[rowIndex]);
+                  // Navigator.pop(context, plantNames[rowIndex]);
                 }
               },
               child: Container(

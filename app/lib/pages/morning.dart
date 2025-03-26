@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nextgen_software/pages/components/snackbar.dart';
+import 'package:nextgen_software/pages/devices/thermostat.dart';
 import '../model/mode.dart';
+import '../scopedModel/app_model.dart';
 import 'devices/curtain.dart';
+import 'devices/light.dart';
+import 'devices/lock.dart';
 
 class MorningScreen extends StatefulWidget {
   final Mode mode;
-  const MorningScreen({super.key, required this.mode});
+  final AppModel model;
+  const MorningScreen({super.key, required this.mode, required this.model});
 
   @override
   MorningScreenState createState() => MorningScreenState();
@@ -60,7 +66,9 @@ class MorningScreenState extends State<MorningScreen> {
           SizedBox(width: 48,
             child: IconButton(
               icon: Icon(Icons.settings, size: 30, color: Colors.black),
-              onPressed: () {},
+              onPressed: () {
+                showComingSoonSnackBar(context, 'Feature pending');
+              },
               tooltip: "Settings",
             ),),
         ],
@@ -108,23 +116,24 @@ class MorningScreenState extends State<MorningScreen> {
               ],
             ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  icon: Icon(Icons.toggle_off, size: 50, color: Colors.black),
-                  onPressed: () {},
-                  tooltip: "On",
-                ),
-                Container(
-                  height: 40,
-                  width: 80,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(5)
-                  ),
-                  child: Center(
-                    child: Text("Change timings", style: TextStyle(color: Colors.white, fontSize: 11), textAlign: TextAlign.center,),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                  child: GestureDetector(
+                    onTap: (){showComingSoonSnackBar(context, 'Feature pending');},
+                    child: Container(
+                      height: 40,
+                      width: 80,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(5)
+                      ),
+                      child: Center(
+                        child: Text("Change timings", style: TextStyle(color: Colors.white, fontSize: 11), textAlign: TextAlign.center,),
+                      ),
+                    ),
                   ),
                 )
               ],
@@ -163,10 +172,20 @@ class MorningScreenState extends State<MorningScreen> {
                 final appliance = model.appliances[index];
                 return GestureDetector(
                   onTap: () {
-                    if (appliance.type == 'curtain'){
+                    if (appliance.type == 'thermostat'){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CurtainScreen(device: appliance)),
+                        MaterialPageRoute(builder: (context) => ThermostatScreen(device: appliance, appModel: widget.model)),
+                      );
+                    } else if (appliance.type == 'light'){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LightScreen(device: appliance, appModel: widget.model)),
+                      );
+                    } else if (appliance.type == 'security lock'){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LockScreen(device: appliance, appModel: widget.model)),
                       );
                     }
                   },
@@ -215,7 +234,9 @@ class MorningScreenState extends State<MorningScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: GestureDetector(
-              // onTap: model.onManageDevices, // Trigger manage devices action
+              onTap: (){
+                showComingSoonSnackBar(context, 'Feature pending');
+              },
               child: Container(
                 height: 40,
                 width: MediaQuery.of(context).size.width * 0.8,

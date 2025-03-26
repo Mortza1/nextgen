@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = "https://little-spiders-thank.loca.lt";
+  final String baseUrl = "https://orange-friends-hope.loca.lt";
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = '$baseUrl/auth/login';
@@ -109,6 +109,25 @@ class ApiService {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to add mode');
+    }
+  }
+
+  Future<Map<String, dynamic>> uploadAudio(String filePath) async {
+    final url = '$baseUrl/auth/upload-audio';
+
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        return jsonDecode(responseBody);
+      } else {
+        throw Exception('Failed to upload audio. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error uploading audio: $e');
     }
   }
 

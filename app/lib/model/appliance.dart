@@ -138,13 +138,15 @@ class LightState extends ApplianceState {
 
 class CameraState extends ApplianceState {
   bool isRecording;
+  bool isOn;
 
-  CameraState({this.isRecording = false});
+  CameraState({this.isRecording = false, this.isOn = false});
 
   @override
   Map<String, dynamic> toMap() {
     return {
       'isRecording': isRecording,
+      'isOn' : isOn
     };
   }
 }

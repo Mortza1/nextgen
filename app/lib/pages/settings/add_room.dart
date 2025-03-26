@@ -28,19 +28,17 @@ class AddRoomScreenState extends State<AddRoomScreen> {
   }
 
   Widget main() {
-    return Expanded(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: Color(0xffF3F4FC)),
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            top(),
-            SizedBox(height: 40),
-            fields(),
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(color: Color(0xffF3F4FC)),
+      child: Column(
+        children: [
+          SizedBox(height: 40),
+          top(),
+          SizedBox(height: 40),
+          fields(),
+        ],
       ),
     );
   }
@@ -71,10 +69,7 @@ class AddRoomScreenState extends State<AddRoomScreen> {
               ),
             ),
             GestureDetector(
-              onTap: (){
-                _textController.text.isEmpty ? Navigator.pop(context) :
-                _isSaving ? null : _onSavePressed;
-              },
+              onTap: _onSavePressed,
               child: _isSaving
                   ? CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xff00AB5E)),
@@ -122,6 +117,7 @@ class AddRoomScreenState extends State<AddRoomScreen> {
 
   // Handle Save Button Press
   void _onSavePressed() async {
+    print('hi');
     setState(() {
       _isSaving = true; // Show progress indicator
     });

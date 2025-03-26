@@ -63,17 +63,17 @@ class SettingScreenState extends State<SettingScreen> {
           Text(widget.model.userData['name'] ?? '',  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),),
           Text(widget.model.userData['email'] ?? '',  style: TextStyle(fontWeight: FontWeight.w500),),
           SizedBox(height: 30,),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.12,
-            width: MediaQuery.of(context).size.width * 0.8,
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffC2C3CD), width: 2),
-              borderRadius: BorderRadius.circular(22)
-            ),
-            child: Center(
-              child: Text('Game scores', style: TextStyle(color: Color(0xffA1A2AA)),),
-            ),
-          ),
+          // Container(
+          //   height: MediaQuery.of(context).size.height * 0.12,
+          //   width: MediaQuery.of(context).size.width * 0.8,
+          //   decoration: BoxDecoration(
+          //     border: Border.all(color: Color(0xffC2C3CD), width: 2),
+          //     borderRadius: BorderRadius.circular(22)
+          //   ),
+          //   child: Center(
+          //     child: Text('Game scores', style: TextStyle(color: Color(0xffA1A2AA)),),
+          //   ),
+          // ),
           SizedBox(height: 30,),
           Container(
             padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 15),
@@ -149,18 +149,18 @@ class SettingScreenState extends State<SettingScreen> {
             ),
           ),
           SizedBox(height: 30,),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.15,
-            width: MediaQuery.of(context).size.width * 0.8,
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffC2C3CD), width: 2),
-              borderRadius: BorderRadius.circular(22)
-            ),
-            child: Center(
-              child: 
-              Text('Game Achievements', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 18),),
-            ),
-          )
+          // Container(
+          //   height: MediaQuery.of(context).size.height * 0.15,
+          //   width: MediaQuery.of(context).size.width * 0.8,
+          //   decoration: BoxDecoration(
+          //     border: Border.all(color: Color(0xffC2C3CD), width: 2),
+          //     borderRadius: BorderRadius.circular(22)
+          //   ),
+          //   child: Center(
+          //     child:
+          //     Text('Game Achievements', style: TextStyle(color: Color(0xffA1A2AA), fontWeight: FontWeight.bold, fontSize: 18),),
+          //   ),
+          // )
         ],
       ),
     );

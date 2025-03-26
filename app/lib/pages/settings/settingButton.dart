@@ -8,6 +8,7 @@ import 'package:nextgen_software/pages/settings/privacy.dart';
 import 'package:nextgen_software/pages/settings/profile.dart';
 
 import '../../scopedModel/app_model.dart';
+import '../components/webview.dart';
 
 class SettingButtonScreen extends StatefulWidget {
   final AppModel model;
@@ -220,7 +221,14 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: (){showComingSoonSnackBar(context, 'Will be linked to the website');},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebViewPage(url: 'https://delicious-domain-418976.framer.app/new-need-help'), // Replace with your website URL
+                      ),
+                    );
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.8,
                     height: (MediaQuery.of(context).size.height * 0.29)/4,
@@ -238,7 +246,14 @@ class SettingButtonScreenState extends State<SettingButtonScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: (){showComingSoonSnackBar(context, 'Will be linked to the website');},
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebViewPage(url: 'https://delicious-domain-418976.framer.app/contact-us-2'), // Replace with your website URL
+                      ),
+                    );
+                  },
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
                     height: (MediaQuery.of(context).size.height * 0.29)/4,

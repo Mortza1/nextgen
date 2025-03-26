@@ -163,10 +163,18 @@ class _HomePageBodyState extends State<HomePageBody> {
                                   ),
                                 ),
                                 mode.isActive()
-                                    ? const Icon(Icons.toggle_on,
-                                    color: Colors.green, size: 40)
-                                    : const Icon(Icons.toggle_off,
-                                    color: Colors.black, size: 40),
+                                    ? Container(
+                                  height: MediaQuery.of(context).size.height * 0.04,
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Center(
+                                    child: Text('ACTIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),),
+                                  ),
+                                )
+                                    : SizedBox()
                               ],
                             ),
                           ),
@@ -220,11 +228,6 @@ class _HomePageBodyState extends State<HomePageBody> {
                       mode.title,
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    mode.isActive()
-                        ? const Icon(Icons.toggle_on,
-                        color: Colors.green, size: 35)
-                        : const Icon(Icons.toggle_off,
-                        color: Colors.black, size: 35),
                   ],
                 ),
                 SizedBox(height: 10),
@@ -329,7 +332,7 @@ class _HomePageBodyState extends State<HomePageBody> {
     var rooms = (widget.appModel.homeData['rooms'] as List<dynamic>?) ?? [];
 
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right:5, bottom: 40),
+      padding: const EdgeInsets.only(left: 5, right:5, bottom: 0),
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -347,7 +350,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                 .cast<Appliance>()
                 .toList();
 
-            return Padding(
+            return appliances.isEmpty ? SizedBox() : Padding(
               padding: const EdgeInsets.only(bottom: 60.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -488,70 +491,38 @@ class _HomePageBodyState extends State<HomePageBody> {
       }
     }
   }
-  Widget _assistantButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.11,
-        child: Center(
-          child: GestureDetector(
-            onTapDown: (_) {
-              // Change the color when the button is pressed
-              setState(() {
-                _buttonColor = Color(0xffFB4242); // Change to your desired color
-              });
-            },
-            onTapUp: (_) {
-              // Revert the color when the button is released
-              setState(() {
-                _buttonColor = const Color(0xffFEDC97); // Revert to the original color
-              });
-            },
-            onTapCancel: () {
-              // Revert the color if the tap is canceled
-              setState(() {
-                _buttonColor = const Color(0xffFEDC97);
-              });
-            },
-            child: Container(
-              height: 75,
-              width: 75,
-              decoration: BoxDecoration(
-                color: _buttonColor, // Use the state variable for color
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Center(
-                child: Image.asset(
-                  'assets/images/mic.png',
-                  height: 25,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
     ApplianceModel model = widget.appModel.applianceModel;
     ModeModel modeModel = widget.appModel.modeModel;
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: SingleChildScrollView(
-        child: Column(
-        children: <Widget>[
-          _topMyHomeSection(),
-          // _consumptionBox(),
-          ConsumptionWidget(homeData: widget.appModel.homeData, model: widget.appModel,),
-          // _topWidgetSection(model),
-          _modeSection(modeModel, model),
-          _mainWidgetsSection(model),
-          // _assistantButton()
-          // AssistantButton()
-    ])));
+    return Stack(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _topMyHomeSection(),
+                ConsumptionWidget(
+                  homeData: widget.appModel.homeData,
+                  model: widget.appModel,
+                ),
+                _modeSection(modeModel, model),
+                _mainWidgetsSection(model),
+                SizedBox(height: 80), // Add bottom padding
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 80.0,
+          right: 16.0,
+          child: AssistantButton(model: widget.appModel),
+        ),
+      ],
+    );
   }
 
 }

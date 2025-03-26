@@ -57,6 +57,8 @@ class _ToggleMainState extends State<ToggleMain> {
         break;
       case 'security lock':
         command = (device.state as SmartLockState).isOn ? 'unplug' : 'plug_in';
+      case 'cameras':
+        command = (device.state as CameraState).isOn ? 'plug_out' : 'plug_in';
         break;
       default:
         command = 'toggle';
@@ -93,6 +95,8 @@ class _ToggleMainState extends State<ToggleMain> {
         return _buildIcon((device.state as ThermostatState).isOn);
       case 'security lock':
         return _buildIcon((device.state as SmartLockState).isOn);
+      case 'cameras':
+        return _buildIcon((device.state as CameraState).isOn);
       default:
         return _buildIcon(device.isEnable);
     }

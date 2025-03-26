@@ -60,11 +60,11 @@ def on_message(client, userdata, msg):
 
     elif command == "set_rgb":
         light_state["rgb"] = tuple(payload.get("rgb", (255, 255, 255)))
-        print(f"{DEVICE_ID} RGB set to {light_state['rgb']}")
+        print(f"{DEVICE_ID} RGB updated")
 
     elif command == "set_brightness":
         light_state["brightness"] = max(0, min(100, payload.get("brightness", 100)))
-        print(f"{DEVICE_ID} Brightness set to {light_state['brightness']}%")
+        print(f"{DEVICE_ID} Brightness updated")
 
     else:
         print(f"Unknown command: {command}")

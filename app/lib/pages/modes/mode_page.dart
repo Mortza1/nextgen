@@ -153,7 +153,7 @@ class ModeScreenState extends State<ModeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MorningScreen(mode: mode),
+                          builder: (context) => MorningScreen(mode: mode, model: widget.model,),
                         ),
                       );
                     },
@@ -188,12 +188,24 @@ class ModeScreenState extends State<ModeScreen> {
                             ),
                           ),
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               mode.isActive()
-                                  ? const Icon(Icons.toggle_on,
-                                  color: Colors.green, size: 50)
-                                  : const Icon(Icons.toggle_off,
-                                  color: Colors.black, size: 50),
+                                  ? Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                                    child: Container(
+                                                                    height: MediaQuery.of(context).size.height * 0.04,
+                                                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(5)
+                                                                    ),
+                                                                    child: Center(
+                                    child: Text('ACTIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),),
+                                                                    ),
+                                                                  ),
+                                  )
+                                  : SizedBox(),
                               Container(
                                 height: 40,
                                 width: 60,
@@ -256,14 +268,14 @@ class ModeScreenState extends State<ModeScreen> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                isEnergySavingActive = !isEnergySavingActive;
+                                widget.model.toggleEnergy();
                               });
                             },
                             child: Icon(
-                              isEnergySavingActive
+                              widget.model.isEnergySaverOn
                                   ? Icons.toggle_on
                                   : Icons.toggle_off,
-                              color: isEnergySavingActive ? Colors.green : Colors.black,
+                              color: widget.model.isEnergySaverOn ? Colors.green : Colors.black,
                               size: 50,
                             ),
                           ),

@@ -5,7 +5,8 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'package:nextgen_software/scopedModel/app_model.dart';
 
 class WebSocketService {
-  final String url = 'wss://little-spiders-thank.loca.lt/ws';
+  final String url = 'wss://lovely-baths-boil.loca.lt/ws';
+
   late WebSocketChannel channel;
   final AppModel model;  // Add AppModel reference
 

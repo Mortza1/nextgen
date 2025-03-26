@@ -7,6 +7,9 @@ import '../../model/mode.dart';
 import '../../scopedModel/app_model.dart';
 import '../../scopedModel/connected_mode.dart';
 import '../devices/curtain.dart';
+import '../devices/light.dart';
+import '../devices/lock.dart';
+import '../devices/thermostat.dart';
 
 class AddModeScreen extends StatefulWidget {
   final ApplianceModel model;
@@ -652,20 +655,21 @@ class AddModeScreenState extends State<AddModeScreen> {
                 final appliance = selectedDevices[index];
                 return GestureDetector(
                   onTap: () async {
-                    if (appliance.type == 'curtain') {
-                      final updatedAppliance = await Navigator.push(
+                    if (appliance.type == 'thermostat'){
+                      Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => CurtainScreen(device: appliance),
-                        ),
+                        MaterialPageRoute(builder: (context) => ThermostatScreen(device: appliance, appModel: widget.appModel)),
                       );
-
-                      if (updatedAppliance != null) {
-                        setState(() {
-                          // Update the appliance in the list with the returned appliance
-                          selectedDevices[index] = updatedAppliance;
-                        });
-                      }
+                    } else if (appliance.type == 'light'){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LightScreen(device: appliance, appModel: widget.appModel)),
+                      );
+                    } else if (appliance.type == 'security lock'){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LockScreen(device: appliance, appModel: widget.appModel)),
+                      );
                     }
                   },
                   child: Container(

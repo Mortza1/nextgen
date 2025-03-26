@@ -16,6 +16,31 @@ class AppModel extends Model {
   final ApiService _apiService = ApiService();
   final ModeModel modeModel = ModeModel();
 
+  bool isEnergySaverOn = true;
+  String selectedPlant = 'mon-clay';
+
+  void updatePlant(String plant){
+  List<String> parts = selectedPlant.split('-');
+  if (parts.isNotEmpty){
+    selectedPlant = '$plant-${parts[1]}';
+  }
+  notifyListeners();
+  }
+  void updatePot(String pot){
+    List<String> parts = selectedPlant.split('-');
+    if (parts.isNotEmpty){
+      selectedPlant = '${parts[0]}-$pot';
+      print('dasuhdaihdiuhwieuf');
+    }
+    print(selectedPlant+'ssssss');
+    notifyListeners();
+  }
+
+  void toggleEnergy(){
+    isEnergySaverOn = !isEnergySaverOn;
+    notifyListeners();
+  }
+
   Future<void> checkLoginStatus() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _isLoggedIn = prefs.getString('user_id') == null ? false : true;
@@ -57,6 +82,17 @@ class AppModel extends Model {
     }
 
     notifyListeners();  // Update UI
+  }
+  Future<Map<String, dynamic>> uploadAudio(String filePath) async {
+    try {
+      final result = await _apiService.uploadAudio(filePath);
+      // Process the result if needed
+      return result;
+    } catch (e) {
+      // Handle the error
+      print('Error uploading audio in AppModel: $e');
+      throw e; // Rethrow the error to be handled in the UI if needed.
+    }
   }
   Future<Map<String, dynamic>?> getDevice(String deviceId) async {
       final result = await _apiService.getDevice(deviceId);
@@ -235,8 +271,6 @@ class AppModel extends Model {
         );
       case 'curtain':
         return CurtainState(opened: device['state']['opened'] ?? 50);
-      case 'camera':
-        return CameraState(isRecording: device['state']['isRecording'] ?? false);
       case 'thermostat':
         return ThermostatState(
           isOn: device['current_data']['metric']['is_on'] ?? false,
@@ -252,8 +286,8 @@ class AppModel extends Model {
           isOn: device['current_data']['metric']['is_plugged_in'] ?? false
         );
       case 'cameras':
-        return SocketState(
-        );
+        print(device);
+        return CameraState(isRecording: false, isOn : device['current_data']['plugged_in'] );
       default:
         return null;
     }

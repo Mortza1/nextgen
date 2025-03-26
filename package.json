@@ -1,6 +1,10 @@
 {
   "dependencies": {
     "@canvasjs/charts": "^3.12.5",
-    "@canvasjs/react-charts": "^1.0.2"
+    "@canvasjs/react-charts": "^1.0.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.8",
+    "@mui/x-charts": "^7.28.0"
   }
 }

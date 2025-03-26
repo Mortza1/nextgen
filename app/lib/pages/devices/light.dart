@@ -62,8 +62,7 @@ class LightScreenState extends State<LightScreen> {
         children: [
           SizedBox(height: 35,),
           _screenHeader(),
-          isOn ?
-          _seekerControls(_valueNotifier, progress) : deviceOff(),
+          _seekerControls(_valueNotifier, progress),
         ],
       ),
     );
@@ -171,77 +170,72 @@ class LightScreenState extends State<LightScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  height: 55,
-                  width: 55,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xffD1D1D8), width: 3),
-                    borderRadius: BorderRadius.circular(12)
-                  ),
-                  child: Center(
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: Color(0xffFF4747),
-                        borderRadius: BorderRadius.circular(100)
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 55,
-                  width: 55,
-                  decoration: BoxDecoration(
+          GestureDetector(
+            onTap: (){
+              widget.appModel.setCommand(widget.device.id, 'set_rgb');
+            },
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
                       border: Border.all(color: Color(0xffD1D1D8), width: 3),
                       borderRadius: BorderRadius.circular(12)
-                  ),
-                  child: Center(
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                          color: Color(0xff8247FF),
+                    ),
+                    child: Center(
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          color: Color(0xffFF4747),
                           borderRadius: BorderRadius.circular(100)
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  height: 55,
-                  width: 55,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xffD1D1D8), width: 3),
-                      borderRadius: BorderRadius.circular(12)
-                  ),
-                  child: Center(
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                          color: Color(0xff4BFF47),
-                          borderRadius: BorderRadius.circular(100)
+                  Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xffD1D1D8), width: 3),
+                        borderRadius: BorderRadius.circular(12)
+                    ),
+                    child: Center(
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                            color: Color(0xff8247FF),
+                            borderRadius: BorderRadius.circular(100)
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  height: 55,
-                  width: 55,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xffD1D1D8), width: 3),
-                      borderRadius: BorderRadius.circular(12)
+                  Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xffD1D1D8), width: 3),
+                        borderRadius: BorderRadius.circular(12)
+                    ),
+                    child: Center(
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                            color: Color(0xff4BFF47),
+                            borderRadius: BorderRadius.circular(100)
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Center(
-                    child: Icon(Icons.color_lens, color: Color(0xff626262), size: 30,),
-                  ),
-                )
-              ],
+
+                ],
+              ),
             ),
           )
 

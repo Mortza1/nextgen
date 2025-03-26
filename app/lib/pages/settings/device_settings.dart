@@ -57,19 +57,17 @@ class DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
   }
 
   Widget main() {
-    return Expanded(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: Color(0xffF3F4FC)),
-        child: Column(
-          children: [
-            SizedBox(height: 40),
-            top(),
-            SizedBox(height: 40),
-            fields(),
-          ],
-        ),
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(color: Color(0xffF3F4FC)),
+      child: Column(
+        children: [
+          SizedBox(height: 40),
+          top(),
+          SizedBox(height: 40),
+          fields(),
+        ],
       ),
     );
   }

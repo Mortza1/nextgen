@@ -381,7 +381,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return GestureDetector(
         onTap: () {
           setState(() {
-            isEnergySavingOn = !isEnergySavingOn; // Toggle state
+            widget.model.toggleEnergy();
           });
         },
       child: Container(
@@ -397,9 +397,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
           Image.asset('assets/images/leaf_a.png', height: 30,),
           Text('Turn on energy saving', style: TextStyle(fontWeight: FontWeight.bold),),
           Icon(
-            isEnergySavingOn ? Icons.toggle_on : Icons.toggle_off,
+            widget.model.isEnergySaverOn ? Icons.toggle_on : Icons.toggle_off,
             size: 35,
-            color: isEnergySavingOn ? Colors.green : Colors.black, // Color change on toggle
+            color: widget.model.isEnergySaverOn ? Colors.green : Colors.black, // Color change on toggle
           ),
         ],
       ),
